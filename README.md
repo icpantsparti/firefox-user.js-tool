@@ -1,2 +1,2 @@
-# firefox-user.js-tool
+# userjs-tool.html
 Offline HTML viewer and actions for Firefox user.js (ghacksuserjs, pyllyukko, etc)
