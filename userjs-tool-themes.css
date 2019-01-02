@@ -1,0 +1,46 @@
+/*
+
+  name: userjs-tool-themes.css
+  URL: https://github.com/icpantsparti/firefox-user.js-tool
+  license: MIT: https://raw.githubusercontent.com/icpantsparti/firefox-user.js-tool/master/LICENSE
+
+  This is an optional file for use with userjs-tool.html
+
+  Use this file to override the default theme with your own colors or to
+  add your own custom themes (copy and replace _default with _themename).
+
+  The default theme is used when userjs-tool.html opens, or you can specify
+  another theme using URL variables, such as: userjs-tool.html?theme=themename
+
+  Color codes: https://www.w3schools.com/colors/colors_groups.asp
+
+*/
+
+/*----------------------------------------------------------------------------*/
+
+    /* default theme */
+
+    .body_default, .view_area_default, .boxes_default
+                                  { background-color: #262626; /*(black)*/
+                                               color: #b3b3b3; /*(gray)*/ }
+    .controls_default             { background-color: #555555; /*DimGray*/
+                                               color: #C0C0C0; /*Silver*/ }
+    .controls_default:focus       { outline: 2px auto #FF0000; /*Red*/ }
+    .controls_default:hover       { background-color: #DAA520; /*GoldenRod*/
+                                               color: #000000; /*Black*/ }
+    .borders_default        { box-shadow: 3px 3px 4px #FFFFFF; /*White*/
+                                    border: 1px solid #A9A9A9; /*DarkGray*/
+                     border-width: 1px 1px 0px 1px; }
+    .view_area_default .pref                 { color: #FFFFFF; /*White*/ }
+    .body_default a                          { color: #ffbf80; /*(brown)*/ }
+    .view_area_default .false                { color: #FF6347; /*Tomato*/ }
+    .view_area_default .true                 { color: #00FF00; /*Lime*/ }
+    .view_area_default .integer              { color: #FFFF00; /*Yellow*/ }
+    .view_area_default .string               { color: #DDA0DD; /*Plum*/ }
+    .view_area_default .http                 { color: #99ccff; /*(blue)*/ }
+    .view_area_default .warn      { background-color: #FF3333; /*(Red)*/
+                                               color: #FFFFFF; /*White*/ }
+    .view_area_default .hid                  { color: #C6F3C6; /*(Green)*/ }
+    .view_area_default .ref                  { color: #98E498; /*(Green)*/ }
+
+/*----------------------------------------------------------------------------*/
