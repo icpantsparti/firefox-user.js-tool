@@ -17,6 +17,8 @@ Disclaimer: Use with care at your own risk, alpha/experimental/untested.
 
 (This is a viewer/tool, and not an editor/installer.)
 
+![](/images/userjs-tool_small.png)
+
 ### userjs-tool-themes.css
 This is an optional file for use with userjs-tool.html
 
