@@ -1,0 +1,3235 @@
+<!DOCTYPE html>
+<html xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+  <!-- ****************************************
+  name: userjs-tool.html
+  version/date: (shown below)
+  URL: https://github.com/icpantsparti/firefox-user.js-tool
+  license: MIT: https://raw.githubusercontent.com/icpantsparti/firefox-user.js-tool/master/LICENSE
+  other sources: shown in the code below (embedded libraries/functions)
+  **************************************** -->
+
+  <title>userjs-tool.html</title>
+
+  <script type="text/javascript">
+
+    /* **************************************** */
+    /*             version/date                 */
+    var version = '2019.01.02.alpha';
+    /* **************************************** */
+
+    var date_time_stamp;
+
+    // keep track of the section selected to help overcome focus loss
+    var section_focus;
+
+  </script>
+
+  <style type="text/css">
+
+    /* similar color style to the static HTML that ghacks-user.js once produced */
+
+    /* main blocks */
+
+    body {
+      font-family: Consolas,"Liberation Mono",Menlo,Courier,monospace;
+      font-size: 75%;
+      white-space: pre;
+    }
+
+    #controls_bar {
+      display: inline-block;
+      position: fixed;
+      background-color: transparent;
+    }
+
+    #actions_box { white-space: normal; }
+
+    #groups_box { white-space: nowrap; }
+
+    .boxes {
+      display: none;
+      position: fixed;
+      top: 5em;
+      width: 85%;
+      min-width: 85%;
+      max-width: 85%;
+      height: 70%;
+      min-height: 0%;
+      max-height: 70%;
+      background-color: #FFFFFF; /*White*/
+      padding: 20px;
+      overflow: auto;
+      white-space: normal;
+      /* default borders */
+      box-shadow: 3px 3px 4px #000000; /*Black*/
+      border: 1px solid #000000; /*Black*/
+      border-width: 1px 1px 0px 1px;
+    }
+
+    #view_area { white-space: nowrap; }
+
+    .content {
+      display: none;
+      margin: auto;
+      padding: 20px 0px 0px 20px;
+      white-space: pre;
+    }
+
+    /* controls = buttons/selects */
+
+    .controls {
+      font: inherit;
+      padding: 4px 8px 4px 8px;
+      margin-right: 10px;
+      float: left;
+      overflow: hidden;
+      white-space: pre;
+      -moz-appearance: none;
+    }
+
+    #controls_bar .controls { display: inline-block; height: 2.5em; }
+
+    #controls_bar select { padding: 2px 4px 2px 4px; }
+
+    #goto_select, #menu_select { width: 5em; max-width: 5em; }
+
+    .actions_buttons { width: 7.5em; }
+
+    .heading_buttons {
+      padding-left: 20px;
+      width: 90%;
+      text-align: left;
+      float: none;
+    }
+
+    textarea {
+      font: inherit;
+      background-color: inherit;
+      color: inherit;
+      width: 100%;
+      min-width: 100%;
+      max-width: 100%;
+      height: 15vh;
+      min-height: 10em;
+      max-height: 50vh;
+      white-space: pre;
+      resize: vertical;
+    }
+
+    .input_info { display: block; }
+
+    table { font: inherit; width: 100%; border-spacing: 0 10px;}
+
+    .td1 { text-align: left; vertical-align:top; width: 10%; padding-top: 10px; }
+    .td2 { text-align: left; vertical-align:top; width: 100%; padding-top: 10px; }
+    .td3 { text-align: left; vertical-align:center; width: 50%; padding-right: 10px; }
+
+    td, tr { text-align: left; width: 90%; }
+
+    td > button { font: inherit; }
+
+    a { text-decoration: none; }
+
+    a:hover, button:hover, .pref, .false, .true, .integer, .string,
+      .warn, .hid, .ref { font-weight: bold; }
+
+    .setup { font-weight: bold; text-decoration: underline; }
+
+    .hidden, #collect_mode_pad { display: none; }
+
+    .closebtn {
+      font-weight: bold;
+      font-size: 300%;
+      cursor: pointer;
+      position: absolute;
+      right: 1%;
+      top: 1%;
+    }
+
+    details > summary { font-weight: bold; }
+    details > summary:hover { cursor: pointer; }
+    details[open] > summary { text-decoration: underline; }
+
+    /* ************************************************** */
+    /* color themes */
+    /* ************************************************** */
+
+    /* default theme has same values as dark theme */
+    /* use an optional "userjs-tool-themes.css" file to override these */
+    /* color codes: https://www.w3schools.com/colors/colors_groups.asp */
+
+    /* default theme */
+    .body_default, .view_area_default, .boxes_default
+                                  { background-color: #262626; /*(black)*/
+                                               color: #b3b3b3; /*(gray)*/ }
+    .controls_default             { background-color: #555555; /*DimGray*/
+                                               color: #C0C0C0; /*Silver*/ }
+    .controls_default:focus       { outline: 2px auto #FF0000; /*Red*/ }
+    .controls_default:hover       { background-color: #DAA520; /*GoldenRod*/
+                                               color: #000000; /*Black*/ }
+    .borders_default        { box-shadow: 3px 3px 4px #FFFFFF; /*White*/
+                                    border: 1px solid #A9A9A9; /*DarkGray*/
+                     border-width: 1px 1px 0px 1px; }
+    .view_area_default .pref                 { color: #FFFFFF; /*White*/ }
+    .body_default a                          { color: #ffbf80; /*(brown)*/ }
+    .view_area_default .false                { color: #FF6347; /*Tomato*/ }
+    .view_area_default .true                 { color: #00FF00; /*Lime*/ }
+    .view_area_default .integer              { color: #FFFF00; /*Yellow*/ }
+    .view_area_default .string               { color: #DDA0DD; /*Plum*/ }
+    .view_area_default .http                 { color: #99ccff; /*(blue)*/ }
+    .view_area_default .warn      { background-color: #FF3333; /*(Red)*/
+                                               color: #FFFFFF; /*White*/ }
+    .view_area_default .hid                  { color: #C6F3C6; /*(Green)*/ }
+    .view_area_default .ref                  { color: #98E498; /*(Green)*/ }
+
+    /* dark theme */
+    .body_dark, .view_area_dark, .boxes_dark
+                                  { background-color: #262626; /*(black)*/
+                                               color: #b3b3b3; /*(gray)*/ }
+    .controls_dark                { background-color: #555555; /*DimGray*/
+                                               color: #C0C0C0; /*Silver*/ }
+    .controls_dark:focus          { outline: 2px auto #FF0000; /*Red*/ }
+    .controls_dark:hover          { background-color: #DAA520; /*GoldenRod*/
+                                               color: #000000; /*Black*/ }
+    .borders_dark           { box-shadow: 3px 3px 4px #FFFFFF; /*White*/
+                                    border: 1px solid #A9A9A9; /*DarkGray*/
+                     border-width: 1px 1px 0px 1px; }
+    .view_area_dark .pref                    { color: #FFFFFF; /*White*/ }
+    .body_dark a                             { color: #ffbf80; /*(brown)*/ }
+    .view_area_dark .false                   { color: #FF6347; /*Tomato*/ }
+    .view_area_dark .true                    { color: #00FF00; /*Lime*/ }
+    .view_area_dark .integer                 { color: #FFFF00; /*Yellow*/ }
+    .view_area_dark .string                  { color: #DDA0DD; /*Plum*/ }
+    .view_area_dark .http                    { color: #99ccff; /*(blue)*/ }
+    .view_area_dark .warn         { background-color: #FF3333; /*(Red)*/
+                                               color: #FFFFFF; /*White*/ }
+    .view_area_dark .hid                     { color: #C6F3C6; /*(Green)*/ }
+    .view_area_dark .ref                     { color: #98E498; /*(Green)*/ }
+
+    /* light theme */
+    .body_light, .view_area_light, .boxes_light
+                                  { background-color: #FFFFFF; /*White*/
+                                               color: #808080; /*Gray*/ }
+    .controls_light               { background-color: #C0C0C0; /*Silver*/
+                                               color: #000000; /*Black*/ }
+    .controls_light:focus         { outline: 2px auto #FF0000; /*Red*/ }
+    .controls_light:hover         { background-color: #DAA520; /*GoldenRod*/
+                                               color: #000000; /*Black*/ }
+    .borders_light          { box-shadow: 3px 3px 4px #000000; /*Black*/
+                                    border: 1px solid #000000; /*Black*/
+                     border-width: 1px 1px 0px 1px; }
+    .view_area_light .pref                   { color: #000000; /*Black*/ }
+    .body_light a                            { color: #D2691E; /*Chocolate*/ }
+    .view_area_light .false                  { color: #FF6347; /*Tomato*/ }
+    .view_area_light .true                   { color: #32CD32; /*LimeGreen*/ }
+    .view_area_light .integer                { color: #9932CC; /*DarkOrchid*/ }
+    .view_area_light .string                 { color: #DDA0DD; /*Plum*/ }
+    .view_area_light .http                   { color: #1982D1; /*(Blue)*/ }
+    .view_area_light .warn        { background-color: #FF3333; /*(Red)*/
+                                               color: #FFFFFF; /*White*/ }
+    .view_area_light .hid                    { color: #598033; /*(Green)*/ }
+    .view_area_light .ref                    { color: #A53C00; /*(Brown)*/ }
+
+    /* mono theme */
+    .body_mono, .view_area_mono, .boxes_mono
+                                  { background-color: #FFFFFF; /*White*/
+                                               color: #000000; /*Black*/ }
+    .controls_mono                { background-color: #FFFFFF; /*White*/
+                                               color: #000000; /*Black*/ }
+    .controls_mono:focus          { outline: 2px auto #FF0000; /*Red*/ }
+    .controls_mono:hover          { background-color: #000000; /*Black*/
+                                               color: #FFFFFF; /*White*/ }
+    .borders_mono           { box-shadow: 3px 3px 4px #000000; /*Black*/
+                                    border: 1px solid #000000; /*Black*/
+                     border-width: 1px 1px 0px 1px; }
+    .view_area_mono .pref                    { color: #000000; /*Black*/ }
+    .body_mono a                             { color: #696969; /*DimGray*/ }
+    .view_area_mono .false                   { color: #000000; /*Black*/ }
+    .view_area_mono .true                    { color: #000000; /*Black*/ }
+    .view_area_mono .integer                 { color: #000000; /*Black*/ }
+    .view_area_mono .string                  { color: #000000; /*Black*/ }
+    .view_area_mono .http                    { color: #696969; /*DimGray*/ }
+    .view_area_mono .warn         { background-color: #000000; /*Black*/
+                                               color: #FFFFFF; /*White*/ }
+    .view_area_mono .hid                     { color: #000000; /*Black*/ }
+    .view_area_mono .ref                     { color: #000000; /*Black*/ }
+
+    /* inverse theme */
+    .body_inverse, .view_area_inverse, .boxes_inverse
+                                  { background-color: #000000; /*Black*/
+                                               color: #FFFFFF; /*White*/ }
+    .controls_inverse             { background-color: #000000; /*Black*/
+                                               color: #FFFFFF; /*White*/ }
+    .controls_inverse:focus       { outline: 2px auto #FF0000; /*Red*/ }
+    .controls_inverse:hover       { background-color: #FFFFFF; /*White*/
+                                               color: #000000; /*Black*/ }
+    .borders_inverse        { box-shadow: 3px 3px 4px #FFFFFF; /*White*/
+                                    border: 1px solid #FFFFFF; /*White*/
+                     border-width: 1px 1px 0px 1px; }
+    .view_area_inverse .pref                 { color: #FFFFFF; /*White*/ }
+    .body_inverse a                          { color: #D3D3D3; /*LightGray*/ }
+    .view_area_inverse .false                { color: #FFFFFF; /*White*/ }
+    .view_area_inverse .true                 { color: #FFFFFF; /*White*/ }
+    .view_area_inverse .integer              { color: #FFFFFF; /*White*/ }
+    .view_area_inverse .string               { color: #FFFFFF; /*White*/ }
+    .view_area_inverse .http                 { color: #D3D3D3; /*LightGray*/ }
+    .view_area_inverse .warn      { background-color: #FFFFFF; /*White*/
+                                               color: #000000; /*Black*/ }
+    .view_area_inverse .hid                  { color: #FFFFFF; /*White*/ }
+    .view_area_inverse .ref                  { color: #FFFFFF; /*White*/ }
+
+  </style>
+
+
+
+
+  <!-- **************************************************
+       userjs-tool-themes.css  (optional file)
+       (to override default theme with users color choice)
+       ************************************************** -->
+
+  <link rel="stylesheet" href="userjs-tool-themes.css" />
+
+
+
+
+  <!-- **************************************************
+       embedded JavaScript library
+       (used when saving textarea contents to a file)
+       name: download.js
+       version: 4.2
+       author: dandavis
+       URL: https://github.com/rndme/download
+       license: Creative Commons Attribution 4.0 International License
+       license: http://creativecommons.org/licenses/by/4.0/
+       ************************************************** -->
+
+  <script type="text/javascript">
+
+//download.js v4.2, by dandavis; 2008-2016. [CCBY2] see http://danml.com/download.html for tests/usage
+// v1 landed a FF+Chrome compat way of downloading strings to local un-named files, upgraded to use a hidden frame and optional mime
+// v2 added named files via a[download], msSaveBlob, IE (10+) support, and window.URL support for larger+faster saves than dataURLs
+// v3 added dataURL and Blob Input, bind-toggle arity, and legacy dataURL fallback was improved with force-download mime and base64 support. 3.1 improved safari handling.
+// v4 adds AMD/UMD, commonJS, and plain browser support
+// v4.1 adds url download capability via solo URL argument (same domain/CORS only)
+// v4.2 adds semantic variable names, long (over 2MB) dataURL support, and hidden by default temp anchors
+// https://github.com/rndme/download
+
+(function (root, factory) {
+	if (typeof define === 'function' && define.amd) {
+		// AMD. Register as an anonymous module.
+		define([], factory);
+	} else if (typeof exports === 'object') {
+		// Node. Does not work with strict CommonJS, but
+		// only CommonJS-like environments that support module.exports,
+		// like Node.
+		module.exports = factory();
+	} else {
+		// Browser globals (root is window)
+		root.download = factory();
+  }
+}(this, function () {
+
+	return function download(data, strFileName, strMimeType) {
+
+		var self = window, // this script is only for browsers anyway...
+			defaultMime = "application/octet-stream", // this default mime also triggers iframe downloads
+			mimeType = strMimeType || defaultMime,
+			payload = data,
+			url = !strFileName && !strMimeType && payload,
+			anchor = document.createElement("a"),
+			toString = function(a){return String(a);},
+			myBlob = (self.Blob || self.MozBlob || self.WebKitBlob || toString),
+			fileName = strFileName || "download",
+			blob,
+			reader;
+			myBlob= myBlob.call ? myBlob.bind(self) : Blob ;
+	  
+		if(String(this)==="true"){ //reverse arguments, allowing download.bind(true, "text/xml", "export.xml") to act as a callback
+			payload=[payload, mimeType];
+			mimeType=payload[0];
+			payload=payload[1];
+		}
+
+
+		if(url && url.length< 2048){ // if no filename and no mime, assume a url was passed as the only argument
+			fileName = url.split("/").pop().split("?")[0];
+			anchor.href = url; // assign href prop to temp anchor
+		  	if(anchor.href.indexOf(url) !== -1){ // if the browser determines that it's a potentially valid url path:
+        		var ajax=new XMLHttpRequest();
+        		ajax.open( "GET", url, true);
+        		ajax.responseType = 'blob';
+        		ajax.onload= function(e){ 
+				  download(e.target.response, fileName, defaultMime);
+				};
+        		setTimeout(function(){ ajax.send();}, 0); // allows setting custom ajax headers using the return:
+			    return ajax;
+			} // end if valid url?
+		} // end if url?
+
+
+		//go ahead and download dataURLs right away
+		if(/^data\:[\w+\-]+\/[\w+\-]+[,;]/.test(payload)){
+		
+			if(payload.length > (1024*1024*1.999) && myBlob !== toString ){
+				payload=dataUrlToBlob(payload);
+				mimeType=payload.type || defaultMime;
+			}else{			
+				return navigator.msSaveBlob ?  // IE10 can't do a[download], only Blobs:
+					navigator.msSaveBlob(dataUrlToBlob(payload), fileName) :
+					saver(payload) ; // everyone else can save dataURLs un-processed
+			}
+			
+		}//end if dataURL passed?
+
+		blob = payload instanceof myBlob ?
+			payload :
+			new myBlob([payload], {type: mimeType}) ;
+
+
+		function dataUrlToBlob(strUrl) {
+			var parts= strUrl.split(/[:;,]/),
+			type= parts[1],
+			decoder= parts[2] == "base64" ? atob : decodeURIComponent,
+			binData= decoder( parts.pop() ),
+			mx= binData.length,
+			i= 0,
+			uiArr= new Uint8Array(mx);
+
+			for(i;i<mx;++i) uiArr[i]= binData.charCodeAt(i);
+
+			return new myBlob([uiArr], {type: type});
+		 }
+
+		function saver(url, winMode){
+
+			if ('download' in anchor) { //html5 A[download]
+				anchor.href = url;
+				anchor.setAttribute("download", fileName);
+				anchor.className = "download-js-link";
+				anchor.innerHTML = "downloading...";
+				anchor.style.display = "none";
+				document.body.appendChild(anchor);
+				setTimeout(function() {
+					anchor.click();
+					document.body.removeChild(anchor);
+					if(winMode===true){setTimeout(function(){ self.URL.revokeObjectURL(anchor.href);}, 250 );}
+				}, 66);
+				return true;
+			}
+
+			// handle non-a[download] safari as best we can:
+			if(/(Version)\/(\d+)\.(\d+)(?:\.(\d+))?.*Safari\//.test(navigator.userAgent)) {
+				url=url.replace(/^data:([\w\/\-\+]+)/, defaultMime);
+				if(!window.open(url)){ // popup blocked, offer direct download:
+					if(confirm("Displaying New Document\n\nUse Save As... to download, then click back to return to this page.")){ location.href=url; }
+				}
+				return true;
+			}
+
+			//do iframe dataURL download (old ch+FF):
+			var f = document.createElement("iframe");
+			document.body.appendChild(f);
+
+			if(!winMode){ // force a mime that will download:
+				url="data:"+url.replace(/^data:([\w\/\-\+]+)/, defaultMime);
+			}
+			f.src=url;
+			setTimeout(function(){ document.body.removeChild(f); }, 333);
+
+		}//end saver
+
+
+
+
+		if (navigator.msSaveBlob) { // IE10+ : (has Blob, but not a[download] or URL)
+			return navigator.msSaveBlob(blob, fileName);
+		}
+
+		if(self.URL){ // simple fast and modern way using Blob and URL:
+			saver(self.URL.createObjectURL(blob), true);
+		}else{
+			// handle non-Blob()+non-URL browsers:
+			if(typeof blob === "string" || blob.constructor===toString ){
+				try{
+					return saver( "data:" +  mimeType   + ";base64,"  +  self.btoa(blob)  );
+				}catch(y){
+					return saver( "data:" +  mimeType   + "," + encodeURIComponent(blob)  );
+				}
+			}
+
+			// Blob but not URL support:
+			reader=new FileReader();
+			reader.onload=function(e){
+				saver(this.result);
+			};
+			reader.readAsDataURL(blob);
+		}
+		return true;
+	}; /* end download() */
+}));
+
+  </script>  <!-- end: download.js -->
+
+
+
+
+  <!-- **************************************************
+       JavaScript functions - other sources
+       code from or based on sources as shown
+       ************************************************** -->
+
+  <script type="text/javascript">
+
+    // **************************************************
+    // RegExp.escape
+    // **************************************************
+
+    // function to escape a variable for use in regex
+    // https://stackoverflow.com/questions/6318710/javascript-equivalent-of-perls-q-e-or-quotemeta
+
+    RegExp.escape = function(text) {
+      return (text+'').replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+    }
+
+    // **************************************************
+    // b64EncodeUnicode / b64DecodeUnicode
+    // **************************************************
+
+    // functions to base64 encode/decode (and cope with Unicode characters)
+    // https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/Base64_encoding_and_decoding#The_Unicode_Problem
+
+    function b64EncodeUnicode(str) {
+      // first we use encodeURIComponent to get percent-encoded UTF-8,
+      // then we convert the percent encodings into raw bytes which
+      // can be fed into btoa.
+      return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
+        function toSolidBytes(match, p1) {
+          return String.fromCharCode('0x' + p1);
+      }));
+    }
+
+    function b64DecodeUnicode(str) {
+      // Going backwards: from bytestream, to percent-encoding, to original string.
+      return decodeURIComponent(atob(str).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+    }
+
+    // **************************************************
+    // computedStyle
+    // **************************************************
+
+    // function to get element style values
+    // https://stackoverflow.com/questions/6134471/using-elements-that-are-added-to-an-array-with-document-getelementbyidid/6134501#6134501
+    //   var element = document.getElementById('Img3');
+    //   alert(computedStyle(element,'width'));
+
+    var computedStyle = function (el,style) {
+      var cs;
+      if (typeof el.currentStyle != 'undefined'){
+        cs = el.currentStyle;
+      }
+      else {
+        cs = document.defaultView.getComputedStyle(el,null);
+      }
+      return  cs[style];
+    }
+
+    // **************************************************
+    // escapeHtml
+    // **************************************************
+
+    // function to replace & < > " ' characters with HTML escape codes
+    // action = decode+quotes|encode+quotes|decode|encode
+    //          (blank or anything else = encode)
+    // based on code from:
+    // https://stackoverflow.com/questions/1787322/htmlspecialchars-equivalent-in-javascript/4835406
+
+    function escapeHtml(text, action) {
+      if (action == "decode+quotes") {
+        // decode (+ quotes)
+        var map = { '&amp;': '&', '&lt;': '<', '&gt;': '>',
+          '&quot;': '"', '&#039;': "'" };
+        return text.replace(/&amp;|&lt;|&gt;|&quot;|&#039;/g,
+          function(m) { return map[m]; });
+      }
+      else if (action == "encode+quotes") {
+        // encode (+ quotes)
+        var map = { '&': '&amp;', '<': '&lt;', '>': '&gt;',
+          '"': '&quot;', "'": '&#039;' };
+        return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+      }
+      else if (action == "decode") {
+        // decode
+        var map = { '&amp;': '&', '&lt;': '<', '&gt;': '>' };
+        return text.replace(/&amp;|&lt;|&gt;/g,
+          function(m) { return map[m]; });
+      }
+      else {
+        // encode
+        var map = { '&': '&amp;', '<': '&lt;', '>': '&gt;' };
+        return text.replace(/[&<>]/g, function(m) { return map[m]; });
+      }
+    }
+
+    // **************************************************
+    // changeClass
+    // **************************************************
+
+    // based on code from:
+    // https://stackoverflow.com/questions/195951/change-an-elements-css-class-with-javascript
+
+    function changeClass(object,oldClass,newClass)
+    {
+      if (oldClass == "") {
+        if ( ! /(?:^|\s)newClass(?!\S)/.test(object.className) ) {
+          object.className += " "+newClass;
+        }
+      }
+      else {
+        var regExp = new RegExp('(?:^|\\s)' + oldClass + '(?!\\S)', 'ig');
+        object.className = object.className.replace( regExp , newClass );
+      }
+    }
+
+    // **************************************************
+    // getURLVariable
+    // **************************************************
+
+    /* process URL variables */
+    // https://stackoverflow.com/questions/831030/how-to-get-get-request-parameters-in-javascript
+
+    function getURLVariable(name){
+      // window.location.search.substring(1)
+      if(name=(new RegExp('[?&]'
+        + encodeURIComponent(name) + '=([^&#]*)')).exec(location.search))
+        return decodeURIComponent(name[1])
+    }
+
+    // **************************************************
+    // loadFile
+    // **************************************************
+
+    // based on code from:
+    // https://stackoverflow.com/questions/196498/how-do-i-load-the-contents-of-a-text-file-into-a-javascript-variable
+    // https://stackoverflow.com/questions/6348207/making-a-paragraph-in-html-contain-a-text-from-a-file
+
+    // loadFile('/foo.txt')
+    // window.onLoad = loadFile("http://my.remote.url/myremotefile.txt");
+    function loadFile(name, text_box){
+      var e = document.getElementById(text_box);
+      var file = new XMLHttpRequest();
+      //file.onreadystatechange = function() {
+      file.onloadend = function() {
+        // Makes sure the document is ready to parse
+        if (file.readyState === 4) {
+          // Makes sure it's found the file
+          if (file.status === 200) {
+            // document.getElementById("div1").innerHTML = file.responseText;
+            e.value = file.responseText;
+            //e.select();
+            e.selectionStart = 0;
+            e.selectionEnd = 0;
+            e.focus();
+          }
+        }
+      }
+      // avoid cached by adding a unique ID to the URL
+      file.open('GET', name + "?t=" + Math.random());
+      file.send();
+    }
+
+  </script>  <!-- end: JavaScript functions - other sources -->
+
+
+
+
+  <!-- **************************************************
+       JavaScript functions - userjs-tool.html
+       ************************************************** -->
+
+  <script type="text/javascript">
+
+
+    // **************************************************
+    // updateDateTimeStampVariable
+    // **************************************************
+
+    function updateDateTimeStampVariable() {
+      var d = new Date();
+      // var months = ["Jan","Feb","Mar","Apr","May","Jun",
+      //   "Jul","Aug","Sep","Oct","Nov","Dec"];
+      // var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+      // Date.now() Get the time. ECMAScript 5.
+      date_time_stamp = d.getFullYear()
+        // + months[d.getMonth()]
+        + ((d.getMonth()+1) < 10 ? "0" : "") + (d.getMonth()+1)
+        + (d.getDate() < 10 ? "0" : "") + d.getDate() + "_"
+        // + days[d.getDay()]
+        + (d.getHours() < 10 ? "0" : "") + d.getHours()
+        + (d.getMinutes() < 10 ? "0" : "") + d.getMinutes()
+        + (d.getSeconds() < 10 ? "0" : "") + d.getSeconds();
+        // + "." + getMilliseconds();
+    }
+
+
+    // **************************************************
+    // invertColorForClass
+    // **************************************************
+
+    function invertColorForClass(classname) {
+      var newbg = computedStyle(document.getElementById("view_area"),'color');
+      var newfg = computedStyle(document.getElementById("view_area"),'backgroundColor');
+      if ( (newbg == 'rgb(0, 0, 0)' && newfg == 'rgba(0, 0, 0, 0)')
+        || (newbg == 'rgba(0, 0, 0, 0)' && newfg == 'rgb(0, 0, 0)')
+        || (newbg == newfg) )
+      {
+        newfg = "#FFFFFF"; /*White*/
+        newbg = "#000000"; /*Black*/
+      }
+      var e = document.getElementsByClassName(classname);
+      for (var i = 0; i < e.length; i++) {
+        e[i].style.color = newfg;
+        e[i].style.backgroundColor = newbg;
+      }
+    }
+
+
+    // **************************************************
+    // clickActionForCollectMode
+    // **************************************************
+
+    /* collect mode - add/amend pref to collected output */
+
+    function clickActionForCollectMode() {
+      var overridesjs_box = document.getElementById("text_box_2");
+      var prefstatus, prefname, prefvalue, quote_type = "";
+      var new_value = null, new_inactive = null;
+      var x, x2, r;
+
+      // prefstatus was clicked eg active=user_pref, inactive=// user_pref
+      // toggle active/inactive (without prefvalue change)
+      if (/pref/.test(this.className)) {
+        prefstatus = this;
+        prefname = prefstatus.nextElementSibling;
+        prefvalue = prefname.nextElementSibling;
+        if (/^[ \t]*(\/\/|\/\*)[ \t]*user_pref/.test(prefstatus.innerHTML)) {
+          // inactive to active
+          new_inactive = "";
+          prefstatus.innerHTML = "user_pref"
+        }
+        else {
+          // active to inactive
+          new_inactive = "// ";
+          prefstatus.innerHTML = "// user_pref"
+        }
+        // underline "user_pref" or "// user_pref" to indicate change
+        prefstatus.style.textDecoration = "underline";
+      }
+
+      // prefvalue was clicked
+      else {
+        prefvalue = this;
+        prefname = prefvalue.previousElementSibling;
+        prefstatus = prefname.previousElementSibling;
+
+        // only if user_pref is active (as in not // commented)
+        if (!(/^[ \t]*(\/\/|\/\*)[ \t]*user_pref/.test(prefstatus.innerHTML))) {
+
+          // toggle boolean, others prompt edit (remove quotes on strings first)
+          if (/true/.test(prefvalue.className)) {
+            new_value = "false";
+            prefvalue.className = prefvalue.className.replace(/true/, "false");
+          }
+          else if (/false/.test(prefvalue.className)) {
+            new_value = "true";
+            prefvalue.className = prefvalue.className.replace(/false/, "true");
+          }
+          else {
+            // string and integer
+            if (/string/.test(prefvalue.className)) {
+              quote_type = prefvalue.innerHTML[0];
+              // remove quotes
+              new_value = prefvalue.innerHTML.replace(/^["'](.*)["']$/,"$1");
+            }
+            else {
+              new_value = prefvalue.innerHTML;
+            }
+            // show edit box (you get null if canceled)
+            new_value = prompt("Please amend the value", new_value);
+          }
+
+          // validate (add quotes on strings)
+          if (new_value != null) {
+            if (/string/.test(prefvalue.className)) {
+              prefvalue.innerHTML = quote_type + new_value + quote_type;
+            }
+            else if (/integer/.test(prefvalue.className)) {
+              if (Number.isInteger(Number(new_value))) {
+                prefvalue.innerHTML = new_value;
+              }
+              else {
+                new_value = null;
+              }
+            }
+            else {
+              prefvalue.innerHTML = new_value;
+            }
+            if (new_value != null) {
+              // underline value to indicate change
+              prefvalue.style.textDecoration = "underline";
+            }
+          }
+
+        } /* end if (that stops edit of inactive prefs) */
+      }
+
+      // add to list of changes (kept in text_box_2)
+      if (new_value != null || new_inactive != null) {
+
+        x = new RegExp("user_pref\\([\"']"
+          + RegExp.escape(prefname.innerHTML) + "[\"']", "m");
+
+        x2 = new RegExp("^[ \t]*\/\/\/\/ --- comment-out --- '"
+          + RegExp.escape(prefname.innerHTML) + "'", "m");
+
+        if (new_inactive == "" || new_inactive == null) {
+          // ie: r will be: user_pref("name", value);
+          r = "user_pref(\"" + prefname.innerHTML + "\", "
+            + prefvalue.innerHTML + ");";
+        }
+        else {
+          r = "//// --- comment-out --- '" + prefname.innerHTML + "'";
+        }
+
+        if (x.test(overridesjs_box.value)
+          || x2.test(overridesjs_box.value))
+        {
+          // existing in output - do a find and replace
+          //   keep any succeeding comment
+
+          x = new RegExp("^.*user_pref[ \t]*\\([ \t]*[\"']"
+            + RegExp.escape(prefname.innerHTML) + "[\"']"
+            + "[ \t]*,[ \t]*(.*)[ \t]*\\)[ \t]*;"
+            + "(.*)$", "gm");
+          // use "$2 // $1" if you want previous prefvalue
+          overridesjs_box.value =
+            overridesjs_box.value.replace(x,r + "$2");
+
+          x2 = new RegExp("^[ \t]*\/\/\/\/ --- comment-out --- '"
+            + RegExp.escape(prefname.innerHTML) + "'(.*)$", "gm");
+          overridesjs_box.value =
+            overridesjs_box.value.replace(x2,r + "$1");
+        }
+        else {
+          // new to output
+          overridesjs_box.value =
+            overridesjs_box.value + r + "\n";
+        }
+        // get index of prefname within text box
+        var ns = overridesjs_box.value.lastIndexOf('"' + prefname.innerHTML + '"');
+        if (ns == -1) {
+          ns = overridesjs_box.value.lastIndexOf("'" + prefname.innerHTML + "'");
+        }
+        var ne = ns;
+        if (ns != -1) {
+          ns = ns + 1;
+          ne = ns + prefname.innerHTML.length;
+        }
+        // set focus to that location
+        if (ns != -1) {
+          overridesjs_box.scrollIntoView();
+          overridesjs_box.select;
+          overridesjs_box.selectionEnd = ne;
+          overridesjs_box.selectionStart = ns;
+          // it loses focus despite next line
+          overridesjs_box.focus;
+        }
+      }
+    }  /* end function clickActionForCollectMode */
+
+
+    // **************************************************
+    // addEventListenersForCollectMode
+    // **************************************************
+
+    function addEventListenersForCollectMode() {
+      // https://stackoverflow.com/questions/37255293/getelementsbyclassname-with-two-classes
+      var class1 = Array.from(document.getElementsByClassName("true"));
+      var class2 = Array.from(document.getElementsByClassName("false"));
+      var class3 = Array.from(document.getElementsByClassName("integer"));
+      var class4 = Array.from(document.getElementsByClassName("string"));
+      var class5 = Array.from(document.getElementsByClassName("pref"));
+      var e = Array.from(new Set(class1.concat(class2,class3,class4,class5)));
+      for (var i = 0; i < e.length; i++) {
+        e[i].style.cursor = "cell";
+        e[i].addEventListener("click", clickActionForCollectMode);
+      }
+    }
+
+
+    // **************************************************
+    // removeEventListenersForCollectMode
+    // **************************************************
+
+    function removeEventListenersForCollectMode() {
+      // https://stackoverflow.com/questions/37255293/getelementsbyclassname-with-two-classes
+      var class1 = Array.from(document.getElementsByClassName("true"));
+      var class2 = Array.from(document.getElementsByClassName("false"));
+      var class3 = Array.from(document.getElementsByClassName("integer"));
+      var class4 = Array.from(document.getElementsByClassName("string"));
+      var class5 = Array.from(document.getElementsByClassName("pref"));
+      var e = Array.from(new Set(class1.concat(class2,class3,class4,class5)));
+      for (var i = 0; i < e.length; i++) {
+        e[i].style.cursor = "auto";
+        e[i].removeEventListener("click", clickActionForCollectMode);
+      }
+    }
+
+
+    // **************************************************
+    // tidySectionHeading
+    // **************************************************
+
+    // used in userjsViewer and overridesjsTemplate
+
+    function tidySectionHeading(text) {
+      function tidySectionHeadingRegex(f,r) {
+        var x = new RegExp(f, "i");
+        text = text.replace(x, r);
+      }
+
+      // ghacks style
+      tidySectionHeadingRegex("^[ \*\t]*[/][*][*][*-][ \*\t]*\\[SECTION ([^\\]]*)\\]:[ \t]*(.*)[ \*\t]*$", "$1: $2");
+      tidySectionHeadingRegex("^\/[*\/] *(ESR.*)$", "9999+ $1");
+      tidySectionHeadingRegex("^\/\\* *(END).*$", "9999~ $1");
+
+      // pyllyukko style
+      tidySectionHeadingRegex("^[ \*\t]*SECTION:[ \t]*(.*)[ \*\t]*$", "$1");
+
+      // 12bytes style
+      tidySectionHeadingRegex("^[ *=]*(12BYTES\.ORG.*)$", "$1");
+      tidySectionHeadingRegex("^ [*] === (.*)$", "$1");
+      tidySectionHeadingRegex("^[ *=]*(END 12BYTES\.ORG CUSTOMIZATIONS.*)$", "$1");
+      tidySectionHeadingRegex("^[ *=]*(BEGIN USER CUSTOMIZATIONS.*)$", "$1");
+      tidySectionHeadingRegex("^[ *=]*(END USER CUSTOMIZATIONS.*)$", "$1");
+
+      // remove leading/trailing /*** etc
+      tidySectionHeadingRegex("^[/][*][*][*-] *([^*])", "$1");
+      // some leading/trailing character removal - eg ***/ === /*** etc
+      tidySectionHeadingRegex("[ \t*=/-]*$", "");
+      tidySectionHeadingRegex("^[ \t*=/-]*", "");
+      // replace & < > characters with HTML escape codes
+      return(escapeHtml(text));
+    } /* end function tidySectionHeading */
+
+
+    // **************************************************
+    // detectSectionHeading
+    // **************************************************
+
+    // used in userjsViewer and overridesjsTemplate
+
+    function detectSectionHeading(line,userjs_type,line_number) {
+
+      // narga style
+      if (userjs_type == "narga" && line_number > 7) {
+        if (new RegExp("^[ \t]+[*][^/]").test(line)) {
+          return(true); }
+        else {
+          return(false);
+        }
+      }
+
+      // ghacks style
+      else if (new RegExp("^[/][*][*][*-] *([^*])").test(line)) {
+        return(true); }
+      else if (new RegExp("^\/[*/] *(ESR.*)$").test(line)) {
+        return(true); }
+      else if (new RegExp("^[/][*] *(END).*$").test(line)) {
+        return(true); }
+
+      // pyllyukko style
+      else if (new RegExp("^[ *\t]*SECTION:[ \t]*(.*)[ *\t]*$").test(line)) {
+        return(true); }
+
+      // 12bytes style
+      else if (new RegExp("^[ *=]*(12BYTES\.ORG.*)$").test(line)) {
+        return(true); }
+      else if (new RegExp("^ [*] === (.*)$").test(line)) {
+        return(true); }
+      else if (new RegExp("^[ *=]*(END 12BYTES\.ORG CUSTOMIZATIONS.*)$").test(line)) {
+        return(true); }
+      else if (new RegExp("^[ *=]*(BEGIN USER CUSTOMIZATIONS.*)$").test(line)) {
+        return(true); }
+      else if (new RegExp("^[ *=]*(END USER CUSTOMIZATIONS.*)$").test(line)) {
+        return(true); }
+
+      // krathalan style
+      else if (new RegExp("^[ \t]*\/[/*][ \t]*--*[ \t]*([0-9]+[. ]|Section)").test(line)) {
+        return(true); }
+
+      else {
+        return(false);
+      }
+    } /* end function detectSectionHeading */
+
+
+    // **************************************************
+    // detectUserjsType
+    // **************************************************
+
+    // used in userjsViewer and overridesjsTemplate
+
+    function detectUserjsType(line,userjs_type,line_number) {
+      // determine type (within first 10 lines)
+      if (userjs_type == "" && line_number < 10) {
+        if (new RegExp("^\\**[ \t]*name:[ \t]*ghacks.user.js", "i").test(line)) {
+          userjs_type = "ghacks";
+        }
+        if (new RegExp("NARGA", "i").test(line)) {
+          userjs_type = "narga";
+        }
+      }
+      return userjs_type;
+    } /* end function detectUserjsType */
+
+
+    // **************************************************
+    // userjsViewer
+    // **************************************************
+
+    /* build and display userjs as HTML */
+
+    function userjsViewer(text_box_name) {
+
+      // update date of hidden heading (H1/H3/DL tags for bookmarks import compatibility)
+      updateDateTimeStampVariable();
+      document.getElementById("hiddendate").innerHTML =
+        document.getElementById("hiddendate").innerHTML.replace(/(--userjs_)[0-9_]+/, "$1" + date_time_stamp);
+
+      // get content and clear input and page
+      document.getElementById("view_area").innerHTML = "";
+      var content = document.getElementById(text_box_name).value.replace(/(\r\n|\r)/g,'\n').split("\n");
+
+      // variables for holding HTML that we build from the content
+      var goto_select_html = ''
+        + '      <option value="" disabled selected hidden>Go to</option>\n';
+      var groups_box_html = ''
+        + '<span class="closebtn" onclick="toggleGroupsBox();">&times;</span>\n'
+        + '<b>Groups</b> (about:config?filter) (see ...&gt;Information/Help)<br><br>\n';
+      var content_html = ''
+        // hidden heading (H1/H3/DL tags for bookmarks import compatibility)
+        + '<span class="hidden"><H3>Main Content</H3></span><DL>\n';
+
+      var section_heading = '(TOP)';
+      // if there is only 1 section we will not collapse the viewer
+      var section_count = 1;
+      var userjs_type = "";
+      var group_user_pref_list = '';
+
+      // some common HTML used for each section_heading
+
+      function appendSectionStartHtml() {
+        goto_select_html = goto_select_html
+          + '      <option>' + section_heading + '</option>\n';
+        groups_box_html = groups_box_html
+          + '<a target="_blank" href="about:config?filter=/^$|^(';
+        var theme = document.body.className.replace( /(^| *)[^_]+_/ , '');
+        content_html = content_html
+          // hidden heading (H1/H3/DL tags for bookmarks import compatibility)
+          + '  <span class="hidden"><H3>' + section_heading + '</H3></span>\n'
+          + '  <button type="button" class="controls borders '
+          + 'controls_' + theme + ' borders_' + theme
+          + ' heading_buttons" id="'
+          + section_heading + '">' + section_heading + '</button>\n'
+          + '  <div class="content">\n';
+      }
+
+      function appendSectionEndHtml() {
+        // remove trailing |
+        group_user_pref_list = group_user_pref_list.replace(/\|$/, '');
+        groups_box_html = groups_box_html + group_user_pref_list
+          + ')(;|$)|^$/i">-' + section_heading + '</A><br>\n';
+        content_html = content_html
+          // add about:config group
+          + '<br><a target="_blank" href="about:config?filter=/^$|^('
+          + group_user_pref_list + ')(;|$)|^$/i">' + '////' + '</A>\n'
+          // end section
+          + '</div><br>\n\n\n';
+        group_user_pref_list = '';
+      }
+
+      /* work through each line of the user.js content */
+      // detect headings, user_pref, values, and URLs
+      // insert color class styles and section blocks
+      // by appending code to:  goto_select_html  groups_box_html  content_html
+
+      appendSectionStartHtml();
+      var i = 0;
+      for (i in content) {
+        var line = content[i];
+
+        userjs_type = detectUserjsType(line,userjs_type,i);
+
+        // on section_heading detection: end previous section, start new section
+        if ( detectSectionHeading(line,userjs_type,i) == true ) {
+          appendSectionEndHtml();
+          section_heading = tidySectionHeading(line);
+          appendSectionStartHtml();
+          section_count = section_count + 1;
+        }
+
+        // HTML code injection prevention
+        // replace & < > characters with HTML escape codes
+        line = escapeHtml(line);
+
+        // on user_pref lines add span and class tags
+        // (for syntax highlighting pretty colors)
+        var x,r;
+        var line_userpref_part = "";
+
+        x = new RegExp("^(.*user_pref)"  // $1 user_pref  //user_pref  etc
+          + "([ \t]*\\([ \t]*[\"'])"     // $2 ("  ('
+          + "([^\"']+)"                  // $3 prefname
+          + "([\"'][ \t]*,[ \t]*)"       // $4 ",  ',
+          + "(.*)"                       // $5 prefvalue  "prefvalue"  'prefvalue'
+          + "([ \t]*\\)[ \t]*;)"         // $6 );
+          + "(.*)$", "gi");              // $7 afters/comment
+
+        if (x.test(line)) {
+
+          // separate line into:  line_userpref_part) user_pref statement  line) afters/comment
+          line_userpref_part = line.replace(x,"$1$2$3$4$5$6");
+          line = line.replace(x,"$7");
+
+
+          // add some HTML (tag and class for colors)
+
+          // a/href for:  prefname  (turn into an about:config link)
+          x = new RegExp("^(.*user_pref[ \t]*\\([ \t]*[\"'])"
+            + "([^\"']+)([\"'].*)$", "i");
+          r = "$2";
+          var pref_escaped = line_userpref_part.replace(x, r).replace(/([*.+])/g, "\\$1");
+          r = "$1<a target=\"_blank\" href=\"about:config?filter=/^\$|^("
+            + pref_escaped + ")(;|\$)|^\$/i\">$2</A>$3";
+          line_userpref_part = line_userpref_part.replace(x, r);
+          // add prefname to groups
+          group_user_pref_list = group_user_pref_list + pref_escaped + "|";
+
+          // span/class for:  //user_pref  /*user_pref  user_pref
+          if (new RegExp("([/][/*]+[ \t]*user_pref)", "i").test(line_userpref_part)) {
+            // for:  "// user_pref"  "/* user_pref"
+            x = new RegExp("([/][/*]+[ \t]*user_pref)", "i");
+            r = "<span class=\"pref\">$1<\/span>";
+            line_userpref_part = line_userpref_part.replace(x, r);
+          }
+          else {
+            // for:  "user_pref"  (without // or /* immediately before)
+            //x = new RegExp("([ /*\t]*user_pref)", "i");
+            x = new RegExp("(user_pref)", "i");
+            r = "<span class=\"pref\">$1<\/span>";
+            line_userpref_part = line_userpref_part.replace(x, r);
+          }
+
+          // span/class for:  false  (prefvalue)
+          if (new RegExp(",[ \t]*false[ \t]*\\);", "i").test(line_userpref_part)) {
+            x = new RegExp("(,[ \t]*)(false)([ \t]*\\);)", "i");
+            r = "$1<span class=\"false\">$2<\/span>$3";
+            line_userpref_part = line_userpref_part.replace(x, r);
+          }
+          // span/class for:  true  (prefvalue)
+          else if (new RegExp(",[ \t]*true[ \t]*\\);", "i").test(line_userpref_part)) {
+            x = new RegExp("(,[ \t]*)(true)([ \t]*\\);)", "i");
+            r = "$1<span class=\"true\">$2<\/span>$3";
+            line_userpref_part = line_userpref_part.replace(x, r);
+          }
+          // span/class for:  integer  (prefvalue)
+          else if (new RegExp(",[ \t]*[0-9.+-]+[ \t]*\\);", "i").test(line_userpref_part)) {
+            x = new RegExp("(,[ \t]*)([0-9.+-]+)([ \t]*\\);)", "i");
+            r = "$1<span class=\"integer\">$2<\/span>$3";
+            line_userpref_part = line_userpref_part.replace(x, r);
+          }
+          // span/class for:  "string"  'string'  (prefvalue)
+          else {
+            x = new RegExp("(,[ \t]*)([\"']*.*[\"']*)([ \t]*\\);)", "i");
+            r = "$1<span class=\"string\">$2<\/span>$3";
+            line_userpref_part = line_userpref_part.replace(x, r);
+          }
+
+          // span/class for:  ////OVERRIDE:  ////COMMENT-OUT:
+          x = new RegExp("\/\/\/\/(OVERRIDE|COMMENT-OUT):", "gi");
+          r = "<span class=\"overrides\">$&<\/span>";
+          line_userpref_part = line_userpref_part.replace(x, r);
+
+        }
+
+        // a/href for:  HTTP/HTTPS URLs  (turn into a link)
+        x = new RegExp("(https?:[/][/][^ \"']+[^\\)\\], \"'.;])", "gi");
+        r = "<a target=\"_blank\" rel=\"external noopener noreferrer\" href=\"$1\" class=\"http\">"
+          + "<span class=\"hidden\">__</span>$1</A>";
+        line = line.replace(x, r);
+
+        // span/class for:  [WARNING]
+        x = new RegExp("(\\[WARNING\\])", "gi");
+        r = "<span class=\"warn\">$1<\/span>";
+        line = line.replace(x, r);
+
+        // span/class for:  (hidden pref)  [HIDDEN PREF]
+        x = new RegExp("([\\[\\(]hidden pref[\\)\\]])", "gi");
+        r = "<span class=\"hid\">$1<\/span>";
+        line = line.replace(x, r);
+
+        // span/class for:  [SETUP]  [SETUP-...]
+        x = new RegExp("(\\[SETUP\\]|\\[SETUP-[^\\]]+\\]|\/\/[ \t]NOTICE-DISABLED:)", "gi");
+        r = "<span class=\"setup\">$1<\/span>";
+        line = line.replace(x, r);
+
+        // span/class for:  ghacks ref
+        if (line_userpref_part == "" && userjs_type == "ghacks") {
+          // for:  /* 1234:  /*** 1234:
+          x = new RegExp("^([/*]+ )([0-9][0-9][0-9][0-9][^:]*)(:)", "gi");
+          r = "$1<span class=\"ref\">$2<\/span>$3";
+          line = line.replace(x, r);
+          // for:  /*** [SECTION 1234]:
+          x = new RegExp("^([/*]+ \\[SECTION )([0-9][0-9][0-9][0-9][^\\]]*)(\\]:)", "gi");
+          r = "$1<span class=\"ref\">$2<\/span>$3";
+          line = line.replace(x, r);
+        }
+
+        // add to HTML code
+        content_html = content_html + line_userpref_part + line + '\n';
+
+      } /* end for (i in content) */
+      content = [];
+
+      appendSectionEndHtml();
+
+
+      /* update HTML page with the new content */
+      groups_box_html = groups_box_html + '<br><br><br><br>\n';
+      content_html = content_html + '  <br><br><br></DL>\n';
+      document.getElementById("goto_select").innerHTML = goto_select_html;
+      document.getElementById("groups_box").innerHTML = groups_box_html;
+      document.getElementById("view_area").innerHTML = content_html;
+      goto_select_html = null;
+      groups_box_html = null;
+      content_html = null;
+
+
+      /* actions following the new content addition */
+
+      /* add listener for expand/collapse individual sections (multiple buttons) */
+      var e = document.getElementsByClassName("heading_buttons");
+      for (var i = 0; i < e.length; i++) {
+        e[i].addEventListener("click", function() {
+          var next = this.nextElementSibling;
+          if (next.style.display === "block") {
+            next.style.display = "none";
+          } else {
+            next.style.display = "block";
+          }
+          section_focus = this;
+        });
+      }
+
+      invertColorForClass("overrides");
+      togglePrefixAboutConfigLinks("refresh");
+      toggleWrap("refresh");
+
+      // apply some URL variable options
+
+      if ((section_count == 1) || (getURLVariable("expand") == "true")) {
+        applyExpandAll("block"); }
+      else  { applyExpandAll("none"); }
+
+      if (getURLVariable("groups") == "true") { toggleGroupsBox(); }
+
+    }  /* end function userjsViewer */
+
+
+    // **************************************************
+    // userjsAppend
+    // **************************************************
+
+    function userjsAppend(templatejs_box_name, overridesjs_box_name, userjs_box_name) {
+
+      var templatejs_box = document.getElementById(templatejs_box_name);
+      var overridesjs_box = document.getElementById(overridesjs_box_name);
+      var userjs_box = document.getElementById(userjs_box_name);
+      var overridesjs_content = overridesjs_box.value.replace(/(\r\n|\r)/g,'\n').split("\n");
+      var x = new RegExp("^[ \t]*\/\/\/\/ --- add-override-comment ---[ \t]*$", "mi");
+      var override_tagging_on = x.test(overridesjs_box.value);
+
+      userjs_box.value = '';
+
+      function output(text) { userjs_box.value = userjs_box.value + text; };
+
+      updateDateTimeStampVariable();
+      output('// ' + date_time_stamp + " (user-overrides.js appended to user-template.js)\n\n");
+      output(templatejs_box.value.replace(/[\r\n]*$/, ""));
+      output("\n\n\n\n\n/*** (overrides) (start of overrides) ***/\n");
+      output('user_pref("_user.js.parrot", "(overrides) '
+        + '(start of overrides)");' + "\n\n\n\n\n");
+
+      var i = 0;
+      for (i in overridesjs_content) {
+        var line = overridesjs_content[i];
+        var prefname;
+
+        // overrides: comment-out
+        x = new RegExp("^[ \t]*\/\/\/\/ --- comment-out --- '([^']+)'.*$");
+        if (x.test(line)) {
+          // override-out comment pref in the output
+          prefname = line.replace(x, "$1");
+          x = new RegExp("^.*user_pref[ \t]*\\([ \t]*[\"']"
+            + RegExp.escape(prefname) + "[\"'].*$", "gm");
+          userjs_box.value = userjs_box.value.replace(x, "\/\/\/\/COMMENT-OUT: $&");
+        }
+
+        // overrides: active user_pref
+        x = new RegExp("^[ \t]*user_pref", "i");
+        if (x.test(line)) {
+          // override comment pref in the output
+          x = new RegExp("^(.*user_pref)"  // $1 user_pref  //user_pref  etc
+            + "([ \t]*\\([ \t]*[\"'])"     // $2 ("  ('
+            + "([^\"']+)"                  // $3 prefname
+            + "([\"'][ \t]*,[ \t]*)"       // $4 ",  ',
+            + "(.*)"                       // $5 prefvalue  "prefvalue"  'prefvalue'
+            + "([ \t]*\\)[ \t]*;)"         // $6 );
+            + "(.*)$", "gi");              // $7 afters/comment
+          prefname = line.replace(x,"$3");
+          // if override tagging is required we will prefix any already
+          // occurring same name user_pref with ////OVERRIDE:
+          if ((override_tagging_on) && (prefname != "_user.js.parrot")) {
+            x = new RegExp("^.*user_pref[ \t]*\\([ \t]*[\"']"
+              + RegExp.escape(prefname) + "[\"'].*$", "gm");
+            userjs_box.value = userjs_box.value.replace(x, "\/\/\/\/OVERRIDE: $&");
+          }
+        }
+
+        // append line
+        output(line + "\n");
+      }
+      overridesjs_content = [];
+
+      output("\n\n\n\n/*** (overrides) (end of overrides) ***/\n");
+      output('user_pref("_user.js.parrot", "(overrides) '
+        + '(end of overrides): SUCCESS");' + "\n");
+
+      userjs_box.focus();
+      userjs_box.select();
+      //userjs_box.selectionEnd = e.value.length;
+      //userjs_box.selectionStart = e.value.length;
+
+    }  /* end function userjsAppend */
+
+
+    // **************************************************
+    // overridesjsTemplate
+    // **************************************************
+
+    function overridesjsTemplate(templatejs_box_name, overridesjs_box_name) {
+
+      var templatejs_box = document.getElementById(templatejs_box_name);
+      var overridesjs_box = document.getElementById(overridesjs_box_name);
+      var templatejs_content = templatejs_box.value.replace(/(\r\n|\r)/g,'\n').split("\n");
+
+      overridesjs_box.value = '';
+
+      function overridesjs_output(text) { overridesjs_box.value = overridesjs_box.value + text; };
+
+      var section_number_tag = "0000";
+      var section_number_tag_9999_prefix = "";
+      var userjs_type = "";
+      updateDateTimeStampVariable();
+      overridesjs_output('// ' + date_time_stamp + "\n\n");
+      overridesjs_output("/*** (overrides) (TOP) ***/");
+      var i = 0;
+      for (i in templatejs_content) {
+        var line = templatejs_content[i];
+        var x="",r="";
+
+        if (line == "/*** (overrides) (TOP) ***/") { continue; }
+
+        userjs_type = detectUserjsType(line,userjs_type,i);
+
+        // pick up the ghacks-user.js section number
+        if (userjs_type == "ghacks") {
+          if (new RegExp("^/[*/]+ +[^:]+:").test(line)
+            || new RegExp("^/[*/]+ +\\[SECTION [^:]+:").test(line)
+          ) {
+            section_number_tag = line;
+            x = new RegExp("^/[*/]+ +\\[SECTION ([^\\]]+)\\]:.*$");
+            section_number_tag = section_number_tag.replace(x, "$1");
+            x = new RegExp("^/[*/]+ +([^:]+):.*$");
+            section_number_tag = section_number_tag.replace(x, "$1");
+            if (/^9999/.test(section_number_tag)) {
+              section_number_tag_9999_prefix = '9999:';
+            }
+            else if (/^END/.test(section_number_tag)) {
+              section_number_tag_9999_prefix = '';
+            }
+          }
+        }
+
+        // prefix ghacks-user.js parrot value
+        x = new RegExp("^([ \t/*]*user_pref[ \t]*"
+          + "\\([ \t]*[\"']_user\.js\.parrot[\"'][ \t]*,[ \t]*[\"'])"
+          + "(.*)$");
+        if (new RegExp("\\(overrides\\)").test(line) == false) {
+          line = line.replace(x, "$1(overrides) $2");
+        }
+
+        // prefix user_pref line with a temporary ##PREF## identifier
+        // and // comment the pref
+        line = line.replace("\/\/user_pref", "\/\/ user_pref");
+        line = line.replace("\/\*user_pref", "\/* user_pref");
+        x = new RegExp(
+          "^[ \t]*" + "([ \t/*]*user_pref)"
+          + "[ \t]*" + "(\\()"
+          + "[ \t]*" + "([\"'][^\"']+[\"'])"
+          + "[ \t]*,[ \t]*" + "(.*)"
+          + "[ \t]*" + "(\\))"
+          + "[ \t]*" + "(;).*$");
+        line = line.replace(x, "##PREF##\/\/ $1$2$3, $4$5$6");
+
+        // keep section_heading or pref lines
+        if ( detectSectionHeading(line,userjs_type,i) == true ) {
+          line = tidySectionHeading(line);
+          // output heading line (with '(overrides)' inserted)
+          line = line.replace(new RegExp("^\\(overrides\\) "), "");
+          overridesjs_output("\n\n/*** (overrides) " + line + " ***/");
+        }
+        else if (/^##PREF##/.test(line)) {
+          // remove the prefix
+          line = line.replace(new RegExp("^##PREF##"), "");
+
+          // un-comment the ghacks-user.js parrot
+          x = new RegExp("^//[ \t/*]*(user_pref[ \t]*"
+            + "\\([ \t]*[\"']_user\.js\.parrot[\"'][ \t]*,[ \t]*[\"'].*)$");
+          line = line.replace(x, "$1");
+
+          // output user_pref line (and add section number if ghacks)
+          overridesjs_output("\n" + line);
+          if (userjs_type == "ghacks") {
+            overridesjs_output(" // " + section_number_tag_9999_prefix + section_number_tag);
+          }
+        }
+
+      } /* end for (i in templatejs_content) */
+      templatejs_content = [];
+
+      overridesjs_output("\n");
+
+      overridesjs_box.focus();
+      overridesjs_box.select();
+
+    }  /* end function overridesjsTemplate */
+
+
+    // **************************************************
+    // convertListToGroup
+    // **************************************************
+
+    function convertListToGroup(otherjs_box_name) {
+      var otherjs_box = document.getElementById(otherjs_box_name);
+      otherjs_box.readOnly = true;
+      var x, r;
+      // change  \\* \\. \\+  to  * . +
+      otherjs_box.value = otherjs_box.value.replace(/\\\\([*.+])/gm, "$1");
+      // change non user pref characters (<- include :/) to newline delimiters
+      otherjs_box.value = otherjs_box.value.replace(/[^a-zA-Z0-9._*-:/]+/gm, "\n");
+      // blank lines begining http: https:
+      otherjs_box.value = otherjs_box.value.replace(/^https?:.*$/gm, "");
+      // change non user pref characters to newline delimiters
+      otherjs_box.value = otherjs_box.value.replace(/[^a-zA-Z0-9._*-]+/gm, "\n");
+      // remove end of line period
+      otherjs_box.value = otherjs_box.value.replace(/\.$/gm, "");
+      // blank lines not containing a period
+      otherjs_box.value = otherjs_box.value.replace(new RegExp("^[^.\n]+$", "gm"), "");
+      // blank lines not beginning a-z
+      otherjs_box.value = otherjs_box.value.replace(/^[^a-z\n].*$/gm, "");
+      // blank lines such as:  e.g  i.e
+      otherjs_box.value = otherjs_box.value.replace(/^[a-z]\.[a-z]$/gm, "");
+      // remove excess newlines
+      otherjs_box.value = otherjs_box.value.replace(/[\r\n]+/g, "\n");
+      otherjs_box.value = otherjs_box.value.replace(/^[\r\n]+/g, "");
+      otherjs_box.value = otherjs_box.value.replace(/[\r\n]+$/g, "");
+      // style as user_pref
+      otherjs_box.value = otherjs_box.value.replace(/^.*$/gm, "// user_pref(\"$&\", );");
+      updateDateTimeStampVariable();
+      otherjs_box.value = '/*** ' + date_time_stamp
+        + ' preference group (from list) ***/\n\n' + otherjs_box.value
+      // end and exit
+      toggleActionsBox(false);
+      userjsViewer(otherjs_box_name);
+      applyExpandAll("block");
+      toggleGroupsBox(true);
+    } /* end function convertListToGroup */
+
+
+    // **************************************************
+    // prefsjsClean
+    // **************************************************
+
+    function prefsjsClean(userjs_box_name, prefsjs_box_name) {
+      var userjs_box = document.getElementById(userjs_box_name);
+      var prefsjs_box = document.getElementById(prefsjs_box_name);
+      var userjs_content = userjs_box.value.replace(/(\r\n|\r)/g,'\n').split("\n");
+      var i = 0;
+      for (i in userjs_content) {
+        var line = userjs_content[i];
+        var x;
+        var prefname;
+        x = new RegExp("^(.*user_pref)"  // $1 user_pref  //user_pref  etc
+          + "([ \t]*\\([ \t]*[\"'])"     // $2 ("  ('
+          + "([^\"']+)"                  // $3 prefname
+          + "([\"'][ \t]*,[ \t]*)"       // $4 ",  ',
+          + "(.*)"                       // $5 prefvalue  "prefvalue"  'prefvalue'
+          + "([ \t]*\\)[ \t]*;)"         // $6 );
+          + "(.*)$", "gi");              // $7 afters/comment
+        if (x.test(line)) {
+          prefname = line.replace(x,"$3");
+          x = new RegExp("^.*user_pref[ \t]*\\([ \t]*[\"']"
+            + RegExp.escape(prefname) + "[\"'].*$", "gm");
+          prefsjs_box.value = prefsjs_box.value.replace(x, "");
+        }
+        // remove excess newlines
+        prefsjs_box.value = prefsjs_box.value.replace(/\.[\r\n]+user_pref\(/g, ".\n\nuser_pref\(");
+        prefsjs_box.value = prefsjs_box.value.replace(/;[\r\n]+user_pref\(/g, ";\nuser_pref\(");
+        prefsjs_box.value = prefsjs_box.value.replace(/[\r\n]+$/g, "\n");
+      }
+      userjs_content = [];
+      prefsjs_box.focus();
+      prefsjs_box.select();
+    }  /* end function prefsjsClean */
+
+
+    /* ************************************************** */
+    /* various control functions (for buttons/selects/initial) */
+    /* ************************************************** */
+
+
+    // **************************************************
+    // findMenuSelectOption
+    // **************************************************
+
+    function findMenuSelectOption(name_match) {
+      var e = document.getElementById("menu_select");
+      var found;
+      for(var i = 0; i < e.options.length; i++) {
+        if (new RegExp(name_match, "i").test(e.options[i].textContent)) {
+          if (typeof found == "number") {
+            // more than one match
+            found = null;
+            break;
+          }
+          found = i;
+        }
+      }
+      return found;
+    }
+
+
+    // **************************************************
+    // statusMenuSelectOption
+    // **************************************************
+
+    function statusMenuSelectOption(i) {
+      // a selected/on option will be prefixed with
+      // WHITE SQUARE CONTAINING BLACK SMALL SQUARE
+      if (typeof i == "number") {
+        if (/^[\u{25A3}]/u.test(document.getElementById("menu_select").options[i].textContent)) {
+          return true;
+        }
+        else {
+          return false;
+        }
+      }
+      else {
+        return;
+      }
+    }
+
+
+    // **************************************************
+    // updateMenuSelectOption
+    // **************************************************
+
+    function updateMenuSelectOption(i, on) {
+      if (typeof i == "string") {
+        i = findMenuSelectOption(i);
+      }
+      if (typeof i == "number") {
+        var t = document.getElementById("menu_select").options[i];
+        t.textContent = t.textContent.replace(/^[\u{25A2}\u{25A3}\u{25EB}]+/u, "");
+        if (typeof on !== "boolean") {
+          // prefix when option is not a toggle
+          // WHITE SQUARE WITH VERTICAL BISECTING LINE
+          t.textContent = "\u25EB" + t.textContent;
+        }
+        else if (on) {
+          // prefix when option selected (on/true)
+          // WHITE SQUARE CONTAINING BLACK SMALL SQUARE
+          t.textContent = "\u25A3" + t.textContent;
+        }
+        else {
+          // prefix when option not selected (off/false)
+          // WHITE SQUARE WITH ROUNDED CORNERS
+          t.textContent = "\u25A2" + t.textContent;
+        }
+      }
+    }
+
+
+    // **************************************************
+    // refocusSection
+    // **************************************************
+
+    /* section focus */
+
+    function refocusSection() {
+      if (!section_focus) {
+        section_focus = document.getElementById("(TOP)");
+      }
+      section_focus.focus();
+      // if (section_focus == document.getElementById("(TOP)")) {
+      //   section_focus.scrollIntoView(false);
+      // }
+      // else {
+        section_focus.scrollIntoView();
+        // body_height - (scroll_position + window_size)
+        var position_from_bottom = Math.max(document.body.offsetHeight
+          - (window.pageYOffset + window.innerHeight), 0);
+        if (document.getElementById("collect2_button").innerHTML == "EndCollect") {
+          if (position_from_bottom > 200) { window.scrollBy(0, -200); }
+        }
+        else {
+          if (position_from_bottom > 70) { window.scrollBy(0, -70); }
+        }
+      // }
+    }
+
+
+    // **************************************************
+    // togglePrefixAboutConfigLinks
+    // **************************************************
+
+    /* prefix about:config links (about:blank#about:config) */
+
+    function togglePrefixAboutConfigLinks(new_state) {
+      // new_state: ["toggle"] (default) ["on" true] ["off" false] ["refresh"]
+      var opt = findMenuSelectOption("prefix");
+      var on = false;
+      if (new_state === true || new_state === "true" || new_state === "on") {
+        on = true;
+      }
+      else if (new_state === false || new_state === "false" || new_state === "off") {
+        on = false;
+      }
+      else {
+        on = statusMenuSelectOption(opt);
+        // toggle if not refresh
+        if (new_state !== "refresh") { on = !on; }
+      }
+      // update
+      var nobj = document.getElementsByTagName("a");
+      if (on) {
+        // add the about:blank# prefixes
+        for (var i = 0; i < nobj.length; i++) {
+          if (/^about:config./.test(nobj[i].href)) {
+            nobj[i].href = "about:blank#" + nobj[i].href;
+          }
+        }
+      }
+      else {
+        // remove the about:blank# prefixes
+        for (var i = 0; i < nobj.length; i++) {
+          if (/^about:blank#about:config./.test(nobj[i].href)) {
+            nobj[i].href = nobj[i].href.replace(/^about:blank#/,'');
+          }
+        }
+      }
+      updateMenuSelectOption(opt, on);
+    }
+
+
+    // **************************************************
+    // toggleActionsBox
+    // **************************************************
+
+    /* actions box */
+
+    function toggleActionsBox(force) {
+      var overridesjs_box = document.getElementById("text_box_2");
+      var e = document.getElementById("actions_box");
+      var ie = document.getElementById("info_box");
+      var ge = document.getElementById("groups_box");
+      var opt = findMenuSelectOption("actions");
+      if (force === false || e.style.display === "block") {
+        // hide this box
+        updateMenuSelectOption(opt, false);
+        e.style.display = "none";
+      }
+      else {
+        // hide other boxes
+        updateMenuSelectOption("info", false);
+        updateMenuSelectOption("groups", false);
+        ge.style.display = "none";
+        ie.style.display = "none";
+        // show this box
+        updateMenuSelectOption(opt, true);
+        e.style.display = "block";
+        e.focus();
+        document.getElementById("text_box_1").focus();
+        // when collect mode is on
+        if (document.getElementById("collect2_button").innerHTML == "EndCollect") {
+          // actions_box is a smaller size
+          // scroll box 2 into view
+          overridesjs_box.scrollIntoView();
+          overridesjs_box.focus();
+          // position cursor to the end
+          overridesjs_box.selectionEnd = overridesjs_box.value.length;
+          overridesjs_box.selectionStart = overridesjs_box.value.length;
+        }
+      }
+    }
+
+
+    // **************************************************
+    // toggleGroupsBox
+    // **************************************************
+
+    /* groups box */
+
+    function toggleGroupsBox() {
+      var e = document.getElementById("groups_box");
+      var ie = document.getElementById("info_box");
+      var fe = document.getElementById("actions_box");
+      var opt = findMenuSelectOption("groups");
+      if (e.style.display === "block") {
+        // hide this box
+        e.style.display = "none";
+        if (document.getElementById("collect2_button").innerHTML == "EndCollect") {
+          // if collector mode is on, show actions_box
+          toggleActionsBox();
+        }
+        updateMenuSelectOption(opt, false);
+      }
+      else {
+        // hide other boxes
+        updateMenuSelectOption("info", false);
+        updateMenuSelectOption("actions", false);
+        ie.style.display = "none";
+        fe.style.display = "none";
+        // show this box
+        updateMenuSelectOption(opt, true);
+        e.style.display = "block";
+        e.focus();
+      }
+    }
+
+
+    // **************************************************
+    // toggleInfoBox
+    // **************************************************
+
+    /* information box */
+
+    function toggleInfoBox() {
+      var e = document.getElementById("info_box");
+      var ge = document.getElementById("groups_box");
+      var fe = document.getElementById("actions_box");
+      var opt = findMenuSelectOption("info");
+      if (e.style.display === "block") {
+        // hide this box
+        updateMenuSelectOption(opt, false);
+        e.style.display = "none";
+        if (document.getElementById("collect2_button").innerHTML == "EndCollect") {
+          // if collector mode is on, show actions_box
+          toggleActionsBox();
+        }
+      }
+      else {
+        // hide other boxes
+        updateMenuSelectOption("groups", false);
+        updateMenuSelectOption("actions", false);
+        ge.style.display = "none";
+        fe.style.display = "none";
+        // show this box
+        updateMenuSelectOption(opt, true);
+        e.style.display = "block";
+        e.focus();
+      }
+    }
+
+
+    // **************************************************
+    // applyExpandAll
+    // **************************************************
+
+    /* expand/collapse all sections */
+
+    function applyExpandAll(state) {
+      // apply state:  none=Collapse  block=Expand
+      var e = document.getElementsByClassName("content");
+      for (var i = 0; i < e.length; i++) { e[i].style.display = state; }
+    }
+
+
+    // **************************************************
+    // toggleWrap
+    // **************************************************
+
+    /* wrap text */
+
+    function toggleWrap(new_state) {
+      // new_state: ["toggle"] (default) ["on" true] ["off" false] ["refresh"]
+      var opt = findMenuSelectOption("wrap");
+      var on = false;
+      if (new_state === true || new_state === "true" || new_state === "on") {
+        on = true;
+      }
+      else if (new_state === false || new_state === "false" || new_state === "off") {
+        on = false;
+      }
+      else {
+        on = statusMenuSelectOption(opt);
+        // toggle if not refresh
+        if (new_state !== "refresh") { on = !on; }
+      }
+      // update
+      var nobj = document.getElementsByClassName("content");
+      if (on) {
+        // add wrap
+        for (var i = 0; i < nobj.length; i++) {
+          nobj[i].style.whiteSpace = "pre-wrap";
+        }
+      }
+      else {
+        // remove wrap
+        for (var i = 0; i < nobj.length; i++) {
+          nobj[i].style.whiteSpace = "pre";
+        }
+      }
+      updateMenuSelectOption(opt, on);
+    }
+
+
+    // **************************************************
+    // applyFontSize
+    // **************************************************
+
+    /* font resize */
+
+    function applyFontSize(size) {
+      //var e = document.getElementById("view_area");
+      var e = document.body;
+      // size:  percent  increase/decrease amount  eg 75% -10 +10
+      if (e.style.fontSize == "") { e.style.fontSize = "75%"; }
+      size = size.replace(/[% ]/g, "");
+      if (/^-/.test(size)) {
+        size = size.replace(/^-([0-9]+)$/, "$1");
+        size = (parseFloat(e.style.fontSize) - parseFloat(size));
+      }
+      else if (/^\+/.test(size)) {
+        size = size.replace(/^\+([0-9]+)$/, "$1");
+        size = (parseFloat(e.style.fontSize) + parseFloat(size));
+      }
+      e.style.fontSize = size + "%";
+      // update select element first option text to show the new percent
+      document.getElementById("size_select").options[0].textContent
+        = e.style.fontSize;
+    }
+
+
+    // **************************************************
+    // addThemeClass
+    // **************************************************
+
+    /* change color theme */
+
+    function addThemeClass(type, name, remove, add) {
+      // get elements
+      var e;
+      if (type == "body") { e = document.body; }
+      else if (type == "id") { e = document.getElementById(name); }
+      else if (type == "tag") { e = document.getElementsByTagName(name); }
+      else if (type == "class") { e = document.getElementsByClassName(name); }
+      // remove/apply class to elements
+      if (type == "body"||type == "id") {
+        if (remove) { changeClass(e, name + "_" + remove, ""); }
+        if (add) { changeClass(e, "", name + "_" + add); }
+      }
+      else {
+        for (var i = 0; i < e.length; i++) {
+          if (remove) { changeClass(e[i], name + "_" + remove, ""); }
+          if (add) { changeClass(e[i], "", name + "_" + add); }
+        }
+      }
+    }
+
+    // **************************************************
+    // applyTheme
+    // **************************************************
+
+    function applyTheme(newtheme) {
+      // remove any prefix eg "Theme: dark" = "dark"
+      newtheme = newtheme.toLowerCase().replace( /^[^:]+: /, '');
+      // get current theme from body class eg "body_light" = "light"
+      var oldtheme = document.body.className.replace( /(^| *)[^_]+_/ , '');
+      // usage: addThemeClass(type, name, remove, add)
+      // eg addThemeClass("id", "view_area", "light", "dark")
+      //    removes class view_area_light from id=view_area adds view_area_dark
+      addThemeClass("body" , "body"     , oldtheme, newtheme);
+      addThemeClass("id"   , "view_area", oldtheme, newtheme);
+      addThemeClass("class", "view_area", oldtheme, newtheme);
+      addThemeClass("class", "boxes"    , oldtheme, newtheme);
+      addThemeClass("class", "controls" , oldtheme, newtheme);
+      addThemeClass("class", "borders"  , oldtheme, newtheme);
+      invertColorForClass("overrides");
+      updateMenuSelectOption("theme: " + oldtheme, false);
+      updateMenuSelectOption("theme: " + newtheme, true);
+    }
+
+
+    // **************************************************
+    // selectTextAreaContents
+    // **************************************************
+
+    /* functions used for actions box options */
+
+    function selectTextAreaContents(text_box_name) {
+      var e = document.getElementById(text_box_name);
+      if (e.selectionStart == 0 && e.selectionEnd == e.value.length) {
+        // all text is selected already, so move cursor to end
+        e.selectionEnd = e.value.length;
+        e.selectionStart = e.value.length;
+      }
+      else {
+        e.select();
+      }
+      e.focus();
+    }
+
+
+    // **************************************************
+    // clearTextAreaContents
+    // **************************************************
+
+    function clearTextAreaContents(text_box_name) {
+      var e = document.getElementById(text_box_name);
+      e.value = "";
+      e.style.backgroundColor = null; /*reset to initial*/
+      e.readOnly = false;
+      e.focus();
+    }
+
+
+    // **************************************************
+    // setUpDocumentBody
+    // **************************************************
+
+    /* set up main HTML */
+
+    function setUpDocumentBody() {
+
+      updateDateTimeStampVariable();
+
+      document.body.style.whiteSpace = "nowrap";
+
+      // we are setting document.body.innerHTML and any existing content
+      // of that will be assigned to text_box_1
+
+      document.body.innerHTML = ''  // and append the following large section
+
+        // hidden heading (H1/H3/DL tags for bookmarks import compatibility)
+        + '<span class="hidden"><H1>Bookmarks Menu</H1></span><DL>\n'
+        // >>>> date is replaced later <<<<
+        + '  <span id="hiddendate" class="hidden"><H3>--userjs_'
+        + date_time_stamp + '</H3></span><DL>\n\n\n'
+
+        + '  <div id="controls_bar">\n\n'
+
+        // ---------- goto_select ----------
+
+        // the first option is used as a title/label
+        + '    <select class="controls borders"'
+        + ' id="goto_select" title="Go to section">\n'
+        // >>>> section headings (between here) are replaced later <<<<
+        + '      <option value="" disabled selected hidden>Go to</option>\n'
+        + '      <option>(TOP)</option>\n'
+        // >>>> section headings (between here) are replaced later <<<<
+        + '    </select>\n\n'
+
+        // ---------- groups_button ----------
+
+        + '    <button type="button" class="controls borders"'
+        + ' id="groups_button" title="Show/hide about:config groups box">'
+        + 'Groups</button>\n\n'
+
+        // ---------- size_select ----------
+
+        // the first option is used as a title/label
+        // and changes to show the current font size percent
+        + '    <select class="controls borders"'
+        + ' id="size_select" title="Change font size">\n'
+        + '      <option value="" disabled selected hidden>75%</option>\n'
+        + '      <option>-10%</option>\n'
+        + '      <option>+10%</option>\n'
+        + '      <option>75%</option>\n'
+        + '      <option>100%</option>\n'
+        + '      <option>125%</option>\n'
+        + '      <option>150%</option>\n'
+        + '      <option>175%</option>\n'
+        + '      <option>200%</option>\n'
+        + '      <option>250%</option>\n'
+        + '      <option>300%</option>\n'
+        + '    </select>\n'
+        + '\n'
+
+        // ---------- menu_select ----------
+
+        // some of these option names will alter when toggled (the prefix symbol)
+        // the menu_select addEventListener matches option name keywords not indexes
+        // the first option is used as a title/label
+        // options are prefixed with unicode characters:
+        //   &#x25EB; WHITE SQUARE WITH VERTICAL BISECTING LINE  (not a toggle)
+        //   &#x25A2; WHITE SQUARE WITH ROUNDED CORNERS  (off/false)
+        //   &#x25A3; WHITE SQUARE CONTAINING BLACK SMALL SQUARE  (on/true)
+        //   &#x00A0; (blank/space) as leading/multi-spaces are lost
+        //   &hellip; symbol for '...'  (not used, looks too small)
+        //   &#x205D; TRICOLON  (vertical ...) (not used)
+        + '    <select id="menu_select" class="controls borders"'
+        + ' title="Select menu option">\n'
+        + '      <option value="" disabled selected hidden>&#x00A0;...</option>\n'
+        + '      <option>&#x25EB;&#x00A0;&#x00A0;Collapse all</option>\n'
+        + '      <option>&#x25EB;&#x00A0;&#x00A0;Expand all</option>\n'
+        + '      <option>&#x25EB;&#x00A0;&#x00A0;Collapse current</option>\n'
+        // + '      <option value="" disabled ></option>\n'
+        + '      <option>&#x25A2;&#x00A0;&#x00A0;Actions</option>\n'
+        + '      <option>&#x25A2;&#x00A0;&#x00A0;Information/Help</option>\n'
+        + '      <option>&#x25A2;&#x00A0;&#x00A0;Groups</option>\n'
+        // + '      <option value="" disabled ></option>\n'
+        + '      <option>&#x25A2;&#x00A0;&#x00A0;Wrap text</option>\n'
+        + '      <option>&#x25A2;&#x00A0;&#x00A0;Prefix about:config</option>\n'
+        // + '      <option value="" disabled ></option>\n'
+        + '      <option>&#x25A2;&#x00A0;&#x00A0;Theme: default</option>\n'
+        + '      <option>&#x25A2;&#x00A0;&#x00A0;Theme: dark</option>\n'
+        + '      <option>&#x25A2;&#x00A0;&#x00A0;Theme: light</option>\n'
+        + '      <option>&#x25EB;&#x00A0;&#x00A0;Other themes</option>\n'
+        + '    </select>\n'
+
+        + '\n'
+        + '  </div>\n\n\n'
+
+        // ---------- info_box ----------
+
+        // hidden heading (H1/H3/DL tags for bookmarks import compatibility)
+        + '  <span class="hidden"><H3>Info</H3></span>\n'
+
+        + '  <div id="info_box" class="boxes borders">\n'
+        + '<span class="closebtn" onclick="toggleInfoBox();">&times;</span>\n'
+
+        // heading/version/links
+
+        + '<b>Information/Help</b>\n'
+        + '<br><br><br>'
+
+        + '<a target="_blank" rel="external noopener noreferrer" href="'
+        + 'https://raw.githubusercontent.com/icpantsparti/firefox-user.js-tool/master/userjs-tool.html'
+        + '">userjs-tool.html</a> \n'
+
+        + '&nbsp;&nbsp;(version ' + version + ')\n'
+
+        + '&nbsp;&nbsp;<a target="_blank" rel="external noopener noreferrer" href="'
+        + 'https://raw.githubusercontent.com/icpantsparti/firefox-user.js-tool/master/LICENSE'
+        + '"><span class="hidden">firefox-user.js-tool - </span>MIT license</a>\n'
+
+        + '<br><br>GitHub for Updates/Issues/Licence/Etc: \n'
+        + '<a target="_blank" rel="external noopener noreferrer" href="'
+        + 'https://github.com/icpantsparti/firefox-user.js-tool'
+        + '">firefox-user.js-tool<span class="hidden"> - GitHub</span></a>'
+
+        + '<br><br>Disclaimer: Use with care at your own risk, alpha/experimental/untested.\n'
+
+        // Introduction
+
+        + '<br><br><br><details><summary>Introduction</summary><br><br>\n'
+
+        + 'Offline HTML viewer and actions for Firefox user.js \n'
+        + '(ghacksuserjs, pyllyukko, etc).\n'
+
+        + '<br><br>Display a Mozilla Firefox user.js settings file contents \n'
+        + 'in your Firefox browser, with: highlighting, links, themes*, \n'
+        + 're-size, wrap, about:config?filter links. &nbsp;Expandable \n'
+        + 'sections, and "go to" section links, with compatible user.js \n'
+        + 'projects. &nbsp;Plus: user-overrides.js* template, point and \n'
+        + 'click overrides collector, append* (with comment-out), and \n'
+        + 'prefs.js cleaner*.\n'
+
+        + '<br><br>(*ghacks-user.js inspired, as is the dark/light theme. \n'
+        + '&nbsp;Please visit them and read their wiki/info (the link is \n'
+        + 'given in the "user.js" info section below), they have \n'
+        + 'nice scripts which fully handle append/clean/more)\n'
+
+        + '<br><br>This was an over the top experiment for learning \n'
+        + 'some HTML/CSS/JavaScript.\n'
+
+        + '<br><br></details>\n'
+
+        // Known Issues
+
+        + '<br><details><summary>Known Issues</summary><br><br>\n'
+        + 'Please check for updates and advise issues at the GitHub link above.\n'
+        + '<br><br></details>\n'
+
+        // user.js (and user-overrides.js)
+
+        + '<br><details><summary>user.js (and user-overrides.js)</summary><br><br>\n'
+
+        + 'A user.js file can be used by Mozilla Firefox for configuration. \n'
+        + '&nbsp;It allows you to enforce preference settings (user_pref) \n'
+        + 'on browser start up. &nbsp;These are the settings \n'
+        + 'accessed when you type \'about:config\' into the URL address box. \n'
+        + '&nbsp;(See: <a target="_blank" rel="external noopener noreferrer" '
+        + 'href="http://kb.mozillazine.org/User.js_file">'
+        + 'mozillaZine User.js file</a> \n'
+        + 'and <a target="_blank" rel="external noopener noreferrer" '
+        + 'href="https://github.com/ghacksuserjs/ghacks-user.js/wiki">'
+        + 'ghacks-user.js wiki</a>)\n'
+
+        + '<br><br>The user.js file needs to be placed in your firefox profile \n'
+        + 'folder, type \'about:profiles\' into the URL address box to help \n'
+        + 'find this. &nbsp;Make a backup copy of your firefox profile folder.\n'
+
+        + '<br><br>There is no user.js content distributed with this HTML \n'
+        + 'file, user.js templates can be obtained from third party sources \n'
+        + 'and are subject to their license. &nbsp;If this HTML file contains \n'
+        + 'any user.js code then it has been added at a later stage by \n'
+        + 'another party or end user.\n'
+
+        + '<br><br>Various online sites provide details of user_pref \n'
+        + 'settings. &nbsp;Some projects publish their user.js template, with \n'
+        + 'instructions and information/wiki, some example links are given \n'
+        + 'below the input boxes for "...&gt;Actions" option. &nbsp;These \n'
+        + 'projects may update their content regularly, keep your user.js \n'
+        + 'up to date, settings may also change with each Firefox version.\n'
+
+        + '<br><br>A user-overrides.js file is not used directly by Firefox, \n'
+        + 'it is a ghacks-user.js idea, please read about this at the wiki \n'
+        + 'link given above. &nbsp;Basically, you take a projects user.js \n'
+        + 'template, and append your user-overrides.js onto it, to form \n'
+        + 'your user.js. &nbsp;The user-overrides.js file contains your \n'
+        + 'personal user_pref settings including any differences you \n'
+        + 'require. &nbsp;(user-template.js + user-overrides.js = user.js)\n'
+
+        + '<br><br></details>\n'
+
+        // Loading content
+
+        + '<br><details><summary>Loading content</summary><br><br>\n'
+        + 'There are various ways to load user.js content:\n'
+
+        + '<br><br>PASTE: paste the content into the "...&gt;Actions" \n'
+        + 'text boxes (open the user.js first in a text editor or in a \n'
+        + 'browser tab to copy it, some example user.js links are provided \n'
+        + 'below the input boxes).\n'
+
+        + '<br><br>LOAD: use the "...&gt;Actions&gt;[Load]" buttons to \n'
+        + 'get a same-origin file (ie a file in the same location as \n'
+        + 'userjs-tool.html), enter the filename or subdir/filename. \n'
+
+        + '<br><br>AUTO: Automatic load/view of same-origin files, specified \n'
+        + 'with combinations of URL variables (see "Initial states" below).\n'
+
+        + '<br><br>EMBED: (not recommended) edit and paste \n'
+        + '"base64 encoded user.js" data within the &lt;body&gt; section \n'
+        + '(near the end) of this HTML file, it will be decoded and displayed \n'
+        + 'on loading. &nbsp;See the "...&gt;Actions&gt;[Encode]" option.\n'
+        + '<br><br></details>\n'
+
+        // Theme
+
+        + '<br><details><summary>Theme</summary><br><br>\n'
+
+        + 'This is not syntax highlighting, just simple highlighting. \n'
+        + '&nbsp;Inactive user_pref (those within comments) \n'
+        + 'have the same highlighting style as active user_pref.\n'
+
+        + '<br><br>\n'
+        + 'Some inactive user_pref will have \'//\' preceding them, others \n'
+        + 'within \'/* */\' comment blocks (which may be multi-line) \n'
+        + 'will have no style indicating they are inactive. \n'
+        + '&nbsp;Some ghacks-user.js sections (such as: RFP ALTERNATIVES, \n'
+        + 'and DEPRECATED/ESR) use comment blocks, a text editor (such as \n'
+        + 'Kate, Notepad++, or Meld diff tool) would grey out everything in \n'
+        + 'those commented sections, this viewer does not.\n'
+
+        + '<br><br>\n'
+        + 'Opens using default theme, unless the theme to use is specified \n'
+        + 'with URL variables (see "Initial states" below). \n'
+        + '&nbsp;If you want to override the default theme with your own colors, \n'
+        + 'or to add more custom color themes, save and edit the optional \n'
+        + '"userjs-tool-themes.css" file in the same location as \n'
+        + '"userjs-tool.html".\n'
+        + '<br><br></details>\n'
+
+        // about:config links (and Groups)
+
+        + '<br><details><summary>about:config links (and Groups)</summary><br><br>\n'
+        + 'Due to Firefox security, about:config links will not open \n'
+        + 'when clicked, either:'
+
+        + '<br><br>COPY: right click and "Copy link location", "Paste and go" \n'
+        + 'into the URL address box of a new tab. &nbsp;(On Android long press \n'
+        + 'the link to see the copy link option).\n'
+
+        + '<br><br>OPEN: right click the link and "Open Link in New Tab", \n'
+        + 'change to tab, click in URL address box and press enter to load. \n'
+        + '(This may not work in some browser versions).\n'
+
+        + '<br><br>PREFIX: use the "...&gt;Prefix about:config" menu option \n'
+        + 'to prefix about:config links with "about:blank#", just to make \n'
+        + 'them clickable, then you must remove that prefix in the URL box.\n'
+
+        + '<br><br>BOOKMARK: bookmark them (but they will go out of date), \n'
+        + 'import them by: &nbsp;1) when viewing the user.js use the browser\'s \n'
+        + '"Save Page As..." (Ctrl+S) to save a HTML file (remove it afterwards) \n'
+        + '&nbsp;2) go into the browser\'s "Library", "Bookmarks", "Show All \n'
+        + 'Bookmarks" (Ctrl+Shift+B or Ctrl+Shift+O) \n'
+        + '&nbsp;3) consider using bookmarks "Backup..." as a precaution \n'
+        + '&nbsp;4) use "Import Bookmarks from HTML..." (may be slow)\n'
+        + '&nbsp;5) keep them up to date.\n'
+
+        + '<br><br>\n'
+        + 'The "[Groups]" button provides links for accessing batches of \n'
+        + 'preferences in about:config, the groups are based on the user.js \n'
+        + 'sections. &nbsp;Useful when reviewing, troubleshooting, temporary \n'
+        + 'changes, manual tweaks on Android, etc.\n'
+
+        + '<br><br>\n'
+        + 'Do not forget, when using about:config some preferences are hidden, \n'
+        + 'and will only show up if they have been created/user set. \n'
+        + '&nbsp;Also, if you change any settings through about:config \n'
+        + 'which are active in your user.js, they will change back to the \n'
+        + 'user.js value on browser restart.\n'
+        + '<br><br></details>\n'
+
+        // initial states
+
+        + '<br><details><summary>Initial states (URL variables)</summary><br><br>\n'
+        + 'Some initial states can be set with URL variables \n'
+        + '(default values are shown):<br><br>\n'
+        + '&nbsp;&nbsp;expand=false<br>'
+        + '&nbsp;&nbsp;wrap=false<br>'
+        + '&nbsp;&nbsp;groups=false&nbsp;&nbsp;(display of Groups box, use with load/auto-load)<br>'
+        + '&nbsp;&nbsp;prefix=false&nbsp;&nbsp;(Prefix about:config links)<br>'
+        + '&nbsp;&nbsp;theme=default&nbsp;&nbsp;(default|dark|light|mono|inverse|none|...)<br>'
+        + '&nbsp;&nbsp;size=75&nbsp;&nbsp;(font size percent)<br>'
+        + '&nbsp;&nbsp;auto=false&nbsp;&nbsp;(auto load/view)<br>'
+        + '&nbsp;&nbsp;load1=&nbsp;&nbsp;(load1=user.js when auto=true)<br>'
+        + '&nbsp;&nbsp;load2=&nbsp;&nbsp;(load2=user-overrides.js when auto=true)<br>'
+        + '&nbsp;&nbsp;load3=&nbsp;&nbsp;(load3=user-template.js when auto=true)<br>'
+        + '&nbsp;&nbsp;load4=<br>'
+        + '&nbsp;&nbsp;view=0&nbsp;&nbsp;(view box 0(off)|1|2|3|4, 1 when auto=true)<br>'
+        + '\n<br>Examples:<br><br>\n'
+        + '&nbsp;&nbsp;file:///C:/Users/USERNAME/AppData/Roaming/Mozilla/Firefox/Profiles/XXXXXXXX.default/userjs-tool.html?auto=true<br>\n'
+        + '&nbsp;&nbsp;file:///C:/Users/USERNAME/Downloads/userjs-tool.html?auto=true&amp;expand=true<br>\n'
+        + '&nbsp;&nbsp;file:///home/USERNAME/.mozilla/firefox/XXXXXXXX.default/userjs-tool.html?auto=true<br>\n'
+        + '&nbsp;&nbsp;file:///home/USERNAME/Downloads/userjs-tool.html?theme=light&amp;size=150<br>\n'
+        + '<br>&nbsp;&nbsp;?auto=true&nbsp;&nbsp;(load boxes 1, 2, 3, and view box 1)<br>\n'
+        + '&nbsp;&nbsp;?auto=true&amp;load2=&amp;load3=&amp;expand=true&nbsp;&nbsp;(auto load/view user.js and expand)<br>\n'
+        + '&nbsp;&nbsp;?auto=true&amp;load1=&amp;view=0&nbsp;&nbsp;(auto load overrides/template, without auto view)<br>\n'
+        + '&nbsp;&nbsp;?auto=true&amp;view=0&nbsp;&nbsp;(auto load, without auto view)<br>\n'
+        + '&nbsp;&nbsp;?auto=true&amp;load1=&amp;load2=&amp;view=3&nbsp;&nbsp;(auto load and view box 3 only)<br>\n'
+        + '&nbsp;&nbsp;?load1=filename.js&amp;view=1&nbsp;&nbsp;(load and view box 1)<br>\n'
+        + '<br><br></details>\n'
+
+        // Acknowledgments
+
+        + '<br><details><summary>Acknowledgments</summary><br><br>\n'
+        + 'The HTML rendered view of user.js follows a similar style (and \n'
+        + 'dark/light theme) to the static HTML that ghacks-user.js once produced, \n'
+        + 'many thanks to https://github.com/ghacksuserjs/ghacks-user.js \n'
+        + 'and all particiPANTS, and to http://www.ghacks.net/ \n'
+        + 'who first hosted ghacks-user.js. \n'
+        + '&nbsp;Thanks to https://github.com/rndme/download, I have \n'
+        + 'embedded your JavaScript library to enable the "Save As" \n'
+        + '(I saw https://github.com/pyllyukko/user.js mention \n'
+        + 'https://github.com/Genbox/HardenIT which used that, thanks too). \n'
+        + '&nbsp;This does not use any JQuery library or similar. &nbsp;Other \n'
+        + 'acknowledgments (eg stackoverflow etc) are shown in the code. \n'
+        + '&nbsp;I like <a target="_blank" rel="external noopener noreferrer" '
+        + 'href="https://kate-editor.org/get-it/">Kate</a> (text editor), \n'
+        + 'and <a target="_blank" rel="external noopener noreferrer" '
+        + 'href="http://meldmerge.org/">Meld</a> (visual diff/merge).\n'
+        + '<br><br></details>\n'
+
+        // Actions
+
+        + '<br><details><summary>"...&gt;Actions" options</summary><br><br>\n'
+
+        + 'Closing or refreshing the browser tab will lose any \n'
+        + 'content added into the Actions boxes.<br>\n'
+
+        // Actions - View
+
+        + '<br><details><summary>&nbsp;&nbsp;[View]</summary><br><br>\n'
+        + 'View the user.js (that you pasted/loaded into a text box) with \n'
+        + 'some nice HTML formatting.\n'
+        + '<br><br></details>\n'
+
+        // Actions - Append
+
+        + '<br><details><summary>&nbsp;&nbsp;[Append]</summary><br><br>\n'
+
+        + 'Take the user-template.js (eg ghacks user.js) (from Box 3) \n'
+        + 'and append your user-overrides.js (from Box 2), place the result \n'
+        + 'into Box 1.\n'
+
+        + '<br><br>This will also process any lines from Box 2 of the format: \n'
+        + '<u>//// --- comment-out --- \'prefname.goes.here\'</u> as they \n'
+        + 'occur, ie any user_pref with that name in the output so far will \n'
+        + 'be "inactivated", commented out with "////COMMENT-OUT:". \n'
+        + '&nbsp;Care: if you comment out prefs you may also have to \n'
+        + 'manually reset their value in about:config.\n'
+
+        + '<br><br>Optionally, if your user-overrides.js contains a line \n'
+        + 'that reads: <u>//// --- add-override-comment ---</u> \n'
+        + 'then the tag "////OVERRIDE:" will be placed in front of \n'
+        + 'any overridden user_pref in the user.js output. \n'
+        + '&nbsp;Care: if your user-overrides.js uses multi-line comments \n'
+        + '(/*...*/) to disable any user_pref overrides this tagging feature \n'
+        + 'will not work as expected, and you could end up with some \n'
+        + 'user_pref in the user.js inadvertently inactivated with \n'
+        + '"////OVERRIDE:", there is no issue with same line comments (//).\n'
+
+        + '<br><br>"////COMMENT-OUT:" and "////OVERRIDE:" tags are displayed \n'
+        + 'inverted when using the viewer so they stand out.\n'
+
+        + '<br><br></details>\n'
+
+        // Actions - Template
+
+        + '<br><details><summary>&nbsp;&nbsp;[Template]</summary><br><br>\n'
+        + 'Create a template for a user-overrides.js. &nbsp;Reduce the \n'
+        + 'user-template.js (from Box 3) to headings and commented \n'
+        + 'user_pref, place the result into Box 2.\n'
+        + '<br><br></details>\n'
+
+        // Actions - Collect
+
+        + '<br><details><summary>&nbsp;&nbsp;[Collect]</summary><br><br>\n'
+        + 'Helps to create a user-overrides.js, by allowing \n'
+        + 'point/click/edit collection of user_pref.\n'
+        + '<br><br>It first takes you into the usual viewing of Box 3 \n'
+        + 'content, with the added ability to:\n'
+        + '<br><br>click on the word "user_pref" (to toggle \n'
+        + 'collection of either <u>//// --- comment-out --- \n'
+        + '\'prefname.goes.here\'</u> or of an active user_pref)\n'
+        + '(note: comment-out is a reminder to prompt you to make sure that \n'
+        + 'pref gets inactivated in your user.js)\n'
+        + '<br><br>click on the user_pref "value" \n'
+        + '(to collect the user_pref with a new value, toggles boolean, \n'
+        + 'input box for integer/string).\n'
+        + '<br><br>This does not change Box 3 content, the \'amendments\' are \n'
+        + 'just collected in Box 2.\n'
+        + '<br><br>The "Actions" box is displayed with reduced size for \n'
+        + 'viewing of Box 2 changes (hide/show works as usual), press the \n'
+        + 'yellow highlighted "[End Collect]" button when you have \n'
+        + 'finished (scroll the actions box to find that button if it is \n'
+        + 'out of view).\n'
+        + '<br><br>(The Box 2 Select button usage changes slightly, the first \n'
+        + 'instance of the pref name toggled is selected, if you wish to select \n'
+        + 'all click elsewhere in the box and click the select button again.)\n'
+        + '<br><br></details>\n'
+
+        // Actions - Clean
+
+        + '<br><details><summary>&nbsp;&nbsp;[Clean]</summary><br><br>\n'
+        + 'Remove user_pref from prefs.js in Box 4, based on the active and \n'
+        + 'inactive user_pref from user.js in Box 1.\n'
+        + '<br><br>Use with care, this might clean more (or even less) than \n'
+        + 'you expect.&nbsp; Do not replace your prefs.js while firefox is \n'
+        + 'running, and rename the old file as a backup.\n'
+        + '<br><br>The ghacks-user.js pref cleaner scripts are a better way \n'
+        + 'to do this, read at the ghacks-user.js wiki, note the pros/cons.\n'
+        + '<br><br></details>\n'
+
+        // Actions - Group
+
+        + '<br><details><summary>&nbsp;&nbsp;[Group]</summary><br><br>\n'
+        + 'Convert a list of prefs in Box 4 to an about:config?filter group, \n'
+        + 'place output into Box 4. &nbsp;If you have a bunch of favorite \n'
+        + 'preferences, place the list into Box 4 and turn them into an \n'
+        + 'about:config link that displays that group of preferences. \n'
+        + '&nbsp;The list can be newline, space, comma, or other separated. \n'
+        + '<br><br></details>\n'
+
+        // Actions - Encode/Decode
+
+        + '<br><details><summary>&nbsp;&nbsp;[Encode] and [Decode]</summary><br><br>\n'
+        + 'Take the user.js (from Box 1), add a date comment on line one, \n'
+        + 'and base64 encode it, place the result into Box 4. &nbsp;Use \n'
+        + 'Encode if you are going to save user.js data into this HTML \n'
+        + 'file, because you want it to display when the HTML is opened. \n'
+        + '&nbsp;Decode affects box 4.\n'
+        + '<br><br></details>\n'
+
+        // Actions - Save As
+
+        + '<br><details><summary>&nbsp;&nbsp;[Save As]</summary><br><br>\n'
+        + 'Save the box contents as a file (Desktop Firefox allows you to \n'
+        + 'choose the location and file name).\n'
+        + '<br><br></details>\n'
+
+        // Actions - Load
+
+        + '<br><details><summary>&nbsp;&nbsp;[Load]</summary><br><br>\n'
+        + 'Load a file into the box (eg user.js, user-overrides.js). &nbsp;The \n'
+        + 'file must be same-origin (same location as the userjs-tool.html).\n'
+        + '<br><br></details>\n'
+
+        + '<br><br></details>\n'
+        + '<br><br><br>\n'
+        + '</div>\n\n\n'
+
+        // ---------- groups_box ----------
+
+        // hidden heading (H1/H3/DL tags for bookmarks import compatibility)
+        + '  <span class="hidden"><H3>Groups (about:config?filter)</H3></span>\n'
+
+        + '  <div id="groups_box" class="boxes borders">\n'
+        // >>>> user pref groups (between here) are replaced later <<<<
+        + '<span class="closebtn" onclick="toggleGroupsBox();">&times;</span>\n'
+        + '<b>Groups</b> (about:config?filter) (see ...&gt;Information/Help)<br><br>\n'
+        + '(add user.js content through "...&gt;Actions", then use [View])'
+        + '<br><br><br><br><br>\n'
+        // >>>> user pref groups (between here) are replaced later <<<<
+        + '</div>\n\n\n'
+
+        // ---------- actions_box ----------
+
+        + '  <div id="actions_box" class="boxes borders">\n'
+        + '<span class="closebtn" onclick="toggleActionsBox();">&times;</span>\n'
+        + '<b>Actions</b> (see ...&gt;Information/Help) (also see links below)<br>\n'
+
+        // input boxes
+
+        + '<table>\n'
+        + '<tr><td class="td1"><br>\n'
+
+
+        + '<button type="button" class="controls borders actions_buttons" id="view1_button" \n'
+        + 'title="View content in box 1 with HTML, links, etc">View</button><br>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="append1_button" \n'
+        + 'title="Append/apply, box 3 with box 2, output into box 1">Append</button><br>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="select1_button" \n'
+        + 'title="Select all text in box 1">Select All</button><br>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="save1_button" \n'
+        + 'title="Save the contents of box 1 as a file">Save As</button><br>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="load1_button" \n'
+        + 'title="Load a same-origin/location file into box 1">Load</button><br>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="clear1_button" \n'
+        + 'title="Clear the text in box 1">Clear</button><br>\n'
+
+        + '</td><td class="td2">\n'
+        + '<div class="input_info">Box 1 (user.js)</div>\n'
+        + '<textarea id="text_box_1" autofocus="true">'
+        // add user.js code into the text box if it was encoded in the body
+        //   take document.body.innerHTML as it shows everything
+        //     rather than (document.body.innerText || document.body.textContent)
+        // + document.body.innerHTML.replace(/^[\r\n \t]*(<!--[\s\S]*-->)*[\r\n \t]*$/,"").replace(/[\r\n]*$/,"")
+        + b64DecodeUnicode(document.body.innerHTML.replace(/[^a-zA-Z0-9=+/]/g, ""))
+        + '</textarea>\n'
+        + '</td></tr>'
+
+
+        + '<tr><td class="td1"><br>'
+
+        + '<button type="button" class="controls borders actions_buttons" id="view2_button" \n'
+        + 'title="View content in box 2 with HTML, links, etc">View</button><br>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="template2_button" \n'
+        + 'title="Create a user-overrides.js template, from box 3, output into box 2">Template</button><br>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="collect2_button" \n'
+        + 'title="Point and click user-overrides.js collector, from box 3, output into box 2">Collect</button><br>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="select2_button" \n'
+        + 'title="Select all text in box 2">Select All</button><br>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="save2_button" \n'
+        + 'title="Save the contents of box 2 as a file">Save As</button><br>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="load2_button" \n'
+        + 'title="Load a same-origin/location file into box 2">Load</button><br>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="clear2_button" \n'
+        + 'title="Clear the text in box 2">Clear</button><br>\n'
+
+        + '</td><td class="td2">\n'
+        + '<div class="input_info">Box 2 (user-overrides.js)</div>\n'
+        + '<textarea id="text_box_2"></textarea>\n'
+        + '</td></tr>'
+
+
+        + '<tr><td class="td1"><br>'
+
+        + '<button type="button" class="controls borders actions_buttons" id="view3_button" \n'
+        + 'title="View content in box 3 with HTML, links, etc">View</button><br>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="select3_button" \n'
+        + 'title="Select all text in box 3">Select All</button><br>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="save3_button" \n'
+        + 'title="Save the contents of box 3 as a file">Save As</button><br>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="load3_button" \n'
+        + 'title="Load a same-origin/location file into box 3">Load</button><br>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="clear3_button" \n'
+        + 'title="Clear the text in box 3">Clear</button><br>\n'
+
+        + '</td><td class="td2">\n'
+        + '<div class="input_info">Box 3 (user-template.js) (eg ghacks user.js)</div>\n'
+        + '<textarea id="text_box_3"></textarea>\n'
+        + '</td></tr>'
+
+
+        + '<tr><td class="td1"><br>'
+
+        + '<button type="button" class="controls borders actions_buttons" id="view4_button" \n'
+        + 'title="View content in box 4 with HTML, links, etc">View</button><br>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="clean4_button" \n'
+        + 'title="Remove user_pref within Box 4 (prefs.js) mentioned by Box 1">Clean</button><br>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="group4_button" \n'
+        + 'title="Within Box 4 (other), convert a list of prefs into an about:config?filter group">Group</button><br>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="encode4_button" \n'
+        + 'title="Base64 encode box 1, output into box 4">Encode</button><br>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="decode4_button" \n'
+        + 'title="Decode base64 data in box 4">Decode</button><br>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="select4_button" \n'
+        + 'title="Select all text in box 4">Select All</button><br>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="save4_button" \n'
+        + 'title="Save the contents of box 4 as a file">Save As</button><br>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="load4_button" \n'
+        + 'title="Load a same-origin/location file into box 4">Load</button><br>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="clear4_button" \n'
+        + 'title="Clear the text in box 4">Clear</button><br>\n'
+
+        + '</td><td class="td2">\n'
+        + '<div class="input_info">Box 4 (prefs.js/other)</div>\n'
+        + '<textarea id="text_box_4"></textarea>\n'
+        + '</td></tr>'
+
+
+        + '</table>\n'
+
+        // notes and links
+
+        + '<br><div class="input_info">\n'
+        + 'Box contents are lost on browser close/refresh/etc.\n'
+
+        + '<br><br>Here are some example links for user.js templates/projects, you will \n'
+        + 'need to consider if these are suitable, good quality, or up to date \n'
+        + '(some may show old settings):\n'
+
+        // hidden heading (H1/H3/DL tags for bookmarks import compatibility)
+        + '<span class="hidden"><H3>user.js examples</H3></span>\n'
+
+        + '<br><br><table>\n'
+
+        + '<tr><th class="td3">\n'
+        + 'File Link'
+        + '</td><th class="td3">\n'
+        + 'Project Link'
+        + '</td></tr>'
+
+        + '<tr><td class="td3">\n'
+        + '<a target="_blank" rel="external noopener noreferrer" href="'
+        + 'https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js'
+        + '">ghacksuserjs/ghacks-user.js/user.js</a>\n'
+        + '</td><td class="td3">\n'
+        + '<a target="_blank" rel="external noopener noreferrer" '
+        + 'href="https://github.com/ghacksuserjs/ghacks-user.js">'
+        + 'ghacksuserjs/ghacks-user.js</a>\n'
+        + '</td></tr>'
+
+        + '<tr><td class="td3">\n'
+        + '&nbsp;&nbsp;<a target="_blank" rel="external noopener noreferrer" href="'
+        + 'https://gitlab.com/labwrat/Firefox-user.js/raw/master/user-overrides.js'
+        + '"><i>12bytes:labwrat/Firefox-user.js/user-overrides.js</i></a>\n'
+        + '</td><td class="td3">\n'
+        + '<a target="_blank" rel="external noopener noreferrer" '
+        + 'href="https://gitlab.com/labwrat/Firefox-user.js">'
+        + '12bytes:labwrat/Firefox-user.js</a>\n'
+        + '</td></tr>'
+
+        + '<tr><td class="td3">\n'
+        + '&nbsp;&nbsp;<a target="_blank" rel="external noopener noreferrer" href="'
+        + 'https://raw.githubusercontent.com/crssi/Firefox/master/user-overrides.js'
+        + '"><i>crssi/Firefox/user-overrides.js</i></a>\n'
+        + '</td><td class="td3">\n'
+        + '<a target="_blank" rel="external noopener noreferrer" '
+        + 'href="https://github.com/crssi/Firefox">'
+        + 'crssi/Firefox</a>\n'
+        + '</td></tr>'
+
+        + '<tr><td class="td3">\n'
+        + '<a target="_blank" rel="external noopener noreferrer" href="'
+        + 'https://raw.githubusercontent.com/pyllyukko/user.js/master/user.js'
+        + '">pyllyukko/user.js/user.js</a>\n'
+        + '</td><td class="td3">\n'
+        + '<a target="_blank" rel="external noopener noreferrer" '
+        + 'href="https://github.com/pyllyukko/user.js">'
+        + 'pyllyukko/user.js</a>\n'
+        + '</td></tr>'
+
+        + '<tr><td class="td3">\n'
+        + '<a target="_blank" rel="external noopener noreferrer" href="'
+        + 'https://raw.githubusercontent.com/pyllyukko/user.js/relaxed/user.js'
+        + '">pyllyukko/user.js/relaxed/user.js</a>\n'
+        + '</td><td class="td3">\n'
+        + '<a target="_blank" rel="external noopener noreferrer" '
+        + 'href="https://github.com/pyllyukko/user.js/tree/relaxed">'
+        + 'pyllyukko/user.js/relaxed</a>\n'
+        + '</td></tr>'
+
+        + '<tr><td class="td3">\n'
+        + '<a target="_blank" rel="external noopener noreferrer" href="'
+        + 'https://gitlab.com/krathalan/firefox-tweaks/raw/master/user.js'
+        + '">krathalan/firefox-tweaks/user.js</a>\n'
+        + '</td><td class="td3" rowspan=2>\n'
+        + '<a target="_blank" rel="external noopener noreferrer" '
+        + 'href="https://gitlab.com/krathalan/firefox-tweaks">'
+        + 'krathalan/firefox-tweaks</a>\n'
+        + '</td></tr>'
+
+        + '<tr><td class="td3">\n'
+        + '<a target="_blank" rel="external noopener noreferrer" href="'
+        + 'https://gitlab.com/krathalan/firefox-tweaks/raw/master/user-android.js'
+        + '">krathalan/firefox-tweaks/user-android.js</a>\n'
+        + '</td></tr>'
+
+        + '<tr><td class="td3">\n'
+        + '<a target="_blank" rel="external noopener noreferrer" href="'
+        + 'https://raw.githubusercontent.com/Narga/user.js/master/user.js'
+        + '">narga/user.js/user.js</a>\n'
+        + '</td><td class="td3" rowspan=2>\n'
+        + '<a target="_blank" rel="external noopener noreferrer" '
+        + 'href="https://github.com/Narga/user.js">'
+        + 'narga/user.js</a>\n'
+        + '</td></tr>'
+
+        + '<tr><td class="td3">\n'
+        + '<a target="_blank" rel="external noopener noreferrer" href="'
+        + 'https://raw.githubusercontent.com/Narga/user.js/master/user-narga.js'
+        + '">narga/user.js/user-narga.js</a>\n'
+        + '</td></tr>'
+
+        + '<tr><td class="td3">\n'
+        + '(search online for others)'
+        + '</td><td class="td3">\n'
+        + '</td></tr>'
+
+        + '</table>\n'
+
+        + '</div>\n'
+
+        + '<br><br><br><br><br></div>\n\n\n'
+
+        // ---------- (top of body, the other divs are fixed) ----------
+
+        + '<br><br><br><br>\n'
+        + '<div id="collect_mode_pad"><br><br><br><br><br><br><br><br><br><br></div>\n'
+
+        // ---------- view_area ----------
+
+        + '<div id="view_area">\n\n\n'
+        // >>>> section contents (between here) are replaced later <<<<
+        + '  <button type="button" class="controls borders '
+        + ' heading_buttons" id="(TOP)">(TOP)</button>\n'
+        + '  <div class="content">\n'
+        + '(add user.js content through "...&gt;Actions", then use [View])'
+        + '  </div>\n'
+        // >>>> section contents (between here) are replaced later <<<<
+        + '</div>\n\n\n'
+        + '  </DL></DL>\n';
+
+      applyExpandAll("block");
+
+      /* goto select (jump to section) */
+
+      document.getElementById("goto_select").addEventListener("change", function() {
+        // expand, focus, and scroll to the chosen section
+        var id = document.getElementById("goto_select").value;
+        if (id != "") {
+          var e = document.getElementById(id);
+          e.nextElementSibling.style.display = "block";
+          section_focus = e;
+          refocusSection();
+        }
+        // make the select element show first choice (title)
+        this.selectedIndex=0;
+      });
+
+      /* groups button */
+
+      document.getElementById("groups_button").addEventListener("click", function() {
+        toggleGroupsBox();
+      });
+
+      /* font size select */
+
+      document.getElementById("size_select").addEventListener("change", function() {
+        // change the font size to the value chosen
+        // also changes the select element first choice name which we
+        // are using as a title and it shows the current font size percent
+        applyFontSize(document.getElementById("size_select").value);
+        // make the select element show first choice (title)
+        document.getElementById("size_select").selectedIndex=0;
+      });
+
+      /* menu select (...) */
+
+      document.getElementById("menu_select").addEventListener("change", function() {
+        if (/collapse all/i.test(this.value)) {
+          applyExpandAll("none");
+          refocusSection();
+        }
+        else if (/expand all/i.test(this.value)) {
+          applyExpandAll("block");
+          refocusSection();
+        }
+        else if (/collapse current/i.test(this.value)) {
+          if (section_focus) {
+            section_focus.nextElementSibling.style.display = "none";
+          }
+          refocusSection();
+        }
+        else if (/actions/i.test(this.value)) {
+          toggleActionsBox();
+        }
+        else if (/information/i.test(this.value)) {
+          toggleInfoBox();
+        }
+        else if (/groups/i.test(this.value)) {
+          toggleGroupsBox();
+        }
+        else if (/wrap/i.test(this.value)) {
+          toggleWrap();
+        }
+        else if (/prefix/i.test(this.value)) {
+          togglePrefixAboutConfigLinks();
+        }
+        else if (/Other theme/i.test(this.value)) {
+          this.selectedIndex=0;
+          var new_value = prompt("Please input theme name.\n"
+            + "default,dark,light,mono,inverse,none,...\n"
+            + "(or on open: userjs-tool.html?theme=light)");
+          applyTheme(new_value);
+        }
+        else if (/theme/i.test(this.value)) {
+          applyTheme(this.value);
+        }
+        // make the select element show first choice (title)
+        this.selectedIndex=0;
+      });
+
+
+      /* process URL variables */
+
+      // these are applied now: theme size wrap prefix
+      // these are applied in the content load function: expand groups
+
+      if (getURLVariable("theme")) {
+        applyTheme(getURLVariable("theme"));
+      }
+      else {
+        applyTheme("default");
+      }
+      if (getURLVariable("size")) { applyFontSize(getURLVariable("size")); }
+      if (getURLVariable("wrap") == "true") { toggleWrap("on"); }
+      if (getURLVariable("prefix") == "true") { togglePrefixAboutConfigLinks("on"); }
+
+
+      /* buttons for actions box options */
+
+      // view
+
+      document.getElementById("view1_button").addEventListener("click", function() {
+        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+          document.getElementById("text_box_1").readOnly = true;
+          userjsViewer("text_box_1");
+          toggleActionsBox(false);
+        }
+      });
+
+      document.getElementById("view2_button").addEventListener("click", function() {
+        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+          document.getElementById("text_box_2").readOnly = true;
+          userjsViewer("text_box_2");
+          toggleActionsBox(false);
+        }
+      });
+
+      document.getElementById("view3_button").addEventListener("click", function() {
+        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+          document.getElementById("text_box_3").readOnly = true;
+          userjsViewer("text_box_3");
+          toggleActionsBox(false);
+        }
+      });
+
+      document.getElementById("view4_button").addEventListener("click", function() {
+        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+          document.getElementById("text_box_4").readOnly = true;
+          userjsViewer("text_box_4");
+          toggleActionsBox(false);
+        }
+      });
+
+      // append
+
+      document.getElementById("append1_button").addEventListener("click", function() {
+        // output into box3: user.js (box1) append user-overrides.js (box2)
+        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+          // userjsAppend(templatejs_box_name, overridesjs_box_name, userjs_box_name)
+          userjsAppend("text_box_3", "text_box_2", "text_box_1");
+          document.getElementById("text_box_1").readOnly = true;
+        }
+      });
+
+      // group
+
+      document.getElementById("group4_button").addEventListener("click", function() {
+        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+          convertListToGroup("text_box_4");
+          document.getElementById("text_box_4").readOnly = true;
+        }
+      });
+
+      // clean
+
+      document.getElementById("clean4_button").addEventListener("click", function() {
+        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+          // prefsjsClean(userjs_box_name, prefsjs_box_name)
+          prefsjsClean("text_box_1", "text_box_4");
+          document.getElementById("text_box_4").readOnly = true;
+        }
+      });
+
+      // encode/decode
+
+      document.getElementById("encode4_button").addEventListener("click", function() {
+        // HTML escape codes to replace: & < >
+        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+          var e = document.getElementById("text_box_1");
+          var o = document.getElementById("text_box_4");
+          o.readOnly = true;
+          o.selectionEnd = 0;
+          o.selectionStart = 0;
+          updateDateTimeStampVariable();
+          // base64 encode text (with date stamp on first line)
+          o.value = b64EncodeUnicode('// ' + date_time_stamp + "\n\n" + e.value).replace(/.{76}/g, "$&\n");
+          o.focus();
+          o.select();
+        }
+      });
+
+      document.getElementById("decode4_button").addEventListener("click", function() {
+        // HTML escape codes back to: & < >
+        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+          var e = document.getElementById("text_box_4");
+          e.readOnly = true;
+          e.selectionEnd = 0;
+          e.selectionStart = 0;
+          // base64 decode text
+          e.value = b64DecodeUnicode(e.value.replace(/[^a-zA-Z0-9=+/]/g, ""));
+          e.focus();
+          e.select();
+        }
+      });
+
+      // template
+
+      document.getElementById("template2_button").addEventListener("click", function() {
+        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+          // overridesjsTemplate(templatejs_box_name, overridesjs_box_name)
+          overridesjsTemplate("text_box_3", "text_box_2");
+          document.getElementById("text_box_2").readOnly = true;
+        }
+      });
+
+      // collect
+
+      document.getElementById("collect2_button").addEventListener("click", function() {
+        var e = document.getElementById("text_box_3");
+        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+          // put collect mode on (line through buttons that are disabled)
+          document.getElementById("view1_button").style.textDecoration = "line-through";
+          document.getElementById("view2_button").style.textDecoration = "line-through";
+          document.getElementById("view3_button").style.textDecoration = "line-through";
+          document.getElementById("view4_button").style.textDecoration = "line-through";
+          document.getElementById("append1_button").style.textDecoration = "line-through";
+          document.getElementById("template2_button").style.textDecoration = "line-through";
+          document.getElementById("collect2_button").style.textDecoration = "underline";
+          document.getElementById("collect2_button").style.color = "#FF0000"; /*Red*/
+          document.getElementById("collect2_button").style.backgroundColor = "#FFFF00"; /*Yellow*/
+          document.getElementById("collect2_button").innerHTML = "EndCollect";
+          document.getElementById("clean4_button").style.textDecoration = "line-through";
+          document.getElementById("group4_button").style.textDecoration = "line-through";
+          document.getElementById("encode4_button").style.textDecoration = "line-through";
+          document.getElementById("decode4_button").style.textDecoration = "line-through";
+          document.getElementById("select2_button").innerHTML = "Select/All";
+          document.getElementById("load1_button").style.textDecoration = "line-through";
+          document.getElementById("load2_button").style.textDecoration = "line-through";
+          document.getElementById("load3_button").style.textDecoration = "line-through";
+          document.getElementById("load4_button").style.textDecoration = "line-through";
+          document.getElementById("clear1_button").style.textDecoration = "line-through";
+          document.getElementById("clear2_button").style.textDecoration = "line-through";
+          document.getElementById("clear3_button").style.textDecoration = "line-through";
+          document.getElementById("clear4_button").style.textDecoration = "line-through";
+          userjsViewer("text_box_3");
+          // shrink the actions_box, and focus it on Box 2
+          // make collect_mode_pad visible (which makes the user.js HTML
+          // lower, so the actions_box will not obscure user.js HTML)
+          document.getElementById("collect_mode_pad").style.display = "block";
+          document.getElementById("actions_box").style.maxHeight = "10%";
+          document.getElementById("text_box_2").scrollIntoView();
+          document.getElementById("text_box_2").readOnly = false;
+          // make the user.js HTML clickable (adds 100's of Event Listeners)
+          addEventListenersForCollectMode();
+        }
+        else {
+          // put collect mode off
+          // remove the user.js HTML clickable (removes 100's of Event Listeners)
+          removeEventListenersForCollectMode();
+          document.getElementById("view1_button").style.textDecoration = null;
+          document.getElementById("view2_button").style.textDecoration = null;
+          document.getElementById("view3_button").style.textDecoration = null;
+          document.getElementById("view4_button").style.textDecoration = null;
+          document.getElementById("append1_button").style.textDecoration = null;
+          document.getElementById("template2_button").style.textDecoration = null;
+          document.getElementById("collect2_button").style.textDecoration = null;
+          document.getElementById("collect2_button").style.color = null;
+          document.getElementById("collect2_button").style.backgroundColor = null;
+          document.getElementById("collect2_button").innerHTML = "Collect";
+          document.getElementById("clean4_button").style.textDecoration = null;
+          document.getElementById("group4_button").style.textDecoration = null;
+          document.getElementById("encode4_button").style.textDecoration = null;
+          document.getElementById("decode4_button").style.textDecoration = null;
+          document.getElementById("select2_button").innerHTML = "Select All";
+          document.getElementById("load1_button").style.textDecoration = null;
+          document.getElementById("load2_button").style.textDecoration = null;
+          document.getElementById("load3_button").style.textDecoration = null;
+          document.getElementById("load4_button").style.textDecoration = null;
+          document.getElementById("clear1_button").style.textDecoration = null;
+          document.getElementById("clear2_button").style.textDecoration = null;
+          document.getElementById("clear3_button").style.textDecoration = null;
+          document.getElementById("clear4_button").style.textDecoration = null;
+          // make actions_box usual size and hide collect_mode_pad
+          document.getElementById("collect_mode_pad").style.display = "none";
+          document.getElementById("actions_box").style.maxHeight = "70%";
+          document.getElementById("text_box_1").scrollIntoView(false);
+          document.getElementById("text_box_2").readOnly = true;
+          // display the collected values
+          userjsViewer("text_box_2");
+          toggleActionsBox(false);
+        }
+      });
+
+      // select
+
+      document.getElementById("select1_button").addEventListener("click", function() {
+        selectTextAreaContents("text_box_1");
+      });
+
+      document.getElementById("select2_button").addEventListener("click", function() {
+        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+          // when collector mode is off
+          selectTextAreaContents("text_box_2");
+        }
+        else {
+          // when collector mode is on
+          var e = document.getElementById("text_box_2");
+          if ((e.selectionStart == 0 && e.selectionEnd == e.value.length)
+            || (e.selectionStart == e.selectionEnd))
+          {
+            // when all or nothing is selected, select the opposite
+            selectTextAreaContents("text_box_2");
+          }
+          else {
+            // when text is already selected we will just focus
+            // then what is already selected becomes apparent
+            e.focus();
+          }
+        }
+      });
+
+      document.getElementById("select3_button").addEventListener("click", function() {
+        selectTextAreaContents("text_box_3");
+      });
+
+      document.getElementById("select4_button").addEventListener("click", function() {
+        selectTextAreaContents("text_box_4");
+      });
+
+      // save as
+
+      document.getElementById("save1_button").addEventListener("click", function() {
+        download(document.getElementById("text_box_1").value,
+          "user.js",
+          "application/javascript");
+      });
+
+      document.getElementById("save2_button").addEventListener("click", function() {
+        download(document.getElementById("text_box_2").value,
+          "user-overrides.js",
+          "application/javascript");
+      });
+
+      document.getElementById("save3_button").addEventListener("click", function() {
+        download(document.getElementById("text_box_3").value,
+          "user-template.js",
+          "application/javascript");
+      });
+
+      document.getElementById("save4_button").addEventListener("click", function() {
+        download(document.getElementById("text_box_4").value,
+          "prefs.js",
+          "application/javascript");
+      });
+
+      // load
+
+      document.getElementById("load1_button").addEventListener("click", function() {
+        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+          var open_file = prompt("Please input (same-origin) file name\n"
+            + "eg user.js, subdir/filename", "user.js");
+          if (open_file != null && open_file != "") {
+            clearTextAreaContents("text_box_1");
+            document.getElementById("text_box_1").readOnly = true;
+            loadFile(open_file, "text_box_1");
+          }
+        }
+      });
+
+      document.getElementById("load2_button").addEventListener("click", function() {
+        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+          var open_file = prompt("Please input (same-origin) file name\n"
+            + "eg user-overrides.js, subdir/filename", "user-overrides.js");
+          if (open_file != null && open_file != "") {
+            clearTextAreaContents("text_box_2");
+            document.getElementById("text_box_2").readOnly = true;
+            loadFile(open_file, "text_box_2");
+          }
+        }
+      });
+
+      document.getElementById("load3_button").addEventListener("click", function() {
+        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+          var open_file = prompt("Please input (same-origin) file name\n"
+            + "eg user-template.js, subdir/filename", "user-template.js");
+          if (open_file != null && open_file != "") {
+            clearTextAreaContents("text_box_3");
+            document.getElementById("text_box_3").readOnly = true;
+            loadFile(open_file, "text_box_3");
+          }
+        }
+      });
+
+      document.getElementById("load4_button").addEventListener("click", function() {
+        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+          var open_file = prompt("Please input (same-origin) file name\n"
+            + "eg prefs.js, user.js, subdir/filename", "prefs.js");
+          if (open_file != null && open_file != "") {
+            clearTextAreaContents("text_box_4");
+            document.getElementById("text_box_4").readOnly = true;
+            loadFile(open_file, "text_box_4");
+          }
+        }
+      });
+
+      // clear
+
+      document.getElementById("clear1_button").addEventListener("click", function() {
+        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+          clearTextAreaContents("text_box_1");
+        }
+      });
+
+      document.getElementById("clear2_button").addEventListener("click", function() {
+        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+          clearTextAreaContents("text_box_2");
+        }
+      });
+
+      document.getElementById("clear3_button").addEventListener("click", function() {
+        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+          clearTextAreaContents("text_box_3");
+        }
+      });
+
+      document.getElementById("clear4_button").addEventListener("click", function() {
+        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+          clearTextAreaContents("text_box_4");
+        }
+      });
+
+    }  /* end function setUpDocumentBody */
+
+
+
+
+    // **************************************************
+    // userjsToolStart
+    // **************************************************
+
+    /* ask for user.js input or use content in body or auto load */
+
+    function userjsToolStart() {
+      if (document.body.innerHTML.replace(/^[\r\n \t]*(<!--[\s\S]*-->)*[\r\n \t]*$/,"")) {
+        // <body> has contents (ie user.js is saved in this HTML file)
+        // the setup body function moves the content into text_box_1
+        setUpDocumentBody();
+        // display user.js text
+        userjsViewer("text_box_1");
+      }
+      else {
+        // <body> is empty or only contains a comment
+        setUpDocumentBody();
+        toggleActionsBox(true);
+
+        // see if we have auto-load/load URL parameters
+        // the files to load must be in the same location (same-origin) as
+        // this HTML file (also allow eg: load1= (no load)  load1=another.js)
+        if ((getURLVariable("auto")=="true") && getURLVariable("load1")==null) {
+          loadFile("user.js", "text_box_1");
+        }
+        else if (!(getURLVariable("load1")=="")) {
+          loadFile(getURLVariable("load1"), "text_box_1");
+        }
+
+        if ((getURLVariable("auto")=="true") && getURLVariable("load2")==null) {
+          loadFile("user-overrides.js", "text_box_2");
+        }
+        else if (!(getURLVariable("load2")=="")) {
+          loadFile(getURLVariable("load2"), "text_box_2");
+        }
+
+        if ((getURLVariable("auto")=="true") && getURLVariable("load3")==null) {
+          loadFile("user-template.js", "text_box_3");
+        }
+        else if (!(getURLVariable("load3")=="")) {
+          loadFile(getURLVariable("load3"), "text_box_3");
+        }
+
+        if (!(getURLVariable("load4")=="")) {
+          loadFile(getURLVariable("load4"), "text_box_4");
+        }
+
+        // NOTE: attempted race condition work around here using setTimeout
+        //   if the above code loads the file, the display does not render
+        //   before the next code lines can see the text box has contents,
+        //   so we set a delay, which mostly works, and if it fails it only
+        //   breaks auto-view and the user can click the view button anyway
+
+        setTimeout(function(){
+          // see if we have auto-view URL parameters (view=0 means no auto-view)
+          // but only view if content loaded (ie text box is not empty)
+          if (getURLVariable("view")=="1"
+            && document.getElementById("text_box_1").value.replace(/[\r\n\t ]/g,""))
+          {
+            userjsViewer("text_box_1");
+            toggleActionsBox(false);
+          }
+          else if (getURLVariable("view")=="2"
+            && document.getElementById("text_box_2").value.replace(/[\r\n\t ]/g,""))
+          {
+            userjsViewer("text_box_2");
+            toggleActionsBox(false);
+          }
+          else if (getURLVariable("view")=="3"
+            && document.getElementById("text_box_3").value.replace(/[\r\n\t ]/g,""))
+          {
+            userjsViewer("text_box_3");
+            toggleActionsBox(false);
+          }
+          else if (getURLVariable("view")=="4"
+            && document.getElementById("text_box_4").value.replace(/[\r\n\t ]/g,""))
+          {
+            userjsViewer("text_box_4");
+            toggleActionsBox(false);
+          }
+          // if a box to view was not specified, we auto-view box 1 only
+          // when: auto-view is not off + auto-load is on + box 1 has contents
+          // otherwise we do not auto-view anything
+          else if (!(getURLVariable("view")=="0")
+            && (getURLVariable("auto")=="true")
+            && document.getElementById("text_box_1").value.replace(/[\r\n\t ]/g,""))
+          {
+            userjsViewer("text_box_1");
+            toggleActionsBox(false);
+          }
+
+          // make the text input boxes read only if they have content
+          // (prevents accidental changes, and clear buttons reset read/write)
+          if (document.getElementById("text_box_1").value.replace(/[\r\n\t ]/g,"")) {
+            document.getElementById("text_box_1").readOnly = true;
+          }
+          if (document.getElementById("text_box_2").value.replace(/[\r\n\t ]/g,"")) {
+            document.getElementById("text_box_2").readOnly = true;
+          }
+          if (document.getElementById("text_box_3").value.replace(/[\r\n\t ]/g,"")) {
+            document.getElementById("text_box_3").readOnly = true;
+          }
+          if (document.getElementById("text_box_4").value.replace(/[\r\n\t ]/g,"")) {
+            document.getElementById("text_box_4").readOnly = true;
+          }
+
+        }, 30);
+
+      }
+    }
+
+
+  </script>
+
+
+</head>
+
+
+<!--
+      If you paste "base64 encoded user.js" data within the <body> section
+      of this HTML file it will be decoded and displayed on loading.
+      Use the "...>Actions>[Encode]" option to create the data.
+      (It is better to use URL parameters to auto load a same origin user.js instead)
+-->
+
+
+<body onload="userjsToolStart()">
+
+</body>
+
+</html>
