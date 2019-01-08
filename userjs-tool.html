@@ -17,7 +17,7 @@
 
     /* **************************************** */
     /*             version/date                 */
-    var version = '2019.01.02.alpha';
+    var version = '2019.01.07.alpha';
     /* **************************************** */
 
     var date_time_stamp;
@@ -45,7 +45,7 @@
       background-color: transparent;
     }
 
-    #actions_box { white-space: normal; }
+    #actions_box, #easy_box { white-space: normal; }
 
     #groups_box { white-space: nowrap; }
 
@@ -1021,7 +1021,7 @@
         + '      <option value="" disabled selected hidden>Go to</option>\n';
       var groups_box_html = ''
         + '<span class="closebtn" onclick="toggleGroupsBox();">&times;</span>\n'
-        + '<b>Groups</b> (about:config?filter) (see ...&gt;Information/Help)<br><br>\n';
+        + '<b>Groups</b> (about:config?filter) &nbsp;(see "...&gt;Help")<br><br>\n';
       var content_html = ''
         // hidden heading (H1/H3/DL tags for bookmarks import compatibility)
         + '<span class="hidden"><H3>Main Content</H3></span><DL>\n';
@@ -1660,113 +1660,65 @@
 
 
     // **************************************************
-    // toggleActionsBox
+    // toggleBox
     // **************************************************
 
-    /* actions box */
+    /*  box_name:  info_box  groups_box  actions_box  easy_box  */
 
-    function toggleActionsBox(force) {
-      var overridesjs_box = document.getElementById("text_box_2");
-      var e = document.getElementById("actions_box");
-      var ie = document.getElementById("info_box");
-      var ge = document.getElementById("groups_box");
-      var opt = findMenuSelectOption("actions");
-      if (force === false || e.style.display === "block") {
+    function toggleBox(box_name, force) {
+      var e = document.getElementById(box_name), opt = '';
+      if (box_name == "info_box") { opt = findMenuSelectOption("info"); }
+      else if (box_name == "groups_box") { opt = findMenuSelectOption("groups"); }
+      else if (box_name == "actions_box") { opt = findMenuSelectOption("actions"); }
+      else if (box_name == "easy_box") { opt = findMenuSelectOption("easy"); }
+      if ( (force === false) || ( (force !== true) && (e.style.display === "block") ) ) {
         // hide this box
-        updateMenuSelectOption(opt, false);
         e.style.display = "none";
+        updateMenuSelectOption(opt, false);
+        // if collector mode is on, show actions_box
+        if (document.getElementById("collect2_button").innerHTML == "EndCollect") {
+          toggleBox("actions_box");
+        }
       }
       else {
-        // hide other boxes
+        // hide all boxes
+        document.getElementById("info_box").style.display = "none";
         updateMenuSelectOption("info", false);
+        document.getElementById("groups_box").style.display = "none";
         updateMenuSelectOption("groups", false);
-        ge.style.display = "none";
-        ie.style.display = "none";
-        // show this box
-        updateMenuSelectOption(opt, true);
-        e.style.display = "block";
-        e.focus();
-        document.getElementById("text_box_1").focus();
-        // when collect mode is on
-        if (document.getElementById("collect2_button").innerHTML == "EndCollect") {
-          // actions_box is a smaller size
-          // scroll box 2 into view
-          overridesjs_box.scrollIntoView();
-          overridesjs_box.focus();
-          // position cursor to the end
-          overridesjs_box.selectionEnd = overridesjs_box.value.length;
-          overridesjs_box.selectionStart = overridesjs_box.value.length;
-        }
-      }
-    }
-
-
-    // **************************************************
-    // toggleGroupsBox
-    // **************************************************
-
-    /* groups box */
-
-    function toggleGroupsBox() {
-      var e = document.getElementById("groups_box");
-      var ie = document.getElementById("info_box");
-      var fe = document.getElementById("actions_box");
-      var opt = findMenuSelectOption("groups");
-      if (e.style.display === "block") {
-        // hide this box
-        e.style.display = "none";
-        if (document.getElementById("collect2_button").innerHTML == "EndCollect") {
-          // if collector mode is on, show actions_box
-          toggleActionsBox();
-        }
-        updateMenuSelectOption(opt, false);
-      }
-      else {
-        // hide other boxes
-        updateMenuSelectOption("info", false);
+        document.getElementById("actions_box").style.display = "none";
         updateMenuSelectOption("actions", false);
-        ie.style.display = "none";
-        fe.style.display = "none";
-        // show this box
+        document.getElementById("easy_box").style.display = "none";
+        updateMenuSelectOption("easy", false);
+        // show required box
         updateMenuSelectOption(opt, true);
         e.style.display = "block";
         e.focus();
-      }
-    }
-
-
-    // **************************************************
-    // toggleInfoBox
-    // **************************************************
-
-    /* information box */
-
-    function toggleInfoBox() {
-      var e = document.getElementById("info_box");
-      var ge = document.getElementById("groups_box");
-      var fe = document.getElementById("actions_box");
-      var opt = findMenuSelectOption("info");
-      if (e.style.display === "block") {
-        // hide this box
-        updateMenuSelectOption(opt, false);
-        e.style.display = "none";
-        if (document.getElementById("collect2_button").innerHTML == "EndCollect") {
-          // if collector mode is on, show actions_box
-          toggleActionsBox();
+        // other tweaks
+        if (box_name == "easy_box") {
+          document.getElementById("text_box_easy").focus();
+        }
+        else if (box_name == "actions_box") {
+          document.getElementById("text_box_1").focus();
+          // when collect mode is on
+          if (document.getElementById("collect2_button").innerHTML == "EndCollect") {
+            var overridesjs_box = document.getElementById("text_box_2");
+            // actions_box is a smaller size
+            // scroll box 2 into view
+            overridesjs_box.scrollIntoView();
+            overridesjs_box.focus();
+            // position cursor to the end
+            overridesjs_box.selectionEnd = overridesjs_box.value.length;
+            overridesjs_box.selectionStart = overridesjs_box.value.length;
+          }
         }
       }
-      else {
-        // hide other boxes
-        updateMenuSelectOption("groups", false);
-        updateMenuSelectOption("actions", false);
-        ge.style.display = "none";
-        fe.style.display = "none";
-        // show this box
-        updateMenuSelectOption(opt, true);
-        e.style.display = "block";
-        e.focus();
-      }
     }
+
+    function toggleInfoBox(force) { toggleBox("info_box", force); }
+    function toggleGroupsBox(force) { toggleBox("groups_box", force); }
+    function toggleActionsBox(force) { toggleBox("actions_box", force); }
+    function toggleEasyBox(force) { toggleBox("easy_box", force); }
 
 
     // **************************************************
@@ -2011,14 +1963,15 @@
         + '      <option>&#x25EB;&#x00A0;&#x00A0;Collapse all</option>\n'
         + '      <option>&#x25EB;&#x00A0;&#x00A0;Expand all</option>\n'
         + '      <option>&#x25EB;&#x00A0;&#x00A0;Collapse current</option>\n'
-        // + '      <option value="" disabled ></option>\n'
+        // + '      <option value="" disabled></option>\n'
         + '      <option>&#x25A2;&#x00A0;&#x00A0;Actions</option>\n'
-        + '      <option>&#x25A2;&#x00A0;&#x00A0;Information/Help</option>\n'
+        + '      <option>&#x25A2;&#x00A0;&#x00A0;Easy View / Links</option>\n'
         + '      <option>&#x25A2;&#x00A0;&#x00A0;Groups</option>\n'
-        // + '      <option value="" disabled ></option>\n'
+        + '      <option>&#x25A2;&#x00A0;&#x00A0;Help / Information</option>\n'
+        // + '      <option value="" disabled></option>\n'
         + '      <option>&#x25A2;&#x00A0;&#x00A0;Wrap text</option>\n'
         + '      <option>&#x25A2;&#x00A0;&#x00A0;Prefix about:config</option>\n'
-        // + '      <option value="" disabled ></option>\n'
+        // + '      <option value="" disabled></option>\n'
         + '      <option>&#x25A2;&#x00A0;&#x00A0;Theme: default</option>\n'
         + '      <option>&#x25A2;&#x00A0;&#x00A0;Theme: dark</option>\n'
         + '      <option>&#x25A2;&#x00A0;&#x00A0;Theme: light</option>\n'
@@ -2038,7 +1991,7 @@
 
         // heading/version/links
 
-        + '<b>Information/Help</b>\n'
+        + '<b>Help / Information</b>\n'
         + '<br><br><br>'
 
         + '<a target="_blank" rel="external noopener noreferrer" href="'
@@ -2054,7 +2007,7 @@
         + '<br><br>GitHub for Updates/Issues/Licence/Etc: \n'
         + '<a target="_blank" rel="external noopener noreferrer" href="'
         + 'https://github.com/icpantsparti/firefox-user.js-tool'
-        + '">firefox-user.js-tool<span class="hidden"> - GitHub</span></a>'
+        + '">firefox-user.js-tool<span class="hidden"> (GitHub)</span></a>'
 
         + '<br><br>Disclaimer: Use with care at your own risk, alpha/experimental/untested.\n'
 
@@ -2062,24 +2015,32 @@
 
         + '<br><br><br><details><summary>Introduction</summary><br><br>\n'
 
-        + 'Offline HTML viewer and actions for Firefox user.js \n'
+        + 'Interactive viewer and actions for Firefox user.js \n'
         + '(ghacksuserjs, pyllyukko, etc).\n'
 
         + '<br><br>Display a Mozilla Firefox user.js settings file contents \n'
-        + 'in your Firefox browser, with: highlighting, links, themes*, \n'
-        + 're-size, wrap, about:config?filter links. &nbsp;Expandable \n'
-        + 'sections, and "go to" section links, with compatible user.js \n'
-        + 'projects. &nbsp;Plus: user-overrides.js* template, point and \n'
+        + 'in your Firefox browser, with:\n'
+        + '<br><br>&nbsp;&nbsp;&bull;&nbsp;highlighting, links, themes*, re-size, wrap, \n'
+        + 'about:config?filter links and groups\n'
+        + '<br><br>&nbsp;&nbsp;&bull;&nbsp;expanding sections, and "go to" section links, \n'
+        + 'with compatible user.js projects\n'
+        + '<br><br>&nbsp;&nbsp;&bull;&nbsp;user-overrides.js* template, point and \n'
         + 'click overrides collector, append* (with comment-out), and \n'
-        + 'prefs.js cleaner*.\n'
+        + 'prefs.js cleaner*\n'
+        + '<br><br>&nbsp;&nbsp;&bull;&nbsp;copy/paste or load/auto-load from local user.js files\n'
+        + '<br><br>&nbsp;&nbsp;&bull;&nbsp;opens offline, or online "Easy View": \n'
+        + '<a target="_blank" rel="external noopener noreferrer" href="'
+        + 'https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?easy=true'
+        + '">userjs-tool.html?easy=true<span class="hidden"> (GitHub Pages)</span></a>'
 
-        + '<br><br>(*ghacks-user.js inspired, as is the dark/light theme. \n'
+        + '<br><br>(*ghacks-user.js inspired, as is the dark/light/HTML theme. \n'
         + '&nbsp;Please visit them and read their wiki/info (the link is \n'
         + 'given in the "user.js" info section below), they have \n'
-        + 'nice scripts which fully handle append/clean/more)\n'
+        + 'nice scripts which better handle append/clean and more)\n'
 
-        + '<br><br>This was an over the top experiment for learning \n'
-        + 'some HTML/CSS/JavaScript.\n'
+        + '<br><br>This was an over the top experiment for learning some \n'
+        + 'HTML/CSS/JavaScript.<br>This is a viewer/tool, \n'
+        + 'and not an editor/installer.\n'
 
         + '<br><br></details>\n'
 
@@ -2117,7 +2078,7 @@
         + '<br><br>Various online sites provide details of user_pref \n'
         + 'settings. &nbsp;Some projects publish their user.js template, with \n'
         + 'instructions and information/wiki, some example links are given \n'
-        + 'below the input boxes for "...&gt;Actions" option. &nbsp;These \n'
+        + 'under the "...&gt;Easy View" option. &nbsp;These \n'
         + 'projects may update their content regularly, keep your user.js \n'
         + 'up to date, settings may also change with each Firefox version.\n'
 
@@ -2137,9 +2098,9 @@
         + 'There are various ways to load user.js content:\n'
 
         + '<br><br>PASTE: paste the content into the "...&gt;Actions" \n'
-        + 'text boxes (open the user.js first in a text editor or in a \n'
-        + 'browser tab to copy it, some example user.js links are provided \n'
-        + 'below the input boxes).\n'
+        + 'or "...&gt;Easy View" text boxes (open the user.js first in a \n'
+        + 'text editor or in a browser tab to copy it, some example user.js \n'
+        + 'links are provided under the "...&gt;Easy View" option).\n'
 
         + '<br><br>LOAD: use the "...&gt;Actions&gt;[Load]" buttons to \n'
         + 'get a same-origin file (ie a file in the same location as \n'
@@ -2226,6 +2187,7 @@
         + '<br><details><summary>Initial states (URL variables)</summary><br><br>\n'
         + 'Some initial states can be set with URL variables \n'
         + '(default values are shown):<br><br>\n'
+        + '&nbsp;&nbsp;easy=false&nbsp;&nbsp;(open on Easy View option)<br>'
         + '&nbsp;&nbsp;expand=false<br>'
         + '&nbsp;&nbsp;wrap=false<br>'
         + '&nbsp;&nbsp;groups=false&nbsp;&nbsp;(display of Groups box, use with load/auto-load)<br>'
@@ -2289,7 +2251,7 @@
 
         + '<br><details><summary>&nbsp;&nbsp;[Append]</summary><br><br>\n'
 
-        + 'Take the user-template.js (eg ghacks user.js) (from Box 3) \n'
+        + 'Take the user-template.js (eg ghacks/pyllyukko/etc user.js) (from Box 3) \n'
         + 'and append your user-overrides.js (from Box 2), place the result \n'
         + 'into Box 1.\n'
 
@@ -2408,8 +2370,8 @@
         + '  <div id="groups_box" class="boxes borders">\n'
         // >>>> user pref groups (between here) are replaced later <<<<
         + '<span class="closebtn" onclick="toggleGroupsBox();">&times;</span>\n'
-        + '<b>Groups</b> (about:config?filter) (see ...&gt;Information/Help)<br><br>\n'
-        + '(add user.js content through "...&gt;Actions", then use [View])'
+        + '<b>Groups</b> (about:config?filter) &nbsp;(see "...&gt;Help")<br><br>\n'
+        + '(add user.js content through "...&gt;Actions" or "...&gt;Easy View", then use [View])'
         + '<br><br><br><br><br>\n'
         // >>>> user pref groups (between here) are replaced later <<<<
         + '</div>\n\n\n'
@@ -2418,13 +2380,10 @@
 
         + '  <div id="actions_box" class="boxes borders">\n'
         + '<span class="closebtn" onclick="toggleActionsBox();">&times;</span>\n'
-        + '<b>Actions</b> (see ...&gt;Information/Help) (also see links below)<br>\n'
-
-        // input boxes
+        + '<b>Actions</b> &nbsp;(see "...&gt;Help") &nbsp;("...&gt;Easy View" has user.js links)<br>\n'
 
         + '<table>\n'
         + '<tr><td class="td1"><br>\n'
-
 
         + '<button type="button" class="controls borders actions_buttons" id="view1_button" \n'
         + 'title="View content in box 1 with HTML, links, etc">View</button><br>\n'
@@ -2446,15 +2405,8 @@
 
         + '</td><td class="td2">\n'
         + '<div class="input_info">Box 1 (user.js)</div>\n'
-        + '<textarea id="text_box_1" autofocus="true">'
-        // add user.js code into the text box if it was encoded in the body
-        //   take document.body.innerHTML as it shows everything
-        //     rather than (document.body.innerText || document.body.textContent)
-        // + document.body.innerHTML.replace(/^[\r\n \t]*(<!--[\s\S]*-->)*[\r\n \t]*$/,"").replace(/[\r\n]*$/,"")
-        + b64DecodeUnicode(document.body.innerHTML.replace(/[^a-zA-Z0-9=+/]/g, ""))
-        + '</textarea>\n'
+        + '<textarea id="text_box_1" autofocus="true"></textarea>\n'
         + '</td></tr>'
-
 
         + '<tr><td class="td1"><br>'
 
@@ -2484,7 +2436,6 @@
         + '<textarea id="text_box_2"></textarea>\n'
         + '</td></tr>'
 
-
         + '<tr><td class="td1"><br>'
 
         + '<button type="button" class="controls borders actions_buttons" id="view3_button" \n'
@@ -2503,10 +2454,9 @@
         + 'title="Clear the text in box 3">Clear</button><br>\n'
 
         + '</td><td class="td2">\n'
-        + '<div class="input_info">Box 3 (user-template.js) (eg ghacks user.js)</div>\n'
+        + '<div class="input_info">Box 3 (user-template.js) (eg ghacks/pyllyukko/etc user.js)</div>\n'
         + '<textarea id="text_box_3"></textarea>\n'
         + '</td></tr>'
-
 
         + '<tr><td class="td1"><br>'
 
@@ -2542,17 +2492,38 @@
         + '<textarea id="text_box_4"></textarea>\n'
         + '</td></tr>'
 
-
         + '</table>\n'
 
-        // notes and links
+        + '<br><br><br><br><br></div>\n\n\n'
+
+        // ---------- easy_box ----------
+
+        + '  <div id="easy_box" class="boxes borders">\n'
+        + '<span class="closebtn" onclick="toggleEasyBox();">&times;</span>\n'
+        + '<b>Easy View</b> &nbsp;(see "...&gt;Help") &nbsp;("...&gt;Actions" has more options)<br>\n'
+        + '<br><br>Paste Firefox user.js text into the box below then click the view button.<br>\n'
+        + '<table>\n'
+        + '<tr><td class="td1">\n'
+        + '<br><button type="button" class="controls borders actions_buttons" id="view_easy_button" \n'
+        + '>View</button><br>\n'
+        + '<br><br><button type="button" class="controls borders actions_buttons" id="clear_easy_button" \n'
+        + '>Clear</button><br>\n'
+        + '</td><td class="td2">\n'
+        + '<textarea id="text_box_easy" autofocus="true">'
+        // add user.js code into the text box if it was encoded in the body
+        //   take document.body.innerHTML as it shows everything
+        //     rather than (document.body.innerText || document.body.textContent)
+        // + document.body.innerHTML.replace(/^[\r\n \t]*(<!--[\s\S]*-->)*[\r\n \t]*$/,"").replace(/[\r\n]*$/,"")
+        + b64DecodeUnicode(document.body.innerHTML.replace(/[^a-zA-Z0-9=+/]/g, ""))
+        + '</textarea>\n'
+        + '</td></tr>'
+        + '</table>\n'
 
         + '<br><div class="input_info">\n'
-        + 'Box contents are lost on browser close/refresh/etc.\n'
 
-        + '<br><br>Here are some example links for user.js templates/projects, you will \n'
+        + 'Here are some example links for user.js templates/projects, you will \n'
         + 'need to consider if these are suitable, good quality, or up to date \n'
-        + '(some may show old settings):\n'
+        + '(some may show old settings), some are based on ghacksuserjs/pyllyukko.\n'
 
         // hidden heading (H1/H3/DL tags for bookmarks import compatibility)
         + '<span class="hidden"><H3>user.js examples</H3></span>\n'
@@ -2670,7 +2641,7 @@
         + '  <button type="button" class="controls borders '
         + ' heading_buttons" id="(TOP)">(TOP)</button>\n'
         + '  <div class="content">\n'
-        + '(add user.js content through "...&gt;Actions", then use [View])'
+        + '(add user.js content through "...&gt;Actions" or "...&gt;Easy View", then use [View])'
         + '  </div>\n'
         // >>>> section contents (between here) are replaced later <<<<
         + '</div>\n\n\n'
@@ -2730,11 +2701,14 @@
         else if (/actions/i.test(this.value)) {
           toggleActionsBox();
         }
-        else if (/information/i.test(this.value)) {
-          toggleInfoBox();
+        else if (/easy/i.test(this.value)) {
+          toggleEasyBox();
         }
         else if (/groups/i.test(this.value)) {
           toggleGroupsBox();
+        }
+        else if (/help/i.test(this.value)) {
+          toggleInfoBox();
         }
         else if (/wrap/i.test(this.value)) {
           toggleWrap();
@@ -2742,7 +2716,7 @@
         else if (/prefix/i.test(this.value)) {
           togglePrefixAboutConfigLinks();
         }
-        else if (/Other theme/i.test(this.value)) {
+        else if (/other themes/i.test(this.value)) {
           this.selectedIndex=0;
           var new_value = prompt("Please input theme name.\n"
             + "default,dark,light,mono,inverse,none,...\n"
@@ -2773,12 +2747,24 @@
       if (getURLVariable("prefix") == "true") { togglePrefixAboutConfigLinks("on"); }
 
 
-      /* buttons for actions box options */
+      /* buttons for actions_box and easy_box options */
 
       // view
 
+      document.getElementById("view_easy_button").addEventListener("click", function() {
+        if (document.getElementById("collect2_button").innerHTML == "Collect"
+          && !(document.getElementById("text_box_easy").value == ""))
+        {
+          document.getElementById("text_box_easy").readOnly = true;
+          userjsViewer("text_box_easy");
+          toggleEasyBox(false);
+        }
+      });
+
       document.getElementById("view1_button").addEventListener("click", function() {
-        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+        if (document.getElementById("collect2_button").innerHTML == "Collect"
+          && !(document.getElementById("text_box_1").value == ""))
+        {
           document.getElementById("text_box_1").readOnly = true;
           userjsViewer("text_box_1");
           toggleActionsBox(false);
@@ -2786,7 +2772,9 @@
       });
 
       document.getElementById("view2_button").addEventListener("click", function() {
-        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+        if (document.getElementById("collect2_button").innerHTML == "Collect"
+          && !(document.getElementById("text_box_2").value == ""))
+        {
           document.getElementById("text_box_2").readOnly = true;
           userjsViewer("text_box_2");
           toggleActionsBox(false);
@@ -2794,7 +2782,9 @@
       });
 
       document.getElementById("view3_button").addEventListener("click", function() {
-        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+        if (document.getElementById("collect2_button").innerHTML == "Collect"
+          && !(document.getElementById("text_box_3").value == ""))
+        {
           document.getElementById("text_box_3").readOnly = true;
           userjsViewer("text_box_3");
           toggleActionsBox(false);
@@ -2802,7 +2792,9 @@
       });
 
       document.getElementById("view4_button").addEventListener("click", function() {
-        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+        if (document.getElementById("collect2_button").innerHTML == "Collect"
+          && !(document.getElementById("text_box_4").value == ""))
+        {
           document.getElementById("text_box_4").readOnly = true;
           userjsViewer("text_box_4");
           toggleActionsBox(false);
@@ -2887,6 +2879,7 @@
         var e = document.getElementById("text_box_3");
         if (document.getElementById("collect2_button").innerHTML == "Collect") {
           // put collect mode on (line through buttons that are disabled)
+          document.getElementById("view_easy_button").style.textDecoration = "line-through";
           document.getElementById("view1_button").style.textDecoration = "line-through";
           document.getElementById("view2_button").style.textDecoration = "line-through";
           document.getElementById("view3_button").style.textDecoration = "line-through";
@@ -2906,6 +2899,7 @@
           document.getElementById("load2_button").style.textDecoration = "line-through";
           document.getElementById("load3_button").style.textDecoration = "line-through";
           document.getElementById("load4_button").style.textDecoration = "line-through";
+          document.getElementById("clear_easy_button").style.textDecoration = "line-through";
           document.getElementById("clear1_button").style.textDecoration = "line-through";
           document.getElementById("clear2_button").style.textDecoration = "line-through";
           document.getElementById("clear3_button").style.textDecoration = "line-through";
@@ -2925,6 +2919,7 @@
           // put collect mode off
           // remove the user.js HTML clickable (removes 100's of Event Listeners)
           removeEventListenersForCollectMode();
+          document.getElementById("view_easy_button").style.textDecoration = null;
           document.getElementById("view1_button").style.textDecoration = null;
           document.getElementById("view2_button").style.textDecoration = null;
           document.getElementById("view3_button").style.textDecoration = null;
@@ -2944,6 +2939,7 @@
           document.getElementById("load2_button").style.textDecoration = null;
           document.getElementById("load3_button").style.textDecoration = null;
           document.getElementById("load4_button").style.textDecoration = null;
+          document.getElementById("clear_easy_button").style.textDecoration = null;
           document.getElementById("clear1_button").style.textDecoration = null;
           document.getElementById("clear2_button").style.textDecoration = null;
           document.getElementById("clear3_button").style.textDecoration = null;
@@ -3073,6 +3069,12 @@
 
       // clear
 
+      document.getElementById("clear_easy_button").addEventListener("click", function() {
+        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+          clearTextAreaContents("text_box_easy");
+        }
+      });
+
       document.getElementById("clear1_button").addEventListener("click", function() {
         if (document.getElementById("collect2_button").innerHTML == "Collect") {
           clearTextAreaContents("text_box_1");
@@ -3111,42 +3113,53 @@
     function userjsToolStart() {
       if (document.body.innerHTML.replace(/^[\r\n \t]*(<!--[\s\S]*-->)*[\r\n \t]*$/,"")) {
         // <body> has contents (ie user.js is saved in this HTML file)
-        // the setup body function moves the content into text_box_1
+        // the setup body function moves the content into text_box_easy
         setUpDocumentBody();
         // display user.js text
-        userjsViewer("text_box_1");
+        userjsViewer("text_box_easy");
       }
       else {
         // <body> is empty or only contains a comment
         setUpDocumentBody();
-        toggleActionsBox(true);
+
+        if ( getURLVariable("easy") != "true" || getURLVariable("auto") == "true")
+        {
+          toggleActionsBox(true);
+        }
+        else {
+          toggleEasyBox(true);
+        }
 
         // see if we have auto-load/load URL parameters
         // the files to load must be in the same location (same-origin) as
         // this HTML file (also allow eg: load1= (no load)  load1=another.js)
-        if ((getURLVariable("auto")=="true") && getURLVariable("load1")==null) {
+        if (getURLVariable("auto") == "true" && getURLVariable("load1") == null) {
           loadFile("user.js", "text_box_1");
         }
-        else if (!(getURLVariable("load1")=="")) {
+        else if (getURLVariable("load1") != "" && getURLVariable("load1") != null) {
           loadFile(getURLVariable("load1"), "text_box_1");
+          toggleActionsBox(true);
         }
 
-        if ((getURLVariable("auto")=="true") && getURLVariable("load2")==null) {
+        if (getURLVariable("auto") == "true" && getURLVariable("load2") == null) {
           loadFile("user-overrides.js", "text_box_2");
         }
-        else if (!(getURLVariable("load2")=="")) {
+        else if (getURLVariable("load2") != "" && getURLVariable("load2") != null) {
           loadFile(getURLVariable("load2"), "text_box_2");
+          toggleActionsBox(true);
         }
 
-        if ((getURLVariable("auto")=="true") && getURLVariable("load3")==null) {
+        if (getURLVariable("auto") == "true" && getURLVariable("load3") == null) {
           loadFile("user-template.js", "text_box_3");
         }
-        else if (!(getURLVariable("load3")=="")) {
+        else if (getURLVariable("load3") != "" && getURLVariable("load3") != null) {
           loadFile(getURLVariable("load3"), "text_box_3");
+          toggleActionsBox(true);
         }
 
-        if (!(getURLVariable("load4")=="")) {
+        if (getURLVariable("load4") != "" && getURLVariable("load4") != null) {
           loadFile(getURLVariable("load4"), "text_box_4");
+          toggleActionsBox(true);
         }
 
         // NOTE: attempted race condition work around here using setTimeout
@@ -3158,25 +3171,25 @@
         setTimeout(function(){
           // see if we have auto-view URL parameters (view=0 means no auto-view)
           // but only view if content loaded (ie text box is not empty)
-          if (getURLVariable("view")=="1"
+          if (getURLVariable("view") == "1"
             && document.getElementById("text_box_1").value.replace(/[\r\n\t ]/g,""))
           {
             userjsViewer("text_box_1");
             toggleActionsBox(false);
           }
-          else if (getURLVariable("view")=="2"
+          else if (getURLVariable("view") == "2"
             && document.getElementById("text_box_2").value.replace(/[\r\n\t ]/g,""))
           {
             userjsViewer("text_box_2");
             toggleActionsBox(false);
           }
-          else if (getURLVariable("view")=="3"
+          else if (getURLVariable("view") == "3"
             && document.getElementById("text_box_3").value.replace(/[\r\n\t ]/g,""))
           {
             userjsViewer("text_box_3");
             toggleActionsBox(false);
           }
-          else if (getURLVariable("view")=="4"
+          else if (getURLVariable("view") == "4"
             && document.getElementById("text_box_4").value.replace(/[\r\n\t ]/g,""))
           {
             userjsViewer("text_box_4");
@@ -3185,9 +3198,9 @@
           // if a box to view was not specified, we auto-view box 1 only
           // when: auto-view is not off + auto-load is on + box 1 has contents
           // otherwise we do not auto-view anything
-          else if (!(getURLVariable("view")=="0")
-            && (getURLVariable("auto")=="true")
-            && document.getElementById("text_box_1").value.replace(/[\r\n\t ]/g,""))
+          else if ((getURLVariable("view") != "0")
+            && (getURLVariable("auto") == "true")
+            && (document.getElementById("text_box_1").value.replace(/[\r\n\t ]/g,"")))
           {
             userjsViewer("text_box_1");
             toggleActionsBox(false);
