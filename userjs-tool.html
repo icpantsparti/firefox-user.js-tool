@@ -17,7 +17,7 @@
 
     /* **************************************** */
     /*             version/date                 */
-    var version = '2019.01.17.alpha';
+    var version = '2019.01.18.alpha';
     /* **************************************** */
 
     var date_time_stamp;
@@ -895,7 +895,7 @@
     // tidySectionHeading
     // **************************************************
 
-    // used in userjsViewer and overridesjsTemplate
+    // used in userjsViewer and overridesjsSkeleton
 
     function tidySectionHeading(text) {
       function tidySectionHeadingRegex(f,r) {
@@ -932,7 +932,7 @@
     // detectSectionHeading
     // **************************************************
 
-    // used in userjsViewer and overridesjsTemplate
+    // used in userjsViewer and overridesjsSkeleton
 
     function detectSectionHeading(line,userjs_type,line_number) {
 
@@ -983,7 +983,7 @@
     // detectUserjsType
     // **************************************************
 
-    // used in userjsViewer and overridesjsTemplate
+    // used in userjsViewer and overridesjsSkeleton
 
     function detectUserjsType(line,userjs_type,line_number) {
       // determine type (within first 10 lines)
@@ -1321,10 +1321,10 @@
 
 
     // **************************************************
-    // overridesjsTemplate
+    // overridesjsSkeleton
     // **************************************************
 
-    function overridesjsTemplate(templatejs_box_name, overridesjs_box_name) {
+    function overridesjsSkeleton(templatejs_box_name, overridesjs_box_name) {
 
       var templatejs_box = document.getElementById(templatejs_box_name);
       var overridesjs_box = document.getElementById(overridesjs_box_name);
@@ -1417,7 +1417,7 @@
       overridesjs_box.focus();
       overridesjs_box.select();
 
-    }  /* end function overridesjsTemplate */
+    }  /* end function overridesjsSkeleton */
 
 
     // **************************************************
@@ -2260,7 +2260,7 @@
         + 'about:config?filter links and groups\n'
         + '<br><br>&nbsp;&nbsp;&bull;&nbsp;expanding sections, and "go to" section links, \n'
         + 'with compatible user.js projects\n'
-        + '<br><br>&nbsp;&nbsp;&bull;&nbsp;user-overrides.js* template, point and \n'
+        + '<br><br>&nbsp;&nbsp;&bull;&nbsp;user-overrides.js* skeleton, point and \n'
         + 'click overrides collector, append* (with comment-out), and \n'
         + 'prefs.js cleaner*\n'
         + '<br><br>&nbsp;&nbsp;&bull;&nbsp;copy/paste or load/auto-load from local user.js files\n'
@@ -2443,7 +2443,7 @@
         + '&nbsp;&nbsp;file:///home/USERNAME/Downloads/userjs-tool.html?theme=light&amp;size=150<br>\n'
         + '<br>&nbsp;&nbsp;?auto=true&nbsp;&nbsp;(load boxes 1, 2, 3, and view box 1)<br>\n'
         + '&nbsp;&nbsp;?auto=true&amp;load2=&amp;load3=&amp;expand=true&nbsp;&nbsp;(auto load/view user.js and expand)<br>\n'
-        + '&nbsp;&nbsp;?auto=true&amp;load1=&amp;view=0&nbsp;&nbsp;(auto load overrides/template, without auto view)<br>\n'
+        + '&nbsp;&nbsp;?auto=true&amp;load1=&amp;view=0&nbsp;&nbsp;(auto load overrides and template, without auto view)<br>\n'
         + '&nbsp;&nbsp;?auto=true&amp;view=0&nbsp;&nbsp;(auto load, without auto view)<br>\n'
         + '&nbsp;&nbsp;?auto=true&amp;load1=&amp;load2=&amp;view=3&nbsp;&nbsp;(auto load and view box 3 only)<br>\n'
         + '&nbsp;&nbsp;?load1=filename.js&amp;view=1&nbsp;&nbsp;(load and view box 1)<br>\n'
@@ -2527,10 +2527,10 @@
 
         + '<br><br></details>\n'
 
-        // Actions - Template
+        // Actions - Skeleton
 
-        + '<br><details><summary>&nbsp;&nbsp;[Template] - below box 2</summary><br><br>\n'
-        + 'Create a template for a user-overrides.js. &nbsp;Reduce the \n'
+        + '<br><details><summary>&nbsp;&nbsp;[Skeleton] - below box 2</summary><br><br>\n'
+        + 'Create a skeleton for a user-overrides.js. &nbsp;Reduce the \n'
         + 'user-template.js (from Box 3) to headings and commented \n'
         + 'user_pref, place the result into Box 2.\n'
         + '<br><br></details>\n'
@@ -2653,7 +2653,7 @@
         + '<span class="closebtn" onclick="toggleActionsBox();">&times;</span>\n'
         + '<b>Actions</b> &nbsp;(see "...&gt;Help") &nbsp;("...&gt;Easy View" has user.js links)<br>\n'
 
-        + '<br>Four boxes with actions: View, Append, Template, Collect, Clean, Values, Group, Encode, Decode.<br>\n'
+        + '<br>Four boxes with actions: View, Append, Skeleton, Collect, Clean, Values, Group, Encode, Decode.<br>\n'
 
         + '<table>\n'
         + '<tr><td class="td1">\n'
@@ -2704,8 +2704,8 @@
         + '</td><td class="td2">\n'
         + '<div class="input_info">Box 2 (user-overrides.js)</div>\n'
         + '<textarea id="text_box_2"></textarea>\n'
-        + '<button type="button" class="controls borders actions_buttons" id="template2_button" \n'
-        + 'title="Create a user-overrides.js template, from box 3, output into box 2">Template</button>\n'
+        + '<button type="button" class="controls borders actions_buttons" id="skeleton2_button" \n'
+        + 'title="Create a user-overrides.js skeleton, from box 3, output into box 2">Skeleton</button>\n'
         + '<button type="button" class="controls borders actions_buttons" id="collect2_button" \n'
         + 'title="Point and click user-overrides.js collector, from box 3, output into box 2">Collect</button>\n'
         + '</td></tr>'
@@ -3246,14 +3246,14 @@
         }
       });
 
-      // template
+      // skeleton
 
-      document.getElementById("template2_button").addEventListener("click", function() {
+      document.getElementById("skeleton2_button").addEventListener("click", function() {
         if (document.getElementById("collect2_button").style.textDecoration != "line-through"
           && !(document.getElementById("text_box_3").value == ""))
         {
-          // overridesjsTemplate(templatejs_box_name, overridesjs_box_name)
-          overridesjsTemplate("text_box_3", "text_box_2");
+          // overridesjsSkeleton(templatejs_box_name, overridesjs_box_name)
+          overridesjsSkeleton("text_box_3", "text_box_2");
           document.getElementById("text_box_2").readOnly = true;
         }
       });
@@ -3281,7 +3281,7 @@
           document.getElementById("clear3_button").style.textDecoration = "line-through";
           document.getElementById("clear4_button").style.textDecoration = "line-through";
           document.getElementById("append1_button").style.textDecoration = "line-through";
-          document.getElementById("template2_button").style.textDecoration = "line-through";
+          document.getElementById("skeleton2_button").style.textDecoration = "line-through";
           document.getElementById("collect2_button").style.textDecoration = "line-through";
           document.getElementById("examples3_button").style.textDecoration = "line-through";
           document.getElementById("clean4_button").style.textDecoration = "line-through";
@@ -3329,7 +3329,7 @@
           document.getElementById("clear3_button").style.textDecoration = null;
           document.getElementById("clear4_button").style.textDecoration = null;
           document.getElementById("append1_button").style.textDecoration = null;
-          document.getElementById("template2_button").style.textDecoration = null;
+          document.getElementById("skeleton2_button").style.textDecoration = null;
           document.getElementById("collect2_button").style.textDecoration = null;
           document.getElementById("examples3_button").style.textDecoration = null;
           document.getElementById("clean4_button").style.textDecoration = null;
