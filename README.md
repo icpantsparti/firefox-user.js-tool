@@ -20,4 +20,4 @@ Open the raw text/html file in a browser tab ([direct link](https://raw.githubus
 #### userjs-tool-themes.css
 This is an optional file for use with userjs-tool.html.  Use this file to override the default theme with your own colors or to add your own custom themes.
 
-![](/images/userjs-tool_small.png)
+![](/images/userjs-tool.png)
