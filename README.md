@@ -4,7 +4,7 @@ Interactive viewer and actions for Firefox user.js (ghacksuserjs, pyllyukko, etc
 Display a Mozilla Firefox user.js settings file contents in your Firefox browser, with:
 * highlighting, links, themes*, re-size, wrap, about:config?filter links and groups
 * expanding sections, and "go to" section links, with compatible user.js projects
-* user-overrides.js* template, point and click overrides collector, append* (with comment-out), and prefs.js cleaner*
+* user-overrides.js* skeleton, point and click overrides collector, append* (with comment-out), and prefs.js cleaner*
 * copy/paste or load/auto-load from local user.js files
 * opens offline, or online "Easy View": [userjs-tool.html?easy=true](https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?easy=true)
 
