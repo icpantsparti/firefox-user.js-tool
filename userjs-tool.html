@@ -17,7 +17,7 @@
 
     /* **************************************** */
     /*             version/date                 */
-    var version = '2019.01.07.alpha';
+    var version = '2019.01.17.alpha';
     /* **************************************** */
 
     var date_time_stamp;
@@ -45,10 +45,6 @@
       background-color: transparent;
     }
 
-    #actions_box, #easy_box { white-space: normal; }
-
-    #groups_box { white-space: nowrap; }
-
     .boxes {
       display: none;
       position: fixed;
@@ -69,7 +65,7 @@
       border-width: 1px 1px 0px 1px;
     }
 
-    #view_area { white-space: nowrap; }
+    #groups_box, #view_area { white-space: nowrap; }
 
     .content {
       display: none;
@@ -96,7 +92,9 @@
 
     #goto_select, #menu_select { width: 5em; max-width: 5em; }
 
-    .actions_buttons { width: 7.5em; }
+    /* margin: 10px 10px 5px 0px;  */
+    .actions_buttons { width: 7.7em; margin: 0px; padding: 8px 8px 8px 8px; }
+    #actions_easy_button { margin-top: 45px; }
 
     .heading_buttons {
       padding-left: 20px;
@@ -112,18 +110,19 @@
       width: 100%;
       min-width: 100%;
       max-width: 100%;
-      height: 15vh;
-      min-height: 10em;
+      height: 11.5em;
+      min-height: 11.5em;
       max-height: 50vh;
       white-space: pre;
       resize: vertical;
+      margin: 0px 0px 10px 0px;
     }
 
     .input_info { display: block; }
 
     table { font: inherit; width: 100%; border-spacing: 0 10px;}
 
-    .td1 { text-align: left; vertical-align:top; width: 10%; padding-top: 10px; }
+    .td1 { text-align: left; vertical-align:top; width: 10%; padding: 10px 10px 0px 0px; }
     .td2 { text-align: left; vertical-align:top; width: 100%; padding-top: 10px; }
     .td3 { text-align: left; vertical-align:center; width: 50%; padding-right: 10px; }
 
@@ -139,6 +138,8 @@
     .setup { font-weight: bold; text-decoration: underline; }
 
     .hidden, #collect_mode_pad { display: none; }
+
+    #endcollect2_button { display: none; }
 
     .closebtn {
       font-weight: bold;
@@ -692,7 +693,7 @@
         newbg = "#000000"; /*Black*/
       }
       var e = document.getElementsByClassName(classname);
-      for (var i = 0; i < e.length; i++) {
+      for (var i=0,j=e.length;i<j;i++) {
         e[i].style.color = newfg;
         e[i].style.backgroundColor = newbg;
       }
@@ -791,7 +792,7 @@
       // add to list of changes (kept in text_box_2)
       if (new_value != null || new_inactive != null) {
 
-        x = new RegExp("user_pref\\([\"']"
+        x = new RegExp("user_pref[ \t]*\\([ \t]*[\"']"
           + RegExp.escape(prefname.innerHTML) + "[\"']", "m");
 
         x2 = new RegExp("^[ \t]*\/\/\/\/ --- comment-out --- '"
@@ -827,8 +828,7 @@
         }
         else {
           // new to output
-          overridesjs_box.value =
-            overridesjs_box.value + r + "\n";
+          overridesjs_box.value += r + "\n";
         }
         // get index of prefname within text box
         var ns = overridesjs_box.value.lastIndexOf('"' + prefname.innerHTML + '"');
@@ -865,7 +865,7 @@
       var class4 = Array.from(document.getElementsByClassName("string"));
       var class5 = Array.from(document.getElementsByClassName("pref"));
       var e = Array.from(new Set(class1.concat(class2,class3,class4,class5)));
-      for (var i = 0; i < e.length; i++) {
+      for (var i=0,j=e.length;i<j;i++) {
         e[i].style.cursor = "cell";
         e[i].addEventListener("click", clickActionForCollectMode);
       }
@@ -884,7 +884,7 @@
       var class4 = Array.from(document.getElementsByClassName("string"));
       var class5 = Array.from(document.getElementsByClassName("pref"));
       var e = Array.from(new Set(class1.concat(class2,class3,class4,class5)));
-      for (var i = 0; i < e.length; i++) {
+      for (var i=0,j=e.length;i<j;i++) {
         e[i].style.cursor = "auto";
         e[i].removeEventListener("click", clickActionForCollectMode);
       }
@@ -1035,12 +1035,10 @@
       // some common HTML used for each section_heading
 
       function appendSectionStartHtml() {
-        goto_select_html = goto_select_html
-          + '      <option>' + section_heading + '</option>\n';
-        groups_box_html = groups_box_html
-          + '<a target="_blank" href="about:config?filter=/^$|^(';
+        goto_select_html += '      <option>' + section_heading + '</option>\n';
+        groups_box_html += '<a target="_blank" href="about:config?filter=/^$|^(';
         var theme = document.body.className.replace( /(^| *)[^_]+_/ , '');
-        content_html = content_html
+        content_html += ""  // plus below
           // hidden heading (H1/H3/DL tags for bookmarks import compatibility)
           + '  <span class="hidden"><H3>' + section_heading + '</H3></span>\n'
           + '  <button type="button" class="controls borders '
@@ -1053,9 +1051,8 @@
       function appendSectionEndHtml() {
         // remove trailing |
         group_user_pref_list = group_user_pref_list.replace(/\|$/, '');
-        groups_box_html = groups_box_html + group_user_pref_list
-          + ')(;|$)|^$/i">-' + section_heading + '</A><br>\n';
-        content_html = content_html
+        groups_box_html += group_user_pref_list + ')(;|$)|^$/i">-' + section_heading + '</A><br>\n';
+        content_html += ""  // plus below
           // add about:config group
           + '<br><a target="_blank" href="about:config?filter=/^$|^('
           + group_user_pref_list + ')(;|$)|^$/i">' + '////' + '</A>\n'
@@ -1081,7 +1078,7 @@
           appendSectionEndHtml();
           section_heading = tidySectionHeading(line);
           appendSectionStartHtml();
-          section_count = section_count + 1;
+          section_count += 1;
         }
 
         // HTML code injection prevention
@@ -1119,7 +1116,7 @@
             + pref_escaped + ")(;|\$)|^\$/i\">$2</A>$3";
           line_userpref_part = line_userpref_part.replace(x, r);
           // add prefname to groups
-          group_user_pref_list = group_user_pref_list + pref_escaped + "|";
+          group_user_pref_list += pref_escaped + "|";
 
           // span/class for:  //user_pref  /*user_pref  user_pref
           if (new RegExp("([/][/*]+[ \t]*user_pref)", "i").test(line_userpref_part)) {
@@ -1202,7 +1199,7 @@
         }
 
         // add to HTML code
-        content_html = content_html + line_userpref_part + line + '\n';
+        content_html += line_userpref_part + line + '\n';
 
       } /* end for (i in content) */
       content = [];
@@ -1211,8 +1208,8 @@
 
 
       /* update HTML page with the new content */
-      groups_box_html = groups_box_html + '<br><br><br><br>\n';
-      content_html = content_html + '  <br><br><br></DL>\n';
+      groups_box_html += '<br><br><br><br>\n';
+      content_html += '  <br><br><br></DL>\n';
       document.getElementById("goto_select").innerHTML = goto_select_html;
       document.getElementById("groups_box").innerHTML = groups_box_html;
       document.getElementById("view_area").innerHTML = content_html;
@@ -1225,7 +1222,7 @@
 
       /* add listener for expand/collapse individual sections (multiple buttons) */
       var e = document.getElementsByClassName("heading_buttons");
-      for (var i = 0; i < e.length; i++) {
+      for (var i=0,j=e.length;i<j;i++) {
         e[i].addEventListener("click", function() {
           var next = this.nextElementSibling;
           if (next.style.display === "block") {
@@ -1264,17 +1261,12 @@
       var overridesjs_content = overridesjs_box.value.replace(/(\r\n|\r)/g,'\n').split("\n");
       var x = new RegExp("^[ \t]*\/\/\/\/ --- add-override-comment ---[ \t]*$", "mi");
       var override_tagging_on = x.test(overridesjs_box.value);
-
       userjs_box.value = '';
-
-      function output(text) { userjs_box.value = userjs_box.value + text; };
-
       updateDateTimeStampVariable();
-      output('// ' + date_time_stamp + " (user-overrides.js appended to user-template.js)\n\n");
-      output(templatejs_box.value.replace(/[\r\n]*$/, ""));
-      output("\n\n\n\n\n/*** (overrides) (start of overrides) ***/\n");
-      output('user_pref("_user.js.parrot", "(overrides) '
-        + '(start of overrides)");' + "\n\n\n\n\n");
+      userjs_box.value += '// ' + date_time_stamp + " (user-overrides.js appended to user-template.js)\n\n";
+      userjs_box.value += templatejs_box.value.replace(/[\r\n]*$/, "");
+      userjs_box.value += "\n\n\n\n\n/*** (overrides) __________ (start of overrides) __________ ***/\n";
+      userjs_box.value += 'user_pref("_user.js.parrot", "(overrides) (start of overrides)");' + "\n\n\n\n\n";
 
       var i = 0;
       for (i in overridesjs_content) {
@@ -1313,13 +1305,12 @@
         }
 
         // append line
-        output(line + "\n");
+        userjs_box.value += line + "\n";
       }
       overridesjs_content = [];
 
-      output("\n\n\n\n/*** (overrides) (end of overrides) ***/\n");
-      output('user_pref("_user.js.parrot", "(overrides) '
-        + '(end of overrides): SUCCESS");' + "\n");
+      userjs_box.value += "\n\n\n\n/*** (overrides) (end of overrides) ***/\n";
+      userjs_box.value += 'user_pref("_user.js.parrot", "(overrides) (end of overrides): SUCCESS");' + "\n";
 
       userjs_box.focus();
       userjs_box.select();
@@ -1338,17 +1329,14 @@
       var templatejs_box = document.getElementById(templatejs_box_name);
       var overridesjs_box = document.getElementById(overridesjs_box_name);
       var templatejs_content = templatejs_box.value.replace(/(\r\n|\r)/g,'\n').split("\n");
-
       overridesjs_box.value = '';
-
-      function overridesjs_output(text) { overridesjs_box.value = overridesjs_box.value + text; };
 
       var section_number_tag = "0000";
       var section_number_tag_9999_prefix = "";
       var userjs_type = "";
       updateDateTimeStampVariable();
-      overridesjs_output('// ' + date_time_stamp + "\n\n");
-      overridesjs_output("/*** (overrides) (TOP) ***/");
+      overridesjs_box.value += '// ' + date_time_stamp + "\n\n";
+      overridesjs_box.value += "/*** (overrides) (TOP) ***/";
       var i = 0;
       for (i in templatejs_content) {
         var line = templatejs_content[i];
@@ -1403,7 +1391,7 @@
           line = tidySectionHeading(line);
           // output heading line (with '(overrides)' inserted)
           line = line.replace(new RegExp("^\\(overrides\\) "), "");
-          overridesjs_output("\n\n/*** (overrides) " + line + " ***/");
+          overridesjs_box.value += "\n\n/*** (overrides) " + line + " ***/";
         }
         else if (/^##PREF##/.test(line)) {
           // remove the prefix
@@ -1415,21 +1403,269 @@
           line = line.replace(x, "$1");
 
           // output user_pref line (and add section number if ghacks)
-          overridesjs_output("\n" + line);
+          overridesjs_box.value += "\n" + line;
           if (userjs_type == "ghacks") {
-            overridesjs_output(" // " + section_number_tag_9999_prefix + section_number_tag);
+            overridesjs_box.value += " // " + section_number_tag_9999_prefix + section_number_tag;
           }
         }
 
       } /* end for (i in templatejs_content) */
       templatejs_content = [];
 
-      overridesjs_output("\n");
+      overridesjs_box.value += "\n";
 
       overridesjs_box.focus();
       overridesjs_box.select();
 
     }  /* end function overridesjsTemplate */
+
+
+    // **************************************************
+    // userjsToValueGroups
+    // **************************************************
+
+    function userjsToValueGroups(userjs_box_name, otherjs_box_name) {
+      var userjs_box = document.getElementById(userjs_box_name);
+      var otherjs_box = document.getElementById(otherjs_box_name);
+      otherjs_box.value = '';
+      var active_boolean_false = "",  inactive_boolean_false = "";
+      var active_boolean_true = "",   inactive_boolean_true = "";
+      var active_integer_0 = "",      inactive_integer_0 = "";
+      var active_integer_1 = "",      inactive_integer_1 = "";
+      var active_integer_2 = "",      inactive_integer_2 = "";
+      var active_integer_3 = "",      inactive_integer_3 = "";
+      var active_integer_other = "",  inactive_integer_other = "";
+      var active_string_empty = "",   inactive_string_empty = "";
+      var active_string_other = "",   inactive_string_other = "";
+      var active_invalid = "",        inactive_invalid = "";
+      var userjs_content = userjs_box.value.replace(/(\r\n|\r)/g,'\n').split("\n");
+      var i = 0, x = "", r = "";
+      for (i in userjs_content) {
+        var line = userjs_content[i];
+        x = new RegExp("^(.*user_pref)"  // $1 user_pref  //user_pref  etc
+          + "([ \t]*\\([ \t]*[\"'])"     // $2 ("  ('
+          + "([^\"']+)"                  // $3 prefname
+          + "([\"'][ \t]*,[ \t]*)"       // $4 ",  ',
+          + "(.*)"                       // $5 prefvalue  "prefvalue"  'prefvalue'
+          + "([ \t]*\\)[ \t]*;)"         // $6 );
+          + "(.*)$", "gi");              // $7 afters/comment
+        if (x.test(line)) {
+          var prefname_escaped = RegExp.escape(line.replace(x, "$3"));
+          var prefvalue = line.replace(x,"$5");
+          var prefactive = line.replace(x,"$1");
+
+          // we will handle successive user_pref
+          //   check if pref name is in a previous value group to deal with
+          //   different lines having re-occurring same named pref
+          //   * inactive pref: remove existing from any inactive group
+          //                    add to an inactive group if not in any active group
+          //   * active pref: remove existing from any inactive or active group
+          //                  add to an active group
+          //   eg //user_pref("a.pref", false); if already had: //user_pref("a.pref", true);
+          //      we would remove that from the inactive true group
+          //   eg //user_pref("a.pref", false); if already had: user_pref("a.pref", true);
+          //      we would not add that in the inactive false group
+          //   eg user_pref("a.pref", false); if already had: user_pref("a.pref", true);
+          //      we would remove that from the active true group
+          //   eg user_pref("a.pref", false); if already had: //user_pref("a.pref", true);
+          //      we would remove that from the inactive true group
+
+          // ensure no duplicate in the inactive groups
+          x = new RegExp("^.*user_pref[ \t]*\\([ \t]*[\"']" + prefname_escaped + "[\"'].*$", "gm");
+          inactive_boolean_false = inactive_boolean_false.replace(x, "");
+          inactive_boolean_true  = inactive_boolean_true.replace(x, "");
+          inactive_integer_0     = inactive_integer_0.replace(x, "");
+          inactive_integer_1     = inactive_integer_1.replace(x, "");
+          inactive_integer_2     = inactive_integer_2.replace(x, "");
+          inactive_integer_3     = inactive_integer_3.replace(x, "");
+          inactive_integer_other = inactive_integer_other.replace(x, "");
+          inactive_string_empty  = inactive_string_empty.replace(x, "");
+          inactive_string_other  = inactive_string_other.replace(x, "");
+          inactive_invalid       = inactive_invalid.replace(x, "");
+
+          if (new RegExp("^.*[/][/*].*user_pref", "i").test(prefactive)) {
+            /* inactive user_pref */
+            // ensure not already in active value groups
+            if (!(x.test(active_boolean_false)
+              || x.test(active_boolean_true)
+              || x.test(active_integer_0)
+              || x.test(active_integer_1)
+              || x.test(active_integer_2)
+              || x.test(active_integer_3)
+              || x.test(active_integer_other)
+              || x.test(active_string_empty)
+              || x.test(active_string_other)
+              || x.test(active_invalid)))
+            {
+              // add to inactive value group
+              if (prefvalue == "false") { inactive_boolean_false += line + "\n"; }
+              else if (prefvalue == "true") { inactive_boolean_true += line + "\n"; }
+              else if (prefvalue == "0") { inactive_integer_0 += line + "\n"; }
+              else if (prefvalue == "1") { inactive_integer_1 += line + "\n"; }
+              else if (prefvalue == "2") { inactive_integer_2 += line + "\n"; }
+              else if (prefvalue == "3") { inactive_integer_3 += line + "\n"; }
+              else if (new RegExp("^[0-9.+-]+$").test(prefvalue)) {
+                inactive_integer_other += line + "\n";
+              }
+              else if (new RegExp("^[\"'][\"']$").test(prefvalue)) {
+                inactive_string_empty += line + "\n";
+              }
+              else if (new RegExp("^[\"'].*[\"']$").test(prefvalue)) {
+                inactive_string_other += line + "\n";
+              }
+              else { inactive_invalid = inactive_invalid + line + "\n"; }
+            }
+          }
+          else {
+            /* active user_pref */
+            // ensure no duplicate in the active value groups
+            active_boolean_false = active_boolean_false.replace(x, "");
+            active_boolean_true  = active_boolean_true.replace(x, "");
+            active_integer_0     = active_integer_0.replace(x, "");
+            active_integer_1     = active_integer_1.replace(x, "");
+            active_integer_2     = active_integer_2.replace(x, "");
+            active_integer_3     = active_integer_3.replace(x, "");
+            active_integer_other = active_integer_other.replace(x, "");
+            active_string_empty  = active_string_empty.replace(x, "");
+            active_string_other  = active_string_other.replace(x, "");
+            active_invalid       = active_invalid.replace(x, "");
+            // add to active value group
+            if (prefvalue == "false") { active_boolean_false += line + "\n"; }
+            else if (prefvalue == "true") { active_boolean_true += line + "\n"; }
+            else if (prefvalue == "0") { active_integer_0 += line + "\n"; }
+            else if (prefvalue == "1") { active_integer_1 += line + "\n"; }
+            else if (prefvalue == "2") { active_integer_2 += line + "\n"; }
+            else if (prefvalue == "3") { active_integer_3 += line + "\n"; }
+            else if (new RegExp("^[0-9.+-]+$").test(prefvalue)) {
+              active_integer_other += line + "\n";
+            }
+            else if (new RegExp("^[\"'][\"']$").test(prefvalue)) {
+              active_string_empty += line + "\n";
+            }
+            else if (new RegExp("^[\"'].*[\"']$").test(prefvalue)) {
+              active_string_other += line + "\n";
+            }
+            else { active_invalid += line + "\n"; }
+          }
+        }
+      }
+      userjs_content = [];
+      // remove excess newlines
+      active_boolean_false = active_boolean_false.replace(/[\r\n]+/g, "\n").replace(/^[\r\n]+/g, "").replace(/[\r\n]+$/g, "\n");
+      active_boolean_true  = active_boolean_true.replace(/[\r\n]+/g, "\n").replace(/^[\r\n]+/g, "").replace(/[\r\n]+$/g, "\n");
+      active_integer_0     = active_integer_0.replace(/[\r\n]+/g, "\n").replace(/^[\r\n]+/g, "").replace(/[\r\n]+$/g, "\n");
+      active_integer_1     = active_integer_1.replace(/[\r\n]+/g, "\n").replace(/^[\r\n]+/g, "").replace(/[\r\n]+$/g, "\n");
+      active_integer_2     = active_integer_2.replace(/[\r\n]+/g, "\n").replace(/^[\r\n]+/g, "").replace(/[\r\n]+$/g, "\n");
+      active_integer_3     = active_integer_3.replace(/[\r\n]+/g, "\n").replace(/^[\r\n]+/g, "").replace(/[\r\n]+$/g, "\n");
+      active_integer_other = active_integer_other.replace(/[\r\n]+/g, "\n").replace(/^[\r\n]+/g, "").replace(/[\r\n]+$/g, "\n");
+      active_string_empty  = active_string_empty.replace(/[\r\n]+/g, "\n").replace(/^[\r\n]+/g, "").replace(/[\r\n]+$/g, "\n");
+      active_string_other  = active_string_other.replace(/[\r\n]+/g, "\n").replace(/^[\r\n]+/g, "").replace(/[\r\n]+$/g, "\n");
+      active_invalid       = active_invalid.replace(/[\r\n]+/g, "\n").replace(/^[\r\n]+/g, "").replace(/[\r\n]+$/g, "\n");
+      inactive_boolean_false = inactive_boolean_false.replace(/[\r\n]+/g, "\n").replace(/^[\r\n]+/g, "").replace(/[\r\n]+$/g, "\n");
+      inactive_boolean_true  = inactive_boolean_true.replace(/[\r\n]+/g, "\n").replace(/^[\r\n]+/g, "").replace(/[\r\n]+$/g, "\n");
+      inactive_integer_0     = inactive_integer_0.replace(/[\r\n]+/g, "\n").replace(/^[\r\n]+/g, "").replace(/[\r\n]+$/g, "\n");
+      inactive_integer_1     = inactive_integer_1.replace(/[\r\n]+/g, "\n").replace(/^[\r\n]+/g, "").replace(/[\r\n]+$/g, "\n");
+      inactive_integer_2     = inactive_integer_2.replace(/[\r\n]+/g, "\n").replace(/^[\r\n]+/g, "").replace(/[\r\n]+$/g, "\n");
+      inactive_integer_3     = inactive_integer_3.replace(/[\r\n]+/g, "\n").replace(/^[\r\n]+/g, "").replace(/[\r\n]+$/g, "\n");
+      inactive_integer_other = inactive_integer_other.replace(/[\r\n]+/g, "\n").replace(/^[\r\n]+/g, "").replace(/[\r\n]+$/g, "\n");
+      inactive_string_empty  = inactive_string_empty.replace(/[\r\n]+/g, "\n").replace(/^[\r\n]+/g, "").replace(/[\r\n]+$/g, "\n");
+      inactive_string_other  = inactive_string_other.replace(/[\r\n]+/g, "\n").replace(/^[\r\n]+/g, "").replace(/[\r\n]+$/g, "\n");
+      inactive_invalid       = inactive_invalid.replace(/[\r\n]+/g, "\n").replace(/^[\r\n]+/g, "").replace(/[\r\n]+$/g, "\n");
+
+      updateDateTimeStampVariable();
+
+      otherjs_box.value = ""  // plus below
+        + "/*** " + date_time_stamp + " user_pref grouped by value ***/\n"
+        + "// care: list creation does not recognise multi-line comments (/*...*/)\n"
+        + "//       user_pref from within multi-line comments will\n"
+        + "//       show under active instead of inactive\n";
+
+      otherjs_box.value += "\n/*** __________ active user_pref __________ ***/\n";
+
+      if (active_boolean_false) {
+        otherjs_box.value += "\n/*** active user_pref - boolean: false ***/\n"
+          + active_boolean_false;
+      }
+      if (active_boolean_true) {
+        otherjs_box.value += "\n/*** active user_pref - boolean: true ***/\n"
+          + active_boolean_true;
+      }
+      if (active_integer_0) {
+        otherjs_box.value += "\n/*** active user_pref - integer: 0 ***/\n"
+          + active_integer_0;
+      }
+      if (active_integer_1) {
+        otherjs_box.value += "\n/*** active user_pref - integer: 1 ***/\n"
+          + active_integer_1;
+      }
+      if (active_integer_2) {
+        otherjs_box.value += "\n/*** active user_pref - integer: 2 ***/\n"
+          + active_integer_2;
+      }
+      if (active_integer_3) {
+        otherjs_box.value += "\n/*** active user_pref - integer: 3 ***/\n"
+          + active_integer_3;
+      }
+      if (active_integer_other) {
+        otherjs_box.value += "\n/*** active user_pref - integer: other ***/\n"
+          + active_integer_other;
+      }
+      if (active_string_empty) {
+        otherjs_box.value += "\n/*** active user_pref - string: empty ***/\n"
+          + active_string_empty;
+      }
+      if (active_string_other) {
+        otherjs_box.value += "\n/*** active user_pref - string: other ***/\n"
+          + active_string_other;
+      }
+      if (active_invalid) {
+        otherjs_box.value += "\n/*** active user_pref - invalid ***/\n"
+          + active_invalid;
+      }
+
+      otherjs_box.value += "\n/*** __________ inactive user_pref __________ ***/\n";
+
+      if (inactive_boolean_false) {
+        otherjs_box.value += "\n/*** inactive user_pref - boolean: false ***/\n"
+          + inactive_boolean_false;
+      }
+      if (inactive_boolean_true) {
+        otherjs_box.value += "\n/*** inactive user_pref - boolean: true ***/\n"
+          + inactive_boolean_true;
+      }
+      if (inactive_integer_0) {
+        otherjs_box.value += "\n/*** inactive user_pref - integer: 0 ***/\n"
+          + inactive_integer_0;
+      }
+      if (inactive_integer_1) {
+        otherjs_box.value += "\n/*** inactive user_pref - integer: 1 ***/\n"
+          + inactive_integer_1;
+      }
+      if (inactive_integer_2) {
+        otherjs_box.value += "\n/*** inactive user_pref - integer: 2 ***/\n"
+          + inactive_integer_2;
+      }
+      if (inactive_integer_3) {
+        otherjs_box.value += "\n/*** inactive user_pref - integer: 3 ***/\n"
+          + inactive_integer_3;
+      }
+      if (inactive_integer_other) {
+        otherjs_box.value += "\n/*** inactive user_pref - integer: other ***/\n"
+          + inactive_integer_other;
+      }
+      if (inactive_string_empty) {
+        otherjs_box.value += "\n/*** inactive user_pref - string: empty ***/\n"
+          + inactive_string_empty;
+      }
+      if (inactive_string_other) {
+        otherjs_box.value += "\n/*** inactive user_pref - string: other ***/\n"
+          + inactive_string_other;
+      }
+      if (inactive_invalid) {
+        otherjs_box.value += "\n/*** inactive user_pref - invalid ***/\n"
+          + inactive_invalid;
+      }
+    } /* end function userjsToValueGroups */
 
 
     // **************************************************
@@ -1442,6 +1678,7 @@
       var x, r;
       // change  \\* \\. \\+  to  * . +
       otherjs_box.value = otherjs_box.value.replace(/\\\\([*.+])/gm, "$1");
+      otherjs_box.value = otherjs_box.value.replace(/\\([*.+])/gm, "$1");
       // change non user pref characters (<- include :/) to newline delimiters
       otherjs_box.value = otherjs_box.value.replace(/[^a-zA-Z0-9._*-:/]+/gm, "\n");
       // blank lines begining http: https:
@@ -1466,9 +1703,7 @@
       otherjs_box.value = '/*** ' + date_time_stamp
         + ' preference group (from list) ***/\n\n' + otherjs_box.value
       // end and exit
-      toggleActionsBox(false);
       userjsViewer(otherjs_box_name);
-      applyExpandAll("block");
       toggleGroupsBox(true);
     } /* end function convertListToGroup */
 
@@ -1499,7 +1734,8 @@
             + RegExp.escape(prefname) + "[\"'].*$", "gm");
           prefsjs_box.value = prefsjs_box.value.replace(x, "");
         }
-        // remove excess newlines
+        // remove excess newlines (without messing up the header section)
+        prefsjs_box.value = prefsjs_box.value.replace(/[\r\n][\r\n][\r\n]+/g, "\n");
         prefsjs_box.value = prefsjs_box.value.replace(/\.[\r\n]+user_pref\(/g, ".\n\nuser_pref\(");
         prefsjs_box.value = prefsjs_box.value.replace(/;[\r\n]+user_pref\(/g, ";\nuser_pref\(");
         prefsjs_box.value = prefsjs_box.value.replace(/[\r\n]+$/g, "\n");
@@ -1522,7 +1758,7 @@
     function findMenuSelectOption(name_match) {
       var e = document.getElementById("menu_select");
       var found;
-      for(var i = 0; i < e.options.length; i++) {
+      for (var i=0,j=e.options.length;i<j;i++) {
         if (new RegExp(name_match, "i").test(e.options[i].textContent)) {
           if (typeof found == "number") {
             // more than one match
@@ -1606,7 +1842,7 @@
         // body_height - (scroll_position + window_size)
         var position_from_bottom = Math.max(document.body.offsetHeight
           - (window.pageYOffset + window.innerHeight), 0);
-        if (document.getElementById("collect2_button").innerHTML == "EndCollect") {
+        if (document.getElementById("collect2_button").style.textDecoration == "line-through") {
           if (position_from_bottom > 200) { window.scrollBy(0, -200); }
         }
         else {
@@ -1641,7 +1877,7 @@
       var nobj = document.getElementsByTagName("a");
       if (on) {
         // add the about:blank# prefixes
-        for (var i = 0; i < nobj.length; i++) {
+        for (var i=0,j=nobj.length;i<j;i++) {
           if (/^about:config./.test(nobj[i].href)) {
             nobj[i].href = "about:blank#" + nobj[i].href;
           }
@@ -1649,7 +1885,7 @@
       }
       else {
         // remove the about:blank# prefixes
-        for (var i = 0; i < nobj.length; i++) {
+        for (var i=0,j=nobj.length;i<j;i++) {
           if (/^about:blank#about:config./.test(nobj[i].href)) {
             nobj[i].href = nobj[i].href.replace(/^about:blank#/,'');
           }
@@ -1676,7 +1912,7 @@
         e.style.display = "none";
         updateMenuSelectOption(opt, false);
         // if collector mode is on, show actions_box
-        if (document.getElementById("collect2_button").innerHTML == "EndCollect") {
+        if (document.getElementById("collect2_button").style.textDecoration == "line-through") {
           toggleBox("actions_box");
         }
       }
@@ -1701,7 +1937,7 @@
         else if (box_name == "actions_box") {
           document.getElementById("text_box_1").focus();
           // when collect mode is on
-          if (document.getElementById("collect2_button").innerHTML == "EndCollect") {
+          if (document.getElementById("collect2_button").style.textDecoration == "line-through") {
             var overridesjs_box = document.getElementById("text_box_2");
             // actions_box is a smaller size
             // scroll box 2 into view
@@ -1730,7 +1966,7 @@
     function applyExpandAll(state) {
       // apply state:  none=Collapse  block=Expand
       var e = document.getElementsByClassName("content");
-      for (var i = 0; i < e.length; i++) { e[i].style.display = state; }
+      for (var i=0,j=e.length;i<j;i++) { e[i].style.display = state; }
     }
 
 
@@ -1759,13 +1995,13 @@
       var nobj = document.getElementsByClassName("content");
       if (on) {
         // add wrap
-        for (var i = 0; i < nobj.length; i++) {
+        for (var i=0,j=nobj.length;i<j;i++) {
           nobj[i].style.whiteSpace = "pre-wrap";
         }
       }
       else {
         // remove wrap
-        for (var i = 0; i < nobj.length; i++) {
+        for (var i=0,j=nobj.length;i<j;i++) {
           nobj[i].style.whiteSpace = "pre";
         }
       }
@@ -1819,7 +2055,7 @@
         if (add) { changeClass(e, "", name + "_" + add); }
       }
       else {
-        for (var i = 0; i < e.length; i++) {
+        for (var i=0,j=e.length;i<j;i++) {
           if (remove) { changeClass(e[i], name + "_" + remove, ""); }
           if (add) { changeClass(e[i], "", name + "_" + add); }
         }
@@ -1992,7 +2228,7 @@
         // heading/version/links
 
         + '<b>Help / Information</b>\n'
-        + '<br><br><br>'
+        + '<br><br>'
 
         + '<a target="_blank" rel="external noopener noreferrer" href="'
         + 'https://raw.githubusercontent.com/icpantsparti/firefox-user.js-tool/master/userjs-tool.html'
@@ -2009,11 +2245,11 @@
         + 'https://github.com/icpantsparti/firefox-user.js-tool'
         + '">firefox-user.js-tool<span class="hidden"> (GitHub)</span></a>'
 
-        + '<br><br>Disclaimer: Use with care at your own risk, alpha/experimental/untested.\n'
+        + '<br><br>Disclaimer: Use with care at your own risk, alpha/experimental/untested.<br><br>\n'
 
         // Introduction
 
-        + '<br><br><br><details><summary>Introduction</summary><br><br>\n'
+        + '<br><details><summary>Introduction</summary><br><br>\n'
 
         + 'Interactive viewer and actions for Firefox user.js \n'
         + '(ghacksuserjs, pyllyukko, etc).\n'
@@ -2078,7 +2314,7 @@
         + '<br><br>Various online sites provide details of user_pref \n'
         + 'settings. &nbsp;Some projects publish their user.js template, with \n'
         + 'instructions and information/wiki, some example links are given \n'
-        + 'under the "...&gt;Easy View" option. &nbsp;These \n'
+        + 'under the "...&gt;Easy View / Links" option. &nbsp;These \n'
         + 'projects may update their content regularly, keep your user.js \n'
         + 'up to date, settings may also change with each Firefox version.\n'
 
@@ -2100,7 +2336,7 @@
         + '<br><br>PASTE: paste the content into the "...&gt;Actions" \n'
         + 'or "...&gt;Easy View" text boxes (open the user.js first in a \n'
         + 'text editor or in a browser tab to copy it, some example user.js \n'
-        + 'links are provided under the "...&gt;Easy View" option).\n'
+        + 'links are provided under the "...&gt;Easy View / Links" option).\n'
 
         + '<br><br>LOAD: use the "...&gt;Actions&gt;[Load]" buttons to \n'
         + 'get a same-origin file (ie a file in the same location as \n'
@@ -2222,7 +2458,7 @@
         + 'and all particiPANTS, and to http://www.ghacks.net/ \n'
         + 'who first hosted ghacks-user.js. \n'
         + '&nbsp;Thanks to https://github.com/rndme/download, I have \n'
-        + 'embedded your JavaScript library to enable the "Save As" \n'
+        + 'embedded your JavaScript library to enable the "Save" \n'
         + '(I saw https://github.com/pyllyukko/user.js mention \n'
         + 'https://github.com/Genbox/HardenIT which used that, thanks too). \n'
         + '&nbsp;This does not use any JQuery library or similar. &nbsp;Other \n'
@@ -2242,14 +2478,28 @@
 
         // Actions - View
 
-        + '<br><details><summary>&nbsp;&nbsp;[View]</summary><br><br>\n'
+        + '<br><details><summary>&nbsp;&nbsp;[View] - next to each box</summary><br><br>\n'
         + 'View the user.js (that you pasted/loaded into a text box) with \n'
         + 'some nice HTML formatting.\n'
         + '<br><br></details>\n'
 
+        // Actions - Save
+
+        + '<br><details><summary>&nbsp;&nbsp;[Save] - next to each box</summary><br><br>\n'
+        + 'Save the box contents as a file (Desktop Firefox allows you to \n'
+        + 'choose the location and file name).\n'
+        + '<br><br></details>\n'
+
+        // Actions - Load
+
+        + '<br><details><summary>&nbsp;&nbsp;[Load] - next to each box</summary><br><br>\n'
+        + 'Load a file into the box (eg user.js, user-overrides.js). &nbsp;The \n'
+        + 'file must be same-origin (same location as the userjs-tool.html).\n'
+        + '<br><br></details>\n'
+
         // Actions - Append
 
-        + '<br><details><summary>&nbsp;&nbsp;[Append]</summary><br><br>\n'
+        + '<br><details><summary>&nbsp;&nbsp;[Append] - below box 1</summary><br><br>\n'
 
         + 'Take the user-template.js (eg ghacks/pyllyukko/etc user.js) (from Box 3) \n'
         + 'and append your user-overrides.js (from Box 2), place the result \n'
@@ -2266,7 +2516,7 @@
         + 'that reads: <u>//// --- add-override-comment ---</u> \n'
         + 'then the tag "////OVERRIDE:" will be placed in front of \n'
         + 'any overridden user_pref in the user.js output. \n'
-        + '&nbsp;Care: if your user-overrides.js uses multi-line comments \n'
+        + '<br><br>Care: if your user-overrides.js uses multi-line comments \n'
         + '(/*...*/) to disable any user_pref overrides this tagging feature \n'
         + 'will not work as expected, and you could end up with some \n'
         + 'user_pref in the user.js inadvertently inactivated with \n'
@@ -2279,7 +2529,7 @@
 
         // Actions - Template
 
-        + '<br><details><summary>&nbsp;&nbsp;[Template]</summary><br><br>\n'
+        + '<br><details><summary>&nbsp;&nbsp;[Template] - below box 2</summary><br><br>\n'
         + 'Create a template for a user-overrides.js. &nbsp;Reduce the \n'
         + 'user-template.js (from Box 3) to headings and commented \n'
         + 'user_pref, place the result into Box 2.\n'
@@ -2287,7 +2537,7 @@
 
         // Actions - Collect
 
-        + '<br><details><summary>&nbsp;&nbsp;[Collect]</summary><br><br>\n'
+        + '<br><details><summary>&nbsp;&nbsp;[Collect] [End Collect] - below/near box 2</summary><br><br>\n'
         + 'Helps to create a user-overrides.js, by allowing \n'
         + 'point/click/edit collection of user_pref.\n'
         + '<br><br>It first takes you into the usual viewing of Box 3 \n'
@@ -2304,17 +2554,25 @@
         + 'just collected in Box 2.\n'
         + '<br><br>The "Actions" box is displayed with reduced size for \n'
         + 'viewing of Box 2 changes (hide/show works as usual), press the \n'
-        + 'yellow highlighted "[End Collect]" button when you have \n'
-        + 'finished (scroll the actions box to find that button if it is \n'
+        + 'yellow "[End Collect]" button when you have finished (shown next \n'
+        + 'to box 2 only during collect, scroll the actions box if it is \n'
         + 'out of view).\n'
         + '<br><br>(The Box 2 Select button usage changes slightly, the first \n'
         + 'instance of the pref name toggled is selected, if you wish to select \n'
         + 'all click elsewhere in the box and click the select button again.)\n'
         + '<br><br></details>\n'
 
+        // Actions - Examples
+
+        + '<br><details><summary>&nbsp;&nbsp;[Examples] - below box 3</summary><br><br>\n'
+        + 'Display links for example user.js templates. &nbsp;The button takes \n'
+        + 'you to the "...&gt;Easy View / Links" option, where these example \n'
+        + 'links are shown and there is an "Actions" button to return.\n'
+        + '<br><br></details>\n'
+
         // Actions - Clean
 
-        + '<br><details><summary>&nbsp;&nbsp;[Clean]</summary><br><br>\n'
+        + '<br><details><summary>&nbsp;&nbsp;[Clean] - below box 4</summary><br><br>\n'
         + 'Remove user_pref from prefs.js in Box 4, based on the active and \n'
         + 'inactive user_pref from user.js in Box 1.\n'
         + '<br><br>Use with care, this might clean more (or even less) than \n'
@@ -2324,9 +2582,36 @@
         + 'to do this, read at the ghacks-user.js wiki, note the pros/cons.\n'
         + '<br><br></details>\n'
 
+        // Actions - Values
+
+        + '<br><details><summary>&nbsp;&nbsp;[Values] - below box 4</summary><br><br>\n'
+        + 'Take the user_pref from box 1 user.js, and group by values, \n'
+        + 'output into box 4.\n'
+        + '<br><br>The "[View]" of box 4 then shows the user_pref grouped \n'
+        + 'by active/inactive: false, true, 0, 1, 2, 3, other integer, \n'
+        + 'empty string, other string.\n'
+        + '<br><br>Any user_pref that re-occur in the user.js will \n'
+        + 'only show in one group (with most recent active value priority).\n'
+        + '<br><br>Care: if your user.js uses multi-line comments \n'
+        + '(/*...*/) to disable any user_pref this feature \n'
+        + 'will not work as expected, and you could end up with some \n'
+        + 'inactive user_pref inadvertently grouped as active, \n'
+        + 'there is no issue with same line comment (//) inactive user_pref. \n'
+        + '&nbsp;(Users of ghacks-user.js note this for sections such as: \n'
+        + 'RFP ALTERNATIVES, and DEPRECATED/ESR)\n'
+        + '<br><br>This is mainly intended as an aid if manually reviewing \n'
+        + 'user.js settings on Android Firefox (although you may be \n'
+        + 'able to inject user.js to Android via PC, see the ghacks-user.js \n'
+        + 'wiki, link under "user.js" section above).\n'
+        + '<br><br>The idea is that you can use the about:config?filter \n'
+        + '"Groups" to display user_pref that require a similar value \n'
+        + '(take care with hidden prefs as they may not show up until \n'
+        + 'created).\n'
+        + '<br><br></details>\n'
+
         // Actions - Group
 
-        + '<br><details><summary>&nbsp;&nbsp;[Group]</summary><br><br>\n'
+        + '<br><details><summary>&nbsp;&nbsp;[Group] - below box 4</summary><br><br>\n'
         + 'Convert a list of prefs in Box 4 to an about:config?filter group, \n'
         + 'place output into Box 4. &nbsp;If you have a bunch of favorite \n'
         + 'preferences, place the list into Box 4 and turn them into an \n'
@@ -2336,26 +2621,12 @@
 
         // Actions - Encode/Decode
 
-        + '<br><details><summary>&nbsp;&nbsp;[Encode] and [Decode]</summary><br><br>\n'
+        + '<br><details><summary>&nbsp;&nbsp;[Encode] [Decode] - below box 4</summary><br><br>\n'
         + 'Take the user.js (from Box 1), add a date comment on line one, \n'
         + 'and base64 encode it, place the result into Box 4. &nbsp;Use \n'
         + 'Encode if you are going to save user.js data into this HTML \n'
         + 'file, because you want it to display when the HTML is opened. \n'
         + '&nbsp;Decode affects box 4.\n'
-        + '<br><br></details>\n'
-
-        // Actions - Save As
-
-        + '<br><details><summary>&nbsp;&nbsp;[Save As]</summary><br><br>\n'
-        + 'Save the box contents as a file (Desktop Firefox allows you to \n'
-        + 'choose the location and file name).\n'
-        + '<br><br></details>\n'
-
-        // Actions - Load
-
-        + '<br><details><summary>&nbsp;&nbsp;[Load]</summary><br><br>\n'
-        + 'Load a file into the box (eg user.js, user-overrides.js). &nbsp;The \n'
-        + 'file must be same-origin (same location as the userjs-tool.html).\n'
         + '<br><br></details>\n'
 
         + '<br><br></details>\n'
@@ -2382,20 +2653,19 @@
         + '<span class="closebtn" onclick="toggleActionsBox();">&times;</span>\n'
         + '<b>Actions</b> &nbsp;(see "...&gt;Help") &nbsp;("...&gt;Easy View" has user.js links)<br>\n'
 
+        + '<br>Four boxes with actions: View, Append, Template, Collect, Clean, Values, Group, Encode, Decode.<br>\n'
+
         + '<table>\n'
-        + '<tr><td class="td1"><br>\n'
+        + '<tr><td class="td1">\n'
 
         + '<button type="button" class="controls borders actions_buttons" id="view1_button" \n'
         + 'title="View content in box 1 with HTML, links, etc">View</button><br>\n'
 
-        + '<button type="button" class="controls borders actions_buttons" id="append1_button" \n'
-        + 'title="Append/apply, box 3 with box 2, output into box 1">Append</button><br>\n'
-
         + '<button type="button" class="controls borders actions_buttons" id="select1_button" \n'
-        + 'title="Select all text in box 1">Select All</button><br>\n'
+        + 'title="Select all text in box 1">Select</button><br>\n'
 
         + '<button type="button" class="controls borders actions_buttons" id="save1_button" \n'
-        + 'title="Save the contents of box 1 as a file">Save As</button><br>\n'
+        + 'title="Save the contents of box 1 as a file">Save</button><br>\n'
 
         + '<button type="button" class="controls borders actions_buttons" id="load1_button" \n'
         + 'title="Load a same-origin/location file into box 1">Load</button><br>\n'
@@ -2406,24 +2676,24 @@
         + '</td><td class="td2">\n'
         + '<div class="input_info">Box 1 (user.js)</div>\n'
         + '<textarea id="text_box_1" autofocus="true"></textarea>\n'
+        + '<button type="button" class="controls borders actions_buttons" id="append1_button" \n'
+        + 'title="Append/apply, box 3 with box 2, output into box 1">Append</button>\n'
         + '</td></tr>'
 
-        + '<tr><td class="td1"><br>'
+        + '<tr><td class="td1">'
 
         + '<button type="button" class="controls borders actions_buttons" id="view2_button" \n'
         + 'title="View content in box 2 with HTML, links, etc">View</button><br>\n'
 
-        + '<button type="button" class="controls borders actions_buttons" id="template2_button" \n'
-        + 'title="Create a user-overrides.js template, from box 3, output into box 2">Template</button><br>\n'
-
-        + '<button type="button" class="controls borders actions_buttons" id="collect2_button" \n'
-        + 'title="Point and click user-overrides.js collector, from box 3, output into box 2">Collect</button><br>\n'
+        // End Collect button is hidden until needed
+        + '<button type="button" class="controls borders actions_buttons" id="endcollect2_button" \n'
+        + 'title="End the point and click user-overrides.js collection">End Collect</button><br>\n'
 
         + '<button type="button" class="controls borders actions_buttons" id="select2_button" \n'
-        + 'title="Select all text in box 2">Select All</button><br>\n'
+        + 'title="Select all text in box 2">Select</button><br>\n'
 
         + '<button type="button" class="controls borders actions_buttons" id="save2_button" \n'
-        + 'title="Save the contents of box 2 as a file">Save As</button><br>\n'
+        + 'title="Save the contents of box 2 as a file">Save</button><br>\n'
 
         + '<button type="button" class="controls borders actions_buttons" id="load2_button" \n'
         + 'title="Load a same-origin/location file into box 2">Load</button><br>\n'
@@ -2434,18 +2704,22 @@
         + '</td><td class="td2">\n'
         + '<div class="input_info">Box 2 (user-overrides.js)</div>\n'
         + '<textarea id="text_box_2"></textarea>\n'
+        + '<button type="button" class="controls borders actions_buttons" id="template2_button" \n'
+        + 'title="Create a user-overrides.js template, from box 3, output into box 2">Template</button>\n'
+        + '<button type="button" class="controls borders actions_buttons" id="collect2_button" \n'
+        + 'title="Point and click user-overrides.js collector, from box 3, output into box 2">Collect</button>\n'
         + '</td></tr>'
 
-        + '<tr><td class="td1"><br>'
+        + '<tr><td class="td1">'
 
         + '<button type="button" class="controls borders actions_buttons" id="view3_button" \n'
         + 'title="View content in box 3 with HTML, links, etc">View</button><br>\n'
 
         + '<button type="button" class="controls borders actions_buttons" id="select3_button" \n'
-        + 'title="Select all text in box 3">Select All</button><br>\n'
+        + 'title="Select all text in box 3">Select</button><br>\n'
 
         + '<button type="button" class="controls borders actions_buttons" id="save3_button" \n'
-        + 'title="Save the contents of box 3 as a file">Save As</button><br>\n'
+        + 'title="Save the contents of box 3 as a file">Save</button><br>\n'
 
         + '<button type="button" class="controls borders actions_buttons" id="load3_button" \n'
         + 'title="Load a same-origin/location file into box 3">Load</button><br>\n'
@@ -2456,30 +2730,20 @@
         + '</td><td class="td2">\n'
         + '<div class="input_info">Box 3 (user-template.js) (eg ghacks/pyllyukko/etc user.js)</div>\n'
         + '<textarea id="text_box_3"></textarea>\n'
+        + '<button type="button" class="controls borders actions_buttons" id="examples3_button" \n'
+        + 'title="Display links for example user.js templates">Examples</button>\n'
         + '</td></tr>'
 
-        + '<tr><td class="td1"><br>'
+        + '<tr><td class="td1">'
 
         + '<button type="button" class="controls borders actions_buttons" id="view4_button" \n'
         + 'title="View content in box 4 with HTML, links, etc">View</button><br>\n'
 
-        + '<button type="button" class="controls borders actions_buttons" id="clean4_button" \n'
-        + 'title="Remove user_pref within Box 4 (prefs.js) mentioned by Box 1">Clean</button><br>\n'
-
-        + '<button type="button" class="controls borders actions_buttons" id="group4_button" \n'
-        + 'title="Within Box 4 (other), convert a list of prefs into an about:config?filter group">Group</button><br>\n'
-
-        + '<button type="button" class="controls borders actions_buttons" id="encode4_button" \n'
-        + 'title="Base64 encode box 1, output into box 4">Encode</button><br>\n'
-
-        + '<button type="button" class="controls borders actions_buttons" id="decode4_button" \n'
-        + 'title="Decode base64 data in box 4">Decode</button><br>\n'
-
         + '<button type="button" class="controls borders actions_buttons" id="select4_button" \n'
-        + 'title="Select all text in box 4">Select All</button><br>\n'
+        + 'title="Select all text in box 4">Select</button><br>\n'
 
         + '<button type="button" class="controls borders actions_buttons" id="save4_button" \n'
-        + 'title="Save the contents of box 4 as a file">Save As</button><br>\n'
+        + 'title="Save the contents of box 4 as a file">Save</button><br>\n'
 
         + '<button type="button" class="controls borders actions_buttons" id="load4_button" \n'
         + 'title="Load a same-origin/location file into box 4">Load</button><br>\n'
@@ -2488,8 +2752,22 @@
         + 'title="Clear the text in box 4">Clear</button><br>\n'
 
         + '</td><td class="td2">\n'
-        + '<div class="input_info">Box 4 (prefs.js/other)</div>\n'
+        + '<div class="input_info">Box 4 (other) (eg prefs.js/etc)</div>\n'
         + '<textarea id="text_box_4"></textarea>\n'
+        + '<button type="button" class="controls borders actions_buttons" id="clean4_button" \n'
+        + 'title="Remove user_pref within Box 4 (prefs.js) mentioned by Box 1">Clean</button>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="values4_button" \n'
+        + 'title="Take box 1 user.js, group user_pref by values, output into box 4">Values</button>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="group4_button" \n'
+        + 'title="Within Box 4 (other), convert a list of prefs into an about:config?filter group">Group</button>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="encode4_button" \n'
+        + 'title="Base64 encode box 1, output into box 4">Encode</button>\n'
+
+        + '<button type="button" class="controls borders actions_buttons" id="decode4_button" \n'
+        + 'title="Decode base64 data in box 4">Decode</button>\n'
         + '</td></tr>'
 
         + '</table>\n'
@@ -2500,14 +2778,16 @@
 
         + '  <div id="easy_box" class="boxes borders">\n'
         + '<span class="closebtn" onclick="toggleEasyBox();">&times;</span>\n'
-        + '<b>Easy View</b> &nbsp;(see "...&gt;Help") &nbsp;("...&gt;Actions" has more options)<br>\n'
-        + '<br><br>Paste Firefox user.js text into the box below then click the view button.<br>\n'
+        + '<b>Easy View / Links</b> &nbsp;(see "...&gt;Help") &nbsp;("...&gt;Actions" has more options)<br>\n'
+        + '<br>Paste Firefox user.js text into the box below then click the view button.<br>\n'
         + '<table>\n'
         + '<tr><td class="td1">\n'
-        + '<br><button type="button" class="controls borders actions_buttons" id="view_easy_button" \n'
-        + '>View</button><br>\n'
-        + '<br><br><button type="button" class="controls borders actions_buttons" id="clear_easy_button" \n'
-        + '>Clear</button><br>\n'
+        + '<button type="button" class="controls borders actions_buttons" id="view_easy_button" \n'
+        + 'title="View content in the box with HTML, links, etc">View</button><br>\n'
+        + '<button type="button" class="controls borders actions_buttons" id="clear_easy_button" \n'
+        + 'title="Clear the text in the box">Clear</button><br>\n'
+        + '<button type="button" class="controls borders actions_buttons" id="actions_easy_button" \n'
+        + 'title="Display Actions menu with more options">Actions</button><br>\n'
         + '</td><td class="td2">\n'
         + '<textarea id="text_box_easy" autofocus="true">'
         // add user.js code into the text box if it was encoded in the body
@@ -2519,7 +2799,7 @@
         + '</td></tr>'
         + '</table>\n'
 
-        + '<br><div class="input_info">\n'
+        + '<div class="input_info">\n'
 
         + 'Here are some example links for user.js templates/projects, you will \n'
         + 'need to consider if these are suitable, good quality, or up to date \n'
@@ -2528,7 +2808,7 @@
         // hidden heading (H1/H3/DL tags for bookmarks import compatibility)
         + '<span class="hidden"><H3>user.js examples</H3></span>\n'
 
-        + '<br><br><table>\n'
+        + '<br><table>\n'
 
         + '<tr><th class="td3">\n'
         + 'File Link'
@@ -2752,7 +3032,7 @@
       // view
 
       document.getElementById("view_easy_button").addEventListener("click", function() {
-        if (document.getElementById("collect2_button").innerHTML == "Collect"
+        if (document.getElementById("collect2_button").style.textDecoration != "line-through"
           && !(document.getElementById("text_box_easy").value == ""))
         {
           document.getElementById("text_box_easy").readOnly = true;
@@ -2762,7 +3042,7 @@
       });
 
       document.getElementById("view1_button").addEventListener("click", function() {
-        if (document.getElementById("collect2_button").innerHTML == "Collect"
+        if (document.getElementById("collect2_button").style.textDecoration != "line-through"
           && !(document.getElementById("text_box_1").value == ""))
         {
           document.getElementById("text_box_1").readOnly = true;
@@ -2772,7 +3052,7 @@
       });
 
       document.getElementById("view2_button").addEventListener("click", function() {
-        if (document.getElementById("collect2_button").innerHTML == "Collect"
+        if (document.getElementById("collect2_button").style.textDecoration != "line-through"
           && !(document.getElementById("text_box_2").value == ""))
         {
           document.getElementById("text_box_2").readOnly = true;
@@ -2782,7 +3062,7 @@
       });
 
       document.getElementById("view3_button").addEventListener("click", function() {
-        if (document.getElementById("collect2_button").innerHTML == "Collect"
+        if (document.getElementById("collect2_button").style.textDecoration != "line-through"
           && !(document.getElementById("text_box_3").value == ""))
         {
           document.getElementById("text_box_3").readOnly = true;
@@ -2792,165 +3072,11 @@
       });
 
       document.getElementById("view4_button").addEventListener("click", function() {
-        if (document.getElementById("collect2_button").innerHTML == "Collect"
+        if (document.getElementById("collect2_button").style.textDecoration != "line-through"
           && !(document.getElementById("text_box_4").value == ""))
         {
           document.getElementById("text_box_4").readOnly = true;
           userjsViewer("text_box_4");
-          toggleActionsBox(false);
-        }
-      });
-
-      // append
-
-      document.getElementById("append1_button").addEventListener("click", function() {
-        // output into box3: user.js (box1) append user-overrides.js (box2)
-        if (document.getElementById("collect2_button").innerHTML == "Collect") {
-          // userjsAppend(templatejs_box_name, overridesjs_box_name, userjs_box_name)
-          userjsAppend("text_box_3", "text_box_2", "text_box_1");
-          document.getElementById("text_box_1").readOnly = true;
-        }
-      });
-
-      // group
-
-      document.getElementById("group4_button").addEventListener("click", function() {
-        if (document.getElementById("collect2_button").innerHTML == "Collect") {
-          convertListToGroup("text_box_4");
-          document.getElementById("text_box_4").readOnly = true;
-        }
-      });
-
-      // clean
-
-      document.getElementById("clean4_button").addEventListener("click", function() {
-        if (document.getElementById("collect2_button").innerHTML == "Collect") {
-          // prefsjsClean(userjs_box_name, prefsjs_box_name)
-          prefsjsClean("text_box_1", "text_box_4");
-          document.getElementById("text_box_4").readOnly = true;
-        }
-      });
-
-      // encode/decode
-
-      document.getElementById("encode4_button").addEventListener("click", function() {
-        // HTML escape codes to replace: & < >
-        if (document.getElementById("collect2_button").innerHTML == "Collect") {
-          var e = document.getElementById("text_box_1");
-          var o = document.getElementById("text_box_4");
-          o.readOnly = true;
-          o.selectionEnd = 0;
-          o.selectionStart = 0;
-          updateDateTimeStampVariable();
-          // base64 encode text (with date stamp on first line)
-          o.value = b64EncodeUnicode('// ' + date_time_stamp + "\n\n" + e.value).replace(/.{76}/g, "$&\n");
-          o.focus();
-          o.select();
-        }
-      });
-
-      document.getElementById("decode4_button").addEventListener("click", function() {
-        // HTML escape codes back to: & < >
-        if (document.getElementById("collect2_button").innerHTML == "Collect") {
-          var e = document.getElementById("text_box_4");
-          e.readOnly = true;
-          e.selectionEnd = 0;
-          e.selectionStart = 0;
-          // base64 decode text
-          e.value = b64DecodeUnicode(e.value.replace(/[^a-zA-Z0-9=+/]/g, ""));
-          e.focus();
-          e.select();
-        }
-      });
-
-      // template
-
-      document.getElementById("template2_button").addEventListener("click", function() {
-        if (document.getElementById("collect2_button").innerHTML == "Collect") {
-          // overridesjsTemplate(templatejs_box_name, overridesjs_box_name)
-          overridesjsTemplate("text_box_3", "text_box_2");
-          document.getElementById("text_box_2").readOnly = true;
-        }
-      });
-
-      // collect
-
-      document.getElementById("collect2_button").addEventListener("click", function() {
-        var e = document.getElementById("text_box_3");
-        if (document.getElementById("collect2_button").innerHTML == "Collect") {
-          // put collect mode on (line through buttons that are disabled)
-          document.getElementById("view_easy_button").style.textDecoration = "line-through";
-          document.getElementById("view1_button").style.textDecoration = "line-through";
-          document.getElementById("view2_button").style.textDecoration = "line-through";
-          document.getElementById("view3_button").style.textDecoration = "line-through";
-          document.getElementById("view4_button").style.textDecoration = "line-through";
-          document.getElementById("append1_button").style.textDecoration = "line-through";
-          document.getElementById("template2_button").style.textDecoration = "line-through";
-          document.getElementById("collect2_button").style.textDecoration = "underline";
-          document.getElementById("collect2_button").style.color = "#FF0000"; /*Red*/
-          document.getElementById("collect2_button").style.backgroundColor = "#FFFF00"; /*Yellow*/
-          document.getElementById("collect2_button").innerHTML = "EndCollect";
-          document.getElementById("clean4_button").style.textDecoration = "line-through";
-          document.getElementById("group4_button").style.textDecoration = "line-through";
-          document.getElementById("encode4_button").style.textDecoration = "line-through";
-          document.getElementById("decode4_button").style.textDecoration = "line-through";
-          document.getElementById("select2_button").innerHTML = "Select/All";
-          document.getElementById("load1_button").style.textDecoration = "line-through";
-          document.getElementById("load2_button").style.textDecoration = "line-through";
-          document.getElementById("load3_button").style.textDecoration = "line-through";
-          document.getElementById("load4_button").style.textDecoration = "line-through";
-          document.getElementById("clear_easy_button").style.textDecoration = "line-through";
-          document.getElementById("clear1_button").style.textDecoration = "line-through";
-          document.getElementById("clear2_button").style.textDecoration = "line-through";
-          document.getElementById("clear3_button").style.textDecoration = "line-through";
-          document.getElementById("clear4_button").style.textDecoration = "line-through";
-          userjsViewer("text_box_3");
-          // shrink the actions_box, and focus it on Box 2
-          // make collect_mode_pad visible (which makes the user.js HTML
-          // lower, so the actions_box will not obscure user.js HTML)
-          document.getElementById("collect_mode_pad").style.display = "block";
-          document.getElementById("actions_box").style.maxHeight = "10%";
-          document.getElementById("text_box_2").scrollIntoView();
-          document.getElementById("text_box_2").readOnly = false;
-          // make the user.js HTML clickable (adds 100's of Event Listeners)
-          addEventListenersForCollectMode();
-        }
-        else {
-          // put collect mode off
-          // remove the user.js HTML clickable (removes 100's of Event Listeners)
-          removeEventListenersForCollectMode();
-          document.getElementById("view_easy_button").style.textDecoration = null;
-          document.getElementById("view1_button").style.textDecoration = null;
-          document.getElementById("view2_button").style.textDecoration = null;
-          document.getElementById("view3_button").style.textDecoration = null;
-          document.getElementById("view4_button").style.textDecoration = null;
-          document.getElementById("append1_button").style.textDecoration = null;
-          document.getElementById("template2_button").style.textDecoration = null;
-          document.getElementById("collect2_button").style.textDecoration = null;
-          document.getElementById("collect2_button").style.color = null;
-          document.getElementById("collect2_button").style.backgroundColor = null;
-          document.getElementById("collect2_button").innerHTML = "Collect";
-          document.getElementById("clean4_button").style.textDecoration = null;
-          document.getElementById("group4_button").style.textDecoration = null;
-          document.getElementById("encode4_button").style.textDecoration = null;
-          document.getElementById("decode4_button").style.textDecoration = null;
-          document.getElementById("select2_button").innerHTML = "Select All";
-          document.getElementById("load1_button").style.textDecoration = null;
-          document.getElementById("load2_button").style.textDecoration = null;
-          document.getElementById("load3_button").style.textDecoration = null;
-          document.getElementById("load4_button").style.textDecoration = null;
-          document.getElementById("clear_easy_button").style.textDecoration = null;
-          document.getElementById("clear1_button").style.textDecoration = null;
-          document.getElementById("clear2_button").style.textDecoration = null;
-          document.getElementById("clear3_button").style.textDecoration = null;
-          document.getElementById("clear4_button").style.textDecoration = null;
-          // make actions_box usual size and hide collect_mode_pad
-          document.getElementById("collect_mode_pad").style.display = "none";
-          document.getElementById("actions_box").style.maxHeight = "70%";
-          document.getElementById("text_box_1").scrollIntoView(false);
-          document.getElementById("text_box_2").readOnly = true;
-          // display the collected values
-          userjsViewer("text_box_2");
           toggleActionsBox(false);
         }
       });
@@ -2962,7 +3088,7 @@
       });
 
       document.getElementById("select2_button").addEventListener("click", function() {
-        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+        if (document.getElementById("collect2_button").style.textDecoration != "line-through") {
           // when collector mode is off
           selectTextAreaContents("text_box_2");
         }
@@ -2991,7 +3117,7 @@
         selectTextAreaContents("text_box_4");
       });
 
-      // save as
+      // save
 
       document.getElementById("save1_button").addEventListener("click", function() {
         download(document.getElementById("text_box_1").value,
@@ -3012,15 +3138,16 @@
       });
 
       document.getElementById("save4_button").addEventListener("click", function() {
+        updateDateTimeStampVariable();
         download(document.getElementById("text_box_4").value,
-          "prefs.js",
+          "user-"+date_time_stamp+".js",
           "application/javascript");
       });
 
       // load
 
       document.getElementById("load1_button").addEventListener("click", function() {
-        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+        if (document.getElementById("collect2_button").style.textDecoration != "line-through") {
           var open_file = prompt("Please input (same-origin) file name\n"
             + "eg user.js, subdir/filename", "user.js");
           if (open_file != null && open_file != "") {
@@ -3032,7 +3159,7 @@
       });
 
       document.getElementById("load2_button").addEventListener("click", function() {
-        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+        if (document.getElementById("collect2_button").style.textDecoration != "line-through") {
           var open_file = prompt("Please input (same-origin) file name\n"
             + "eg user-overrides.js, subdir/filename", "user-overrides.js");
           if (open_file != null && open_file != "") {
@@ -3044,7 +3171,7 @@
       });
 
       document.getElementById("load3_button").addEventListener("click", function() {
-        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+        if (document.getElementById("collect2_button").style.textDecoration != "line-through") {
           var open_file = prompt("Please input (same-origin) file name\n"
             + "eg user-template.js, subdir/filename", "user-template.js");
           if (open_file != null && open_file != "") {
@@ -3056,7 +3183,7 @@
       });
 
       document.getElementById("load4_button").addEventListener("click", function() {
-        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+        if (document.getElementById("collect2_button").style.textDecoration != "line-through") {
           var open_file = prompt("Please input (same-origin) file name\n"
             + "eg prefs.js, user.js, subdir/filename", "prefs.js");
           if (open_file != null && open_file != "") {
@@ -3070,32 +3197,242 @@
       // clear
 
       document.getElementById("clear_easy_button").addEventListener("click", function() {
-        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+        if (document.getElementById("collect2_button").style.textDecoration != "line-through") {
           clearTextAreaContents("text_box_easy");
         }
       });
 
       document.getElementById("clear1_button").addEventListener("click", function() {
-        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+        if (document.getElementById("collect2_button").style.textDecoration != "line-through") {
           clearTextAreaContents("text_box_1");
         }
       });
 
       document.getElementById("clear2_button").addEventListener("click", function() {
-        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+        if (document.getElementById("collect2_button").style.textDecoration != "line-through") {
           clearTextAreaContents("text_box_2");
         }
       });
 
       document.getElementById("clear3_button").addEventListener("click", function() {
-        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+        if (document.getElementById("collect2_button").style.textDecoration != "line-through") {
           clearTextAreaContents("text_box_3");
         }
       });
 
       document.getElementById("clear4_button").addEventListener("click", function() {
-        if (document.getElementById("collect2_button").innerHTML == "Collect") {
+        if (document.getElementById("collect2_button").style.textDecoration != "line-through") {
           clearTextAreaContents("text_box_4");
+        }
+      });
+
+      // Actions
+
+      document.getElementById("actions_easy_button").addEventListener("click", function() {
+        toggleActionsBox(true);
+      });
+
+      // append
+
+      document.getElementById("append1_button").addEventListener("click", function() {
+        // output user.js (box1) = user-template.js (box3) append user-overrides.js (box2)
+        if (document.getElementById("collect2_button").style.textDecoration != "line-through"
+          && !(document.getElementById("text_box_3").value == "")
+          && !(document.getElementById("text_box_2").value == ""))
+        {
+          // userjsAppend(templatejs_box_name, overridesjs_box_name, userjs_box_name)
+          userjsAppend("text_box_3", "text_box_2", "text_box_1");
+          document.getElementById("text_box_1").readOnly = true;
+        }
+      });
+
+      // template
+
+      document.getElementById("template2_button").addEventListener("click", function() {
+        if (document.getElementById("collect2_button").style.textDecoration != "line-through"
+          && !(document.getElementById("text_box_3").value == ""))
+        {
+          // overridesjsTemplate(templatejs_box_name, overridesjs_box_name)
+          overridesjsTemplate("text_box_3", "text_box_2");
+          document.getElementById("text_box_2").readOnly = true;
+        }
+      });
+
+      // collect
+
+      document.getElementById("collect2_button").addEventListener("click", function() {
+        var e = document.getElementById("text_box_3");
+        if (document.getElementById("collect2_button").style.textDecoration != "line-through"
+          && !(e.value == ""))
+        {
+          // put collect mode on (line through buttons that are disabled)
+          document.getElementById("view_easy_button").style.textDecoration = "line-through";
+          document.getElementById("view1_button").style.textDecoration = "line-through";
+          document.getElementById("view2_button").style.textDecoration = "line-through";
+          document.getElementById("view3_button").style.textDecoration = "line-through";
+          document.getElementById("view4_button").style.textDecoration = "line-through";
+          document.getElementById("load1_button").style.textDecoration = "line-through";
+          document.getElementById("load2_button").style.textDecoration = "line-through";
+          document.getElementById("load3_button").style.textDecoration = "line-through";
+          document.getElementById("load4_button").style.textDecoration = "line-through";
+          document.getElementById("clear_easy_button").style.textDecoration = "line-through";
+          document.getElementById("clear1_button").style.textDecoration = "line-through";
+          document.getElementById("clear2_button").style.textDecoration = "line-through";
+          document.getElementById("clear3_button").style.textDecoration = "line-through";
+          document.getElementById("clear4_button").style.textDecoration = "line-through";
+          document.getElementById("append1_button").style.textDecoration = "line-through";
+          document.getElementById("template2_button").style.textDecoration = "line-through";
+          document.getElementById("collect2_button").style.textDecoration = "line-through";
+          document.getElementById("examples3_button").style.textDecoration = "line-through";
+          document.getElementById("clean4_button").style.textDecoration = "line-through";
+          document.getElementById("values4_button").style.textDecoration = "line-through";
+          document.getElementById("group4_button").style.textDecoration = "line-through";
+          document.getElementById("encode4_button").style.textDecoration = "line-through";
+          document.getElementById("decode4_button").style.textDecoration = "line-through";
+          document.getElementById("select2_button").innerHTML = "Select+";
+          // unhide end collect button
+          document.getElementById("endcollect2_button").style.color = "#FF0000"; /*Red*/
+          document.getElementById("endcollect2_button").style.backgroundColor = "#FFFF00"; /*Yellow*/
+          document.getElementById("endcollect2_button").style.display = "block";
+          // shrink the actions_box, and focus it on Box 2
+          // make collect_mode_pad visible (which makes the user.js HTML
+          // lower, so the actions_box will not obscure user.js HTML)
+          document.getElementById("collect_mode_pad").style.display = "block";
+          document.getElementById("actions_box").style.maxHeight = "10%";
+          document.getElementById("text_box_2").scrollIntoView();
+          document.getElementById("text_box_2").readOnly = false;
+          userjsViewer("text_box_3");
+          // make the user.js HTML clickable (adds 100's of Event Listeners)
+          addEventListenersForCollectMode();
+        }
+      });
+
+      // end collect
+
+      document.getElementById("endcollect2_button").addEventListener("click", function() {
+        if (document.getElementById("collect2_button").style.textDecoration == "line-through") {
+          // put collect mode off
+          // remove the user.js HTML clickable (removes 100's of Event Listeners)
+          removeEventListenersForCollectMode();
+          document.getElementById("view_easy_button").style.textDecoration = null;
+          document.getElementById("view1_button").style.textDecoration = null;
+          document.getElementById("view2_button").style.textDecoration = null;
+          document.getElementById("view3_button").style.textDecoration = null;
+          document.getElementById("view4_button").style.textDecoration = null;
+          document.getElementById("load1_button").style.textDecoration = null;
+          document.getElementById("load2_button").style.textDecoration = null;
+          document.getElementById("load3_button").style.textDecoration = null;
+          document.getElementById("load4_button").style.textDecoration = null;
+          document.getElementById("clear_easy_button").style.textDecoration = null;
+          document.getElementById("clear1_button").style.textDecoration = null;
+          document.getElementById("clear2_button").style.textDecoration = null;
+          document.getElementById("clear3_button").style.textDecoration = null;
+          document.getElementById("clear4_button").style.textDecoration = null;
+          document.getElementById("append1_button").style.textDecoration = null;
+          document.getElementById("template2_button").style.textDecoration = null;
+          document.getElementById("collect2_button").style.textDecoration = null;
+          document.getElementById("examples3_button").style.textDecoration = null;
+          document.getElementById("clean4_button").style.textDecoration = null;
+          document.getElementById("values4_button").style.textDecoration = null;
+          document.getElementById("group4_button").style.textDecoration = null;
+          document.getElementById("encode4_button").style.textDecoration = null;
+          document.getElementById("decode4_button").style.textDecoration = null;
+          document.getElementById("select2_button").innerHTML = "Select";
+          // unhide end collect button
+          document.getElementById("endcollect2_button").style.color = null;
+          document.getElementById("endcollect2_button").style.backgroundColor = null;
+          document.getElementById("endcollect2_button").style.display = "none";
+          // make actions_box usual size and hide collect_mode_pad
+          document.getElementById("collect_mode_pad").style.display = "none";
+          document.getElementById("actions_box").style.maxHeight = "70%";
+          document.getElementById("text_box_1").scrollIntoView(false);
+          document.getElementById("text_box_2").readOnly = true;
+          // display the collected values
+          userjsViewer("text_box_2");
+          toggleActionsBox(true);
+        }
+      });
+
+      // examples
+
+      document.getElementById("examples3_button").addEventListener("click", function() {
+        if (document.getElementById("collect2_button").style.textDecoration != "line-through") {
+          toggleEasyBox(true);
+        }
+      });
+
+      // clean
+
+      document.getElementById("clean4_button").addEventListener("click", function() {
+        if (document.getElementById("collect2_button").style.textDecoration != "line-through"
+          && !(document.getElementById("text_box_1").value == "")
+          && !(document.getElementById("text_box_4").value == ""))
+        {
+          // prefsjsClean(userjs_box_name, prefsjs_box_name)
+          prefsjsClean("text_box_1", "text_box_4");
+          document.getElementById("text_box_4").readOnly = true;
+        }
+      });
+
+      // values
+
+      document.getElementById("values4_button").addEventListener("click", function() {
+        if (document.getElementById("collect2_button").style.textDecoration != "line-through"
+          && !(document.getElementById("text_box_1").value == ""))
+        {
+          // userjsToValueGroups(userjs_box_name, otherjs_box_name)
+          userjsToValueGroups("text_box_1", "text_box_4");
+          document.getElementById("text_box_4").readOnly = true;
+          // view
+          userjsViewer("text_box_4");
+          toggleActionsBox(false);
+        }
+      });
+
+      // group
+
+      document.getElementById("group4_button").addEventListener("click", function() {
+        if (document.getElementById("collect2_button").style.textDecoration != "line-through"
+          && !(document.getElementById("text_box_4").value == ""))
+        {
+          convertListToGroup("text_box_4");
+          document.getElementById("text_box_4").readOnly = true;
+        }
+      });
+
+      // encode
+
+      document.getElementById("encode4_button").addEventListener("click", function() {
+        // HTML escape codes to replace: & < >
+        if (document.getElementById("collect2_button").style.textDecoration != "line-through"
+          && !(document.getElementById("text_box_1").value == ""))
+        {
+          var e = document.getElementById("text_box_1");
+          var o = document.getElementById("text_box_4");
+          o.readOnly = true;
+          o.selectionEnd = 0;
+          o.selectionStart = 0;
+          updateDateTimeStampVariable();
+          // base64 encode text (and wrap encoded lines after 76 characters)
+          o.value = b64EncodeUnicode(e.value).replace(/.{76}/g, "$&\n");
+          o.focus();
+          o.select();
+        }
+      });
+
+      // decode
+
+      document.getElementById("decode4_button").addEventListener("click", function() {
+        // HTML escape codes back to: & < >
+        if (document.getElementById("collect2_button").style.textDecoration != "line-through") {
+          var e = document.getElementById("text_box_4");
+          e.readOnly = true;
+          e.selectionEnd = 0;
+          e.selectionStart = 0;
+          // base64 decode text (and remove line wrap etc before decode)
+          e.value = b64DecodeUnicode(e.value.replace(/[^a-zA-Z0-9=+/]/g, ""));
+          e.focus();
+          e.select();
         }
       });
 
