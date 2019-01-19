@@ -17,7 +17,7 @@
 
     /* **************************************** */
     /*             version/date                 */
-    var version = '2019.01.18.alpha';
+    var version = '2019.01.19.alpha';
     /* **************************************** */
 
     var date_time_stamp;
@@ -78,22 +78,22 @@
 
     .controls {
       font: inherit;
-      padding: 4px 8px 4px 8px;
-      margin-right: 10px;
+      padding: 5px;
       float: left;
       overflow: hidden;
       white-space: pre;
       -moz-appearance: none;
+      text-align: center;
     }
 
-    #controls_bar .controls { display: inline-block; height: 2.5em; }
+    #controls_bar .controls {
+      display: inline-block;
+      width: 5.1em;
+      max-width: 5.1em;
+      height: 2.6em;
+    }
 
-    #controls_bar select { padding: 2px 4px 2px 4px; }
-
-    #goto_select, #menu_select { width: 5em; max-width: 5em; }
-
-    /* margin: 10px 10px 5px 0px;  */
-    .actions_buttons { width: 7.7em; margin: 0px; padding: 8px 8px 8px 8px; }
+    #actions_box .controls, #easy_box .controls { width: 7.7em; padding: 8px; }
     #actions_easy_button { margin-top: 45px; }
 
     .heading_buttons {
@@ -2195,7 +2195,7 @@
         //   &#x205D; TRICOLON  (vertical ...) (not used)
         + '    <select id="menu_select" class="controls borders"'
         + ' title="Select menu option">\n'
-        + '      <option value="" disabled selected hidden>&#x00A0;...</option>\n'
+        + '      <option value="" disabled selected hidden>...</option>\n'
         + '      <option>&#x25EB;&#x00A0;&#x00A0;Collapse all</option>\n'
         + '      <option>&#x25EB;&#x00A0;&#x00A0;Expand all</option>\n'
         + '      <option>&#x25EB;&#x00A0;&#x00A0;Collapse current</option>\n'
@@ -2622,11 +2622,10 @@
         // Actions - Encode/Decode
 
         + '<br><details><summary>&nbsp;&nbsp;[Encode] [Decode] - below box 4</summary><br><br>\n'
-        + 'Take the user.js (from Box 1), add a date comment on line one, \n'
-        + 'and base64 encode it, place the result into Box 4. &nbsp;Use \n'
-        + 'Encode if you are going to save user.js data into this HTML \n'
-        + 'file, because you want it to display when the HTML is opened. \n'
-        + '&nbsp;Decode affects box 4.\n'
+        + 'Take the user.js (from Box 1) and base64 encode it, place the \n'
+        + 'result into Box 4. &nbsp;Use Encode if you are going to save \n'
+        + 'user.js data into this HTML file, because you want it to display \n'
+        + 'when the HTML is opened. &nbsp;Decode affects box 4.\n'
         + '<br><br></details>\n'
 
         + '<br><br></details>\n'
@@ -2658,115 +2657,115 @@
         + '<table>\n'
         + '<tr><td class="td1">\n'
 
-        + '<button type="button" class="controls borders actions_buttons" id="view1_button" \n'
+        + '<button type="button" class="controls borders" id="view1_button" \n'
         + 'title="View content in box 1 with HTML, links, etc">View</button><br>\n'
 
-        + '<button type="button" class="controls borders actions_buttons" id="select1_button" \n'
+        + '<button type="button" class="controls borders" id="select1_button" \n'
         + 'title="Select all text in box 1">Select</button><br>\n'
 
-        + '<button type="button" class="controls borders actions_buttons" id="save1_button" \n'
+        + '<button type="button" class="controls borders" id="save1_button" \n'
         + 'title="Save the contents of box 1 as a file">Save</button><br>\n'
 
-        + '<button type="button" class="controls borders actions_buttons" id="load1_button" \n'
+        + '<button type="button" class="controls borders" id="load1_button" \n'
         + 'title="Load a same-origin/location file into box 1">Load</button><br>\n'
 
-        + '<button type="button" class="controls borders actions_buttons" id="clear1_button" \n'
+        + '<button type="button" class="controls borders" id="clear1_button" \n'
         + 'title="Clear the text in box 1">Clear</button><br>\n'
 
         + '</td><td class="td2">\n'
         + '<div class="input_info">Box 1 (user.js)</div>\n'
         + '<textarea id="text_box_1" autofocus="true"></textarea>\n'
-        + '<button type="button" class="controls borders actions_buttons" id="append1_button" \n'
+        + '<button type="button" class="controls borders" id="append1_button" \n'
         + 'title="Append/apply, box 3 with box 2, output into box 1">Append</button>\n'
         + '</td></tr>'
 
         + '<tr><td class="td1">'
 
-        + '<button type="button" class="controls borders actions_buttons" id="view2_button" \n'
+        + '<button type="button" class="controls borders" id="view2_button" \n'
         + 'title="View content in box 2 with HTML, links, etc">View</button><br>\n'
 
         // End Collect button is hidden until needed
-        + '<button type="button" class="controls borders actions_buttons" id="endcollect2_button" \n'
+        + '<button type="button" class="controls borders" id="endcollect2_button" \n'
         + 'title="End the point and click user-overrides.js collection">End Collect</button><br>\n'
 
-        + '<button type="button" class="controls borders actions_buttons" id="select2_button" \n'
+        + '<button type="button" class="controls borders" id="select2_button" \n'
         + 'title="Select all text in box 2">Select</button><br>\n'
 
-        + '<button type="button" class="controls borders actions_buttons" id="save2_button" \n'
+        + '<button type="button" class="controls borders" id="save2_button" \n'
         + 'title="Save the contents of box 2 as a file">Save</button><br>\n'
 
-        + '<button type="button" class="controls borders actions_buttons" id="load2_button" \n'
+        + '<button type="button" class="controls borders" id="load2_button" \n'
         + 'title="Load a same-origin/location file into box 2">Load</button><br>\n'
 
-        + '<button type="button" class="controls borders actions_buttons" id="clear2_button" \n'
+        + '<button type="button" class="controls borders" id="clear2_button" \n'
         + 'title="Clear the text in box 2">Clear</button><br>\n'
 
         + '</td><td class="td2">\n'
         + '<div class="input_info">Box 2 (user-overrides.js)</div>\n'
         + '<textarea id="text_box_2"></textarea>\n'
-        + '<button type="button" class="controls borders actions_buttons" id="skeleton2_button" \n'
+        + '<button type="button" class="controls borders" id="skeleton2_button" \n'
         + 'title="Create a user-overrides.js skeleton, from box 3, output into box 2">Skeleton</button>\n'
-        + '<button type="button" class="controls borders actions_buttons" id="collect2_button" \n'
+        + '<button type="button" class="controls borders" id="collect2_button" \n'
         + 'title="Point and click user-overrides.js collector, from box 3, output into box 2">Collect</button>\n'
         + '</td></tr>'
 
         + '<tr><td class="td1">'
 
-        + '<button type="button" class="controls borders actions_buttons" id="view3_button" \n'
+        + '<button type="button" class="controls borders" id="view3_button" \n'
         + 'title="View content in box 3 with HTML, links, etc">View</button><br>\n'
 
-        + '<button type="button" class="controls borders actions_buttons" id="select3_button" \n'
+        + '<button type="button" class="controls borders" id="select3_button" \n'
         + 'title="Select all text in box 3">Select</button><br>\n'
 
-        + '<button type="button" class="controls borders actions_buttons" id="save3_button" \n'
+        + '<button type="button" class="controls borders" id="save3_button" \n'
         + 'title="Save the contents of box 3 as a file">Save</button><br>\n'
 
-        + '<button type="button" class="controls borders actions_buttons" id="load3_button" \n'
+        + '<button type="button" class="controls borders" id="load3_button" \n'
         + 'title="Load a same-origin/location file into box 3">Load</button><br>\n'
 
-        + '<button type="button" class="controls borders actions_buttons" id="clear3_button" \n'
+        + '<button type="button" class="controls borders" id="clear3_button" \n'
         + 'title="Clear the text in box 3">Clear</button><br>\n'
 
         + '</td><td class="td2">\n'
         + '<div class="input_info">Box 3 (user-template.js) (eg ghacks/pyllyukko/etc user.js)</div>\n'
         + '<textarea id="text_box_3"></textarea>\n'
-        + '<button type="button" class="controls borders actions_buttons" id="examples3_button" \n'
+        + '<button type="button" class="controls borders" id="examples3_button" \n'
         + 'title="Display links for example user.js templates">Examples</button>\n'
         + '</td></tr>'
 
         + '<tr><td class="td1">'
 
-        + '<button type="button" class="controls borders actions_buttons" id="view4_button" \n'
+        + '<button type="button" class="controls borders" id="view4_button" \n'
         + 'title="View content in box 4 with HTML, links, etc">View</button><br>\n'
 
-        + '<button type="button" class="controls borders actions_buttons" id="select4_button" \n'
+        + '<button type="button" class="controls borders" id="select4_button" \n'
         + 'title="Select all text in box 4">Select</button><br>\n'
 
-        + '<button type="button" class="controls borders actions_buttons" id="save4_button" \n'
+        + '<button type="button" class="controls borders" id="save4_button" \n'
         + 'title="Save the contents of box 4 as a file">Save</button><br>\n'
 
-        + '<button type="button" class="controls borders actions_buttons" id="load4_button" \n'
+        + '<button type="button" class="controls borders" id="load4_button" \n'
         + 'title="Load a same-origin/location file into box 4">Load</button><br>\n'
 
-        + '<button type="button" class="controls borders actions_buttons" id="clear4_button" \n'
+        + '<button type="button" class="controls borders" id="clear4_button" \n'
         + 'title="Clear the text in box 4">Clear</button><br>\n'
 
         + '</td><td class="td2">\n'
         + '<div class="input_info">Box 4 (other) (eg prefs.js/etc)</div>\n'
         + '<textarea id="text_box_4"></textarea>\n'
-        + '<button type="button" class="controls borders actions_buttons" id="clean4_button" \n'
+        + '<button type="button" class="controls borders" id="clean4_button" \n'
         + 'title="Remove user_pref within Box 4 (prefs.js) mentioned by Box 1">Clean</button>\n'
 
-        + '<button type="button" class="controls borders actions_buttons" id="values4_button" \n'
+        + '<button type="button" class="controls borders" id="values4_button" \n'
         + 'title="Take box 1 user.js, group user_pref by values, output into box 4">Values</button>\n'
 
-        + '<button type="button" class="controls borders actions_buttons" id="group4_button" \n'
+        + '<button type="button" class="controls borders" id="group4_button" \n'
         + 'title="Within Box 4 (other), convert a list of prefs into an about:config?filter group">Group</button>\n'
 
-        + '<button type="button" class="controls borders actions_buttons" id="encode4_button" \n'
+        + '<button type="button" class="controls borders" id="encode4_button" \n'
         + 'title="Base64 encode box 1, output into box 4">Encode</button>\n'
 
-        + '<button type="button" class="controls borders actions_buttons" id="decode4_button" \n'
+        + '<button type="button" class="controls borders" id="decode4_button" \n'
         + 'title="Decode base64 data in box 4">Decode</button>\n'
         + '</td></tr>'
 
@@ -2782,11 +2781,11 @@
         + '<br>Paste Firefox user.js text into the box below then click the view button.<br>\n'
         + '<table>\n'
         + '<tr><td class="td1">\n'
-        + '<button type="button" class="controls borders actions_buttons" id="view_easy_button" \n'
+        + '<button type="button" class="controls borders" id="view_easy_button" \n'
         + 'title="View content in the box with HTML, links, etc">View</button><br>\n'
-        + '<button type="button" class="controls borders actions_buttons" id="clear_easy_button" \n'
+        + '<button type="button" class="controls borders" id="clear_easy_button" \n'
         + 'title="Clear the text in the box">Clear</button><br>\n'
-        + '<button type="button" class="controls borders actions_buttons" id="actions_easy_button" \n'
+        + '<button type="button" class="controls borders" id="actions_easy_button" \n'
         + 'title="Display Actions menu with more options">Actions</button><br>\n'
         + '</td><td class="td2">\n'
         + '<textarea id="text_box_easy" autofocus="true">'
@@ -2885,17 +2884,17 @@
         + '<tr><td class="td3">\n'
         + '<a target="_blank" rel="external noopener noreferrer" href="'
         + 'https://raw.githubusercontent.com/Narga/user.js/master/user.js'
-        + '">narga/user.js/user.js</a>\n'
+        + '"><s>narga/user.js/user.js</s> (dormant?)</a>\n'
         + '</td><td class="td3" rowspan=2>\n'
         + '<a target="_blank" rel="external noopener noreferrer" '
         + 'href="https://github.com/Narga/user.js">'
-        + 'narga/user.js</a>\n'
+        + '<s>narga/user.js</s> (dormant?)</a>\n'
         + '</td></tr>'
 
         + '<tr><td class="td3">\n'
         + '<a target="_blank" rel="external noopener noreferrer" href="'
         + 'https://raw.githubusercontent.com/Narga/user.js/master/user-narga.js'
-        + '">narga/user.js/user-narga.js</a>\n'
+        + '"><s>narga/user.js/user-narga.js</s> (dormant?)</a>\n'
         + '</td></tr>'
 
         + '<tr><td class="td3">\n'
