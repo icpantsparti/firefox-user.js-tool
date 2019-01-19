@@ -1,3 +1,12 @@
+version 2019.01.19.alpha
+
+* improve control bar buttons (removed gaps) and css
+
+* note example link for narga/user.js as dormant
+
+
+
+
 version 2019.01.18.alpha
 
 * rename [Template] button to [Skeleton]
