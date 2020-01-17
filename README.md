@@ -1,4 +1,7 @@
 #### userjs-tool.html
+
+(2020-01-17 updated version coming soon)
+
 Interactive viewer and actions for Firefox user.js (ghacksuserjs, pyllyukko, etc).
 
 Display a Mozilla Firefox user.js settings file contents in your Firefox browser, with:
