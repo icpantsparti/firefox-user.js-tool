@@ -1,3 +1,54 @@
+version 2020.02.22 (alpha/experimental)
+
+Main:
+
++ [Compare] preferences in two user.js, in a table format with order/layout
+  options and bold cell border around differences
+
+* [Load] button can also use the browser local file select dialog, plus
+  drag/drop.  Added some URL options, and auto-load/view using URL parameters
+
+* Altered the 'about:config?filter=' links/[Groups] format for FF71+
+  (paste them into about:config search box, multi pref regex search works)
+
++ [a:c Functions] button for find (filter/list)/reset/set on about:config Web Console
+
+* updated layout
+
+More:
+
++ now recognize in-block (multi-line) comments (not just in-line comments)
+
++ [View] has extra spacing with ghacksuserjs, and comments displayed in-line
+  (makes /*user_pref*/ (in comment blocks) show //user_pref)
+  (View+ style menu option can disable this)
+
++ show a message (and help/info section) if JavaScript disabled
+
+* re-arrange interface and text boxes:
+    * default to 100% text size, previously 75%
+    * swapped box 1 and 3 around
+    + buttons to change input box shown (or view all)
+    * actions buttons now in one group below the input boxes
+    - "Easy view / Links" input box no longer required
+    * "Links" (user.js templates/information) remain as [Examples]
+    + [Actions] button added at top
+    + [Values] button renamed [By Value] and improved
+      (useful when manually reviewing/setting preferences on Android)
+    + [Group] button renamed [To Group]
+    + [Encode] has extra options (plus option from removed [Decode] button)
+    * panel close button moved to top button bar
+    + [Reduce] button added (comment stripper)
+
+* updated [Examples] (template links) and [Help/Info]
+
+* updated URL parameters, listed under: [Help/Info] Initial states
+
+* other general/code tweaks
+
+
+
+
 version 2019.01.19.alpha
 
 * improve control bar buttons (removed gaps) and css
