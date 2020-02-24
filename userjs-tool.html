@@ -11,7 +11,7 @@
 
        Name         : userjs-tool.html
        Project      : https://github.com/icpantsparti/firefox-user.js-tool
-       Version      : 2020.02.22 (alpha/experimental)
+       Version      : 2020.02.23 (alpha/experimental)
        File         : https://raw.githubusercontent.com/icpantsparti/firefox-user.js-tool/master/userjs-tool.html
        On-line      : https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html
        License (MIT): https://raw.githubusercontent.com/icpantsparti/firefox-user.js-tool/master/LICENSE
@@ -172,7 +172,7 @@
     #div_4_other_button,
     #all_button {
       padding: 0px;
-      height: 2.8em;
+      height: 3em;
       width: 6.5em;
     }
     #all_button { width: 3em; }
@@ -288,7 +288,7 @@
     #collect_mode_pad { display: none; }
     .heading_buttons {
       padding-left: 20px;
-      width: 90%;
+      width: 86%;
       text-align: left;
       float: none;
     }
@@ -5165,7 +5165,8 @@ title="Close panel" onclick="closePanel();">&#935;</button>
 <div id="actions_panel" class="panels borders">
 <!-- hidden heading (H1/H3/DL tags for bookmarks import compatibility) -->
 <span class="hidden"><H3>[Actions]</H3></span>
-<b>[Actions] (Firefox user.js view, compare and more)</b><br><br>
+<b>[Actions] (Firefox user.js view, compare and more)</b> ([X] closes)<br>
+(Please see "Get started info" below)<br><br>
 
 <!-- actions_buttons_bar -->
 
@@ -5221,7 +5222,7 @@ name="file" accept=".js" id="load_template_input" />
 class="local_folder" href="user-template.js">Template</a>
 <textarea id="box_1_template" autofocus="true"
 ondrop="dropHandler1(event);" ondragover="dragOverHandler(event);"
-placeholder="&#10; [Load] drag or paste"
+placeholder="&#10; Add template user.js here&#10; ([Load], drag or paste)&#10; then [View], [Compare], etc"
 ></textarea>
 </td></tr></table></div>
 
@@ -5261,7 +5262,7 @@ name="file" accept=".js" id="load_overrides_input" />
 class="local_folder" href="user-overrides.js">user-overrides.js</a>
 <textarea id="box_2_overrides"
 ondrop="dropHandler2(event);" ondragover="dragOverHandler(event);"
-placeholder="&#10; [Load] drag or paste"
+placeholder="&#10; Add user-overrides.js here&#10; ([Load], drag or paste)&#10; or create"
 ></textarea>
 </td></tr></table></div>
 
@@ -5300,7 +5301,7 @@ name="file" accept=".js" id="load_userjs_input" />
 class="local_folder" href="user.js">user.js</a>
 <textarea id="box_3_userjs"
 ondrop="dropHandler3(event);" ondragover="dragOverHandler(event);"
-placeholder="&#10; [Load] drag or paste"
+placeholder="&#10; Add user.js here&#10; ([Load], drag or paste)&#10; or create"
 ></textarea>
 </td></tr></table></div>
 
@@ -5339,7 +5340,7 @@ class="local_folder" href="prefs.js">prefs.js</a>
 
 <textarea id="box_4_other"
 ondrop="dropHandler4(event);" ondragover="dragOverHandler(event);"
-placeholder="&#10; [Load] drag or paste"
+placeholder="&#10; Add other user.js here&#10; ([Load], drag or paste)&#10; or create"
 ></textarea>
 </td></tr></table></div>
 
@@ -5421,8 +5422,19 @@ title="Functions for about:config (find (filter/list)/reset/set)"
 
 --><button type="button" class="controls borders" id="help_button"
 >Help/Info</button>
-
-<br><br><br><br><br>
+<br><br><br>Get started info (scroll down):<br>
+<div class="indentdiv">
+<br><li>Place user.js text into a box above using the [Load] button (or
+drag/drop, copy/paste, [Examples] has template links) then click the [View]
+button, or use [Compare] button after loading two boxes.</li>
+<br><li>Hover other buttons for their info, or use [Help/Info] button.</li>
+<br><li>The numbers on the buttons indicate the input>output boxes, contents
+of the output box are replaced, [Collect] amends the output box.</li>
+<br><li>[Goto] (section jump) and [Groups] (about:config links) get updated
+when [View]/[Compare] are used.</li>
+<br><li>The [X] button at the top closes the current panel, use [Actions]
+button to return here (or choose via [Menu] button).</li>
+</div><br><br><br><br><br>
 </div><!-- end: actions_buttons_div -->
 
 </div><!-- end: actions_panel -->
@@ -5437,7 +5449,7 @@ title="Functions for about:config (find (filter/list)/reset/set)"
   <div id="groups_panel" class="panels borders">
 <!-- hidden heading (H1/H3/DL tags for bookmarks import compatibility) -->
 <span class="hidden"><H3>[Groups] (paste into about:config search box)</H3></span>
-<b>[Groups] (paste into about:config search box)</b><br>
+<b>[Groups] (paste into about:config search box)</b> ([X] closes)<br>
 (links: right click, a, hold Ctrl: T, V, Enter, V)<br>
 (bookmarks: right click, c, left click, Ctrl+V)
 <br><br>
@@ -5459,7 +5471,7 @@ title="Functions for about:config (find (filter/list)/reset/set)"
 <div id="examples_panel" class="panels borders">
 <!-- hidden heading (H1/H3/DL tags for bookmarks import compatibility) -->
 <span class="hidden"><H3>[Examples] (user.js templates/information)</H3></span>
-<b>[Examples] (user.js templates/information)</b><br><br>
+<b>[Examples] (user.js templates/information)</b> ([X] closes)<br><br>
 Example links for user.js templates/projects/information,
 
 search online for others.
@@ -5829,7 +5841,7 @@ href="file:///home/USERNAME/.mozilla/firefox"
      ************************************* -->
 
 <div id="functions_panel" class="panels borders">
-<b>[about:config Functions]</b><br><br>
+<b>[about:config Functions]</b> ([X] closes)<br><br>
 <button type="button" class="controls borders" id="select_functions_button"
 title="Select all text in the box">Select</button>
 <br><br><br><textarea id="functions_panel_textarea" autofocus="true"></textarea>
@@ -5845,7 +5857,7 @@ title="Select all text in the box">Select</button>
 <div id="help_panel" class="panels borders">
 <!-- hidden heading (H1/H3/DL tags for bookmarks import compatibility) -->
 <span class="hidden"><H3>[Help/Info]</H3></span>
-<b>[Help/Info] (userjs-tool.html)</b><br><br>
+<b>[Help/Info] (userjs-tool.html)</b> ([X] closes)<br><br>
 
 
 <!-- javascript off message -->
@@ -5863,7 +5875,7 @@ an extension such as: uBlock Origin, uMatrix, NoScript.<br>
 Interactive view, compare, and more for Firefox user.js
 (ghacksuserjs, pyllyukko, etc).<br>
 <br>
-Version&nbsp;&nbsp;&nbsp;: 2020.02.22 (alpha/experimental)<br>
+Version&nbsp;&nbsp;&nbsp;: 2020.02.23 (alpha/experimental)<br>
 
 Project&nbsp;&nbsp;&nbsp;:
 <a target="_blank" rel="external noopener noreferrer"
@@ -5903,7 +5915,7 @@ in your Firefox browser, with:<br>
 <br><li>highlighting, links, themes*, re-size, wrap,
 about:config links/regex/groups</li>
 
-<br><li>expanding sections, "go to" section links
+<br><li>expanding sections, and "go to" section links
 (with compatible user.js projects)</li>
 
 <br><li>compare preferences in two user.js, in a table format with
@@ -5913,7 +5925,11 @@ order/layout options and bold cell border around differences</li>
 comment-out*), point and click overrides collector, skeleton,
 prefs.js cleaner*, group by values</li>
 
-<br><li>load/save, drag/drop, or copy/paste user.js files</li>
+<br><li>load/save, drag/drop, or copy/paste user.js files
+(can load from some on-line URLs too)</li>
+
+<br><li>functions for find (filter/list)/reset/set on about:config
+Web Console (Firefox/forks/Thunderbird/SeaMonkey)</li>
 
 <br><li>single .html file (HTML/CSS/JavaScript) with no external dependency</li>
 
