@@ -11,7 +11,7 @@
 
        Name         : userjs-tool.html
        Project      : https://github.com/icpantsparti/firefox-user.js-tool
-       Version      : 2020.02.23 (alpha/experimental)
+       Version      : 2020.02.24 (alpha/experimental)
        File         : https://raw.githubusercontent.com/icpantsparti/firefox-user.js-tool/master/userjs-tool.html
        On-line      : https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html
        License (MIT): https://raw.githubusercontent.com/icpantsparti/firefox-user.js-tool/master/LICENSE
@@ -127,6 +127,15 @@
       height: 2.6em;
       padding: 0;
       font-weight: bold;
+    }
+    .close_panel_x {
+      font-weight: bold;
+      font-size: 300%;
+      cursor: pointer;
+      position: fixed; /*absolute;*/
+      top: 5%;
+      right: 16%;
+      transform: translate(100%, 100%);
     }
 
 
@@ -5163,6 +5172,8 @@ title="Close panel" onclick="closePanel();">&#935;</button>
      ************************************* -->
 
 <div id="actions_panel" class="panels borders">
+<span class="close_panel_x" onclick="toggleActionsPanel();"
+title="Close [Actions] panel">&times;</span>
 <!-- hidden heading (H1/H3/DL tags for bookmarks import compatibility) -->
 <span class="hidden"><H3>[Actions]</H3></span>
 <b>[Actions] (Firefox user.js view, compare and more)</b> ([X] closes)<br>
@@ -5222,7 +5233,7 @@ name="file" accept=".js" id="load_template_input" />
 class="local_folder" href="user-template.js">Template</a>
 <textarea id="box_1_template" autofocus="true"
 ondrop="dropHandler1(event);" ondragover="dragOverHandler(event);"
-placeholder="&#10; Add template user.js here&#10; ([Load], drag or paste)&#10; then [View], [Compare], etc"
+placeholder="&#10; Add user.js template here ([Load], drag or paste)&#10;&#10; Then use [View], [Compare], or another action button"
 ></textarea>
 </td></tr></table></div>
 
@@ -5262,7 +5273,7 @@ name="file" accept=".js" id="load_overrides_input" />
 class="local_folder" href="user-overrides.js">user-overrides.js</a>
 <textarea id="box_2_overrides"
 ondrop="dropHandler2(event);" ondragover="dragOverHandler(event);"
-placeholder="&#10; Add user-overrides.js here&#10; ([Load], drag or paste)&#10; or create"
+placeholder="&#10; Add user-overrides.js here ([Load], drag or paste)&#10;&#10; (or used for action button input/output)"
 ></textarea>
 </td></tr></table></div>
 
@@ -5301,7 +5312,7 @@ name="file" accept=".js" id="load_userjs_input" />
 class="local_folder" href="user.js">user.js</a>
 <textarea id="box_3_userjs"
 ondrop="dropHandler3(event);" ondragover="dragOverHandler(event);"
-placeholder="&#10; Add user.js here&#10; ([Load], drag or paste)&#10; or create"
+placeholder="&#10; Add user.js here ([Load], drag or paste)&#10;&#10; (or used for action button input/output)"
 ></textarea>
 </td></tr></table></div>
 
@@ -5340,7 +5351,7 @@ class="local_folder" href="prefs.js">prefs.js</a>
 
 <textarea id="box_4_other"
 ondrop="dropHandler4(event);" ondragover="dragOverHandler(event);"
-placeholder="&#10; Add other user.js here&#10; ([Load], drag or paste)&#10; or create"
+placeholder="&#10; Add other/user.js here ([Load], drag or paste)&#10;&#10; (or used for action button input/output)"
 ></textarea>
 </td></tr></table></div>
 
@@ -5430,7 +5441,7 @@ button, or use [Compare] button after loading two boxes.</li>
 <br><li>Hover other buttons for their info, or use [Help/Info] button.</li>
 <br><li>The numbers on the buttons indicate the input>output boxes, contents
 of the output box are replaced, [Collect] amends the output box.</li>
-<br><li>[Goto] (section jump) and [Groups] (about:config links) get updated
+<br><li>[Goto] (section jump) and [Groups] (about:config search) are updated
 when [View]/[Compare] are used.</li>
 <br><li>The [X] button at the top closes the current panel, use [Actions]
 button to return here (or choose via [Menu] button).</li>
@@ -5447,6 +5458,8 @@ button to return here (or choose via [Menu] button).</li>
      ************************************* -->
 
   <div id="groups_panel" class="panels borders">
+<span class="close_panel_x" onclick="toggleGroupsPanel();"
+title="Close [Groups] panel">&times;</span>
 <!-- hidden heading (H1/H3/DL tags for bookmarks import compatibility) -->
 <span class="hidden"><H3>[Groups] (paste into about:config search box)</H3></span>
 <b>[Groups] (paste into about:config search box)</b> ([X] closes)<br>
@@ -5469,6 +5482,8 @@ button to return here (or choose via [Menu] button).</li>
      ************************************* -->
 
 <div id="examples_panel" class="panels borders">
+<span class="close_panel_x" onclick="toggleExamplesPanel();"
+title="Close [Examples] panel">&times;</span>
 <!-- hidden heading (H1/H3/DL tags for bookmarks import compatibility) -->
 <span class="hidden"><H3>[Examples] (user.js templates/information)</H3></span>
 <b>[Examples] (user.js templates/information)</b> ([X] closes)<br><br>
@@ -5841,6 +5856,8 @@ href="file:///home/USERNAME/.mozilla/firefox"
      ************************************* -->
 
 <div id="functions_panel" class="panels borders">
+<span class="close_panel_x" onclick="toggleFunctionsPanel();"
+title="Close [Functions] panel">&times;</span>
 <b>[about:config Functions]</b> ([X] closes)<br><br>
 <button type="button" class="controls borders" id="select_functions_button"
 title="Select all text in the box">Select</button>
@@ -5855,6 +5872,8 @@ title="Select all text in the box">Select</button>
      ************************************* -->
 
 <div id="help_panel" class="panels borders">
+<span class="close_panel_x" onclick="toggleHelpPanel();"
+title="Close [Help] panel">&times;</span>
 <!-- hidden heading (H1/H3/DL tags for bookmarks import compatibility) -->
 <span class="hidden"><H3>[Help/Info]</H3></span>
 <b>[Help/Info] (userjs-tool.html)</b> ([X] closes)<br><br>
@@ -5875,7 +5894,7 @@ an extension such as: uBlock Origin, uMatrix, NoScript.<br>
 Interactive view, compare, and more for Firefox user.js
 (ghacksuserjs, pyllyukko, etc).<br>
 <br>
-Version&nbsp;&nbsp;&nbsp;: 2020.02.23 (alpha/experimental)<br>
+Version&nbsp;&nbsp;&nbsp;: 2020.02.24 (alpha/experimental)<br>
 
 Project&nbsp;&nbsp;&nbsp;:
 <a target="_blank" rel="external noopener noreferrer"
