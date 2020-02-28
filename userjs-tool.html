@@ -11,7 +11,7 @@
 
        Name         : userjs-tool.html
        Project      : https://github.com/icpantsparti/firefox-user.js-tool
-       Version      : 2020.02.24 (alpha/experimental)
+       Version      : 2020.02.27 (alpha/experimental)
        File         : https://raw.githubusercontent.com/icpantsparti/firefox-user.js-tool/master/userjs-tool.html
        On-line      : https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html
        License (MIT): https://raw.githubusercontent.com/icpantsparti/firefox-user.js-tool/master/LICENSE
@@ -50,7 +50,7 @@
       /* white-space: nowrap; */
     }
 
-    /* actions/groups/examples/functions/help panels */
+    /* actions/groups/links/functions/help panels */
     .panels {
       display: none;
       position: fixed;
@@ -227,12 +227,12 @@
       max-height: 100%;
     }
 
-    /* examples panel */
-    #table_examples {
+    /* links panel */
+    .table_links {
       width: 95%;
       border-collapse: collapse;
     }
-    .td1_examples {
+    .td1_links {
       border: 1px solid;
       text-align: left;
       vertical-align: top;
@@ -240,7 +240,7 @@
       padding: 10px;
       width: 80%;
     }
-    .td2_examples {
+    .td2_links {
       border: 1px solid;
       text-align: left;
       vertical-align: top;
@@ -248,7 +248,7 @@
       padding: 10px;
       width: 20%;
     }
-    .td3_examples {
+    .td3_links {
       border-left: 0px;
       border-right: 0px;
     }
@@ -260,17 +260,17 @@
       width: 6.5em;
     }
     /* compare stats table */
-    #table_compstats {
+    #table_stats {
       width: 95%;
       border-spacing: 1px;
     }
-    .td1_compstats, .td2_compstats {
+    .td1_stats_count, .td2_stats_count {
       width: 10%;
       text-align: right;
       padding: 0px 20px 0px 0px;
     }
-    .td3a_compstats { width:80%; }
-    .td3b_compstats { width:90%; }
+    .td3a_stats_name { width:80%; }
+    .td3b_stats_name { width:90%; }
     /* compare table */
     #table_comp {
       table-layout: fixed;
@@ -292,6 +292,53 @@
     .td_comp_dashed { border-top: 1px dashed; }
     .td_comp_diff { border: solid 3px; }
     /* #table_comp tr:hover { outline: 3px dashed #FF0000; } */
+
+    /* tableview */
+    #tview_div .controls
+    {
+      height: 2.6em;
+      min-width: 6.5em;
+      width: auto;
+    }
+    #table_tview {
+      table-layout: fixed;
+      width: 100%;
+      border-spacing: 1px;
+      white-space: normal;
+      border-collapse: collapse;
+    }
+    #table_tview td {
+      border-left: 0px;
+      border-right: 0px;
+    }
+    .tr_tview_heading {
+      /*background-color: #191970;*/ /*MidnightBlue*/
+      /*color: #b3b3b3; */ /*(gray)*/
+      border: solid 3px;
+      white-space: pre;
+      border-left: 0px;
+      border-right: 0px;
+    }
+    .tr_tview_inactive {
+      background-color: #404040;
+      /*color: #b3b3b3; */ /*(gray)*/
+    }
+    .tr_tview_all {
+      border: 1px dotted;
+      vertical-align: top;
+      word-break: break-all;
+      padding: 10px;
+    }
+    .td_tview_nav {
+      border-left: 0px;
+      border-right: 0px;
+    }
+    /* .tr_tview_pref:hover { outline: 3px dashed #FF0000; } */
+    .td_tview_id { width: 3.5em;  }
+    .td_tview_name { width: 20%; }
+    .td_tview_value { width: 10%; }
+    .td_tview_desc { width: auto; }
+    .td_tview_info { width: 6em; }
 
     /* within view area */
     #collect_mode_pad { display: none; }
@@ -986,40 +1033,21 @@ function diff( o, n ) {
         + url;
       clearTextAreaContents(text_box);
       toggleTextAreaReadOnly(text_box, true, false);
-
-      // var file = new XMLHttpRequest();
-      // // file.onreadystatechange = function() {
-      // file.onloadend = function() {
-      //   // document is ready to parse / status found
-      //   if (file.readyState === 4) {
-      //     if (file.status === 200 || file.status === 0) {
-      //       e.value = file.responseText;
-      //     }
-      //     else {
-      //       alert("File XMLHttpRequest status: " + file.status + msg);
-      //     }
-      //   }
-      //   else {
-      //     alert("File XMLHttpRequest readyState: " + file.readyState + msg);
-      //   }
-      // }
-      // // url += "?t=" + Math.random(); // add unique id to avoid cached
-      // file.open('GET', url);
-      // file.send();
-
-      fetch(url).then(function(response) {
-        if (response.ok) {
-          return response.text()
-        }
-        else {
-          throw Error(response.status);
-        }
-      }).then(function(text) {
-        e.value = text;
-      }).catch(function(err) {
-        alert("File fetch error: " + err.message + msg);
-      });
-
+      fetch(url)
+        .then(function(response) {
+          if (response.ok) {
+            return response.text()
+          }
+          else {
+            throw Error(response.status);
+          }
+        })
+        .then(function(text) {
+          e.value = text;
+        })
+        .catch(function(err) {
+          alert("File fetch error:\n" + err.message + msg);
+        });
     } // end function downloadFile
 
     // *************************************
@@ -1614,8 +1642,7 @@ function diff( o, n ) {
       // ghacks style
       tidySectionHeadingRegex("^(?:\/\/ )?[ *\t]*[/][*][*][*-][ *\t]*\\[SECTION ([^\\]]*)\\]:[ \t]*(.*)[ *\t]*$", "$1: $2");
       if (!noInserts) {
-        tidySectionHeadingRegex("^(?:\/\/ )?\/[*\/] *(ESR.*)$", "9999+ $1");
-        tidySectionHeadingRegex("^(?:\/\/ )?\/\\* *(START).*$", "0000= $1");
+        tidySectionHeadingRegex("^(?:\/\/ )?\/\\* *(START).*$", "0000: $1");
         tidySectionHeadingRegex("^(?:\/\/ )?\/\\* *(END).*$", "9999~ $1");
       }
 
@@ -1662,9 +1689,6 @@ function diff( o, n ) {
 
       // ghacks style
       else if (new RegExp("^(?:\/\/ )?[/][*][*][*-] *([^*])").test(line)) {
-        return(true);
-      }
-      else if (new RegExp("^(?:\/\/ )?\/[*/] *(ESR.*)$").test(line)) {
         return(true);
       }
       else if (new RegExp("^(?:\/\/ )?[/][*] *(START|END).*$").test(line)) {
@@ -1790,7 +1814,7 @@ function diff( o, n ) {
       var groups_container_html = '';
       var content_html = '';
 
-      var section_heading = '(TOP)';
+      var section_heading = '(TOP) / Introduction';
       // if there is only 1 section we will not collapse the viewer
       var section_count = 1;
       var userjs_type = "";
@@ -2188,7 +2212,7 @@ function diff( o, n ) {
       updateDateTimeStampVariable();
       if (skeleton) {
         output_box.value += "// " + date_time_stamp + " skeleton\n\n";
-        output_box.value += "/*** (overrides) (TOP) ***/";
+        output_box.value += "/*** (overrides) (TOP) / Introduction ***/";
       }
       else {
         output_box.value += "// " + date_time_stamp + " reduced\n";
@@ -2200,7 +2224,7 @@ function diff( o, n ) {
         var x="",r="";
 
         if (skeleton) {
-          if (line == "/*** (overrides) (TOP) ***/") { continue; }
+          if (line == "/*** (overrides) (TOP) / Introduction ***/") { continue; }
         }
 
         userjs_type = detectUserjsType(line, userjs_type, i);
@@ -2582,7 +2606,7 @@ function diff( o, n ) {
 
       var goto_select_html = ''
         + '<option value="" disabled selected hidden>&#x25BE;Goto</option>\n'
-        + '<option>(TOP)</option>\n';
+        + '<option>(TOP) / Introduction</option>\n';
 
       var groups_container_html = '';
 
@@ -2980,25 +3004,25 @@ function diff( o, n ) {
         content_html += '<br><details><summary>Summary'
           + '&nbsp;&nbsp;(1st: ' + input_box_short_name + ')'
           + '&nbsp;&nbsp;(2nd: ' + input_box_short_name_2 + ')'
-          + '</summary><br><table id="table_compstats">'
+          + '</summary><br><table id="table_stats">'
           + '<colgroup><col width="10%" /><col width="10%" />'
           + '<col width="80%"/> </colgroup><tbody>';
         Object.keys(stats).forEach(function(key){
-          content_html += '<tr><td class="td1_compstats">';
+          content_html += '<tr><td class="td1_stats_count">';
           if (stats[key].sub) {
             // col1:empty col2:stat col3:name
-            content_html += '</td><td class="td2_compstats">';
+            content_html += '</td><td class="td2_stats_count">';
             content_html += stats[key].count;
-            content_html += '</td><td class="td3a_compstats">';
+            content_html += '</td><td class="td3a_stats_name">';
           }
           else {
             // col1:stat col2+col3:name
             content_html += stats[key].count;
-            content_html += '</td><td class="td3b_compstats" colspan="2">';
+            content_html += '</td><td class="td3b_stats_name" colspan="2">';
           }
           if ( stats[key].id > 0 ) {
             // stat name as a link
-            content_html += '<a href="#stat' + stats[key].id + '">';
+            content_html += '<a href="#' + stats[key].id + '">';
             content_html += stats[key].name;
             content_html += ' [' + stats[key].id + ']' + '</a>';
             // add to the goto button
@@ -3063,10 +3087,11 @@ function diff( o, n ) {
         // each row
         var title, titlebm, titleid;
         var diff_state1, diff_value1, diff_state2, diff_value2;
-        var section_heading = '(TOP)';
+        var section_heading = '(TOP) / Introduction';
         var group_user_pref_list = '';
         groups_container_html +=
           '<a target="_blank" href="about:config?filter=/^\\*$|^(';
+
         for (var i = 0, len = prefArray.length; i < len; i++) {
 
           diff_state1 = " td_comp_diff";
@@ -3091,7 +3116,7 @@ function diff( o, n ) {
           title = "";
           titleid = "";
           if (prefArray[i].state1 == "-" && prefArray[i].state2 == "-" ) {
-            titleid = " id=\"stat" + prefArray[i].diff + "\"";
+            titleid = " id=\"" + prefArray[i].diff + "\"";
             // go through the stats type object
             // and find the one that matches the diff
             Object.keys(stats).forEach(function(key){
@@ -3103,7 +3128,7 @@ function diff( o, n ) {
                 // ref: http://www.amp-what.com/unicode/search/triangle
                 //   jump link for [back]
                 title += "<a href=\"#";
-                if (i != 0) { title += "stat" + (prefArray[i].diff - 1) }
+                if (i != 0) { title += (prefArray[i].diff - 1) }
                 title += "\">[&#9650;]</a>"; // [back]
                 // jump link for [next]
                 title += " <a href=\"#";
@@ -3111,22 +3136,22 @@ function diff( o, n ) {
                   // this title is same diff as last row ie this is last title
                   title += "bottom"
                 }
-                else { title += "stat" + (prefArray[i].diff + 1) }
+                else { title += (prefArray[i].diff + 1) }
                 title += "\">[&#9660;]</a>"; // [next]
                 //   jump link for [top]
                 title += " <a href=#>[&#9651;]</a>"; // [top]
                 //   jump link for [1] ... (each stat)
                 Object.keys(stats).forEach(function(key2){
                   if (stats[key2].id > 0) {
-                    title += " <a href=\"#stat" + stats[key2].id
+                    title += " <a href=\"#" + stats[key2].id
                       + "\">[" + stats[key2].id + "]</a>";
                   }
                 });
                 //   jump link for [bottom]
                 title += " <a href=#bottom>[&#9661;]</a>"; // [bottom]
 
-                // (second line) add: [stat#] name (count)
-                title += "<br><br><a href=\"#stat" + prefArray[i].diff
+                // (second line) add: [#] name (count)
+                title += "<br><br><a href=\"#" + prefArray[i].diff
                   + "\">[" + prefArray[i].diff + "]</a>"
                   + " <b>" + stats[key].name + "</b>"
                   + "  (" + stats[key].count + ")<br><br>";
@@ -3257,17 +3282,17 @@ function diff( o, n ) {
 
           content_html += '</tr>';
 
-          if (i == (len - 1)) { 
+          if (i == (len - 1)) {
 
             title = "<br><br><br><br><br>";
             //   jump link for [back] [next] [top]
-            title += "<a href=\"#stat" + prefArray[i].diff + "\">[&#9650;]</a>";
+            title += "<a href=\"#" + prefArray[i].diff + "\">[&#9650;]</a>";
             title += " <a href=\"#bottom\">[&#9660;]</a>";
             title += " <a href=#>[&#9651;]</a>";
             //   jump link for [1] ... (each stat)
             Object.keys(stats).forEach(function(key2){
               if (stats[key2].id > 0) {
-                title += " <a href=\"#stat" + stats[key2].id
+                title += " <a href=\"#" + stats[key2].id
                   + "\">[" + stats[key2].id + "]</a>";
               }
             });
@@ -3395,7 +3420,743 @@ function diff( o, n ) {
         }
         toggleActionsPanel(false);
       }
+    } /* end function userjsCompareLauncher */
+
+
+
+
+    // *************************************
+    // userjsTableView
+    // *************************************
+
+    function userjsTableViewLauncher(box_chosen) {
+      // determine the box numbers to compare from the choice text
+      var box = box_chosen.replace(/^.*([0-9]).*$/, "$1");
+      switch (box) {
+        case "1": box="box_1_template"; break;
+        case "2": box="box_2_overrides"; break;
+        case "3": box="box_3_userjs"; break;
+        case "4": box="box_4_other"; break;
+      }
+      if (
+        document.getElementById("collect_button").style.textDecoration != "line-through"
+        && ( !(document.getElementById(box).value == "") )
+      ) {
+        userjsTableView(box);
+        toggleActionsPanel(false);
+      }
+    } /* end function userjsTableViewLauncher */
+
+    function userjsTableViewExpandAll() {
+      var e = document.getElementsByClassName("det");
+      for (var i = 0, j = e.length; i < j; i++) {
+        e[i].open = true;
+      }
     }
+
+    function userjsTableViewExpandDescriptions() {
+      var e = document.getElementsByClassName("prefDet");
+      for (var i = 0, j = e.length; i < j; i++) {
+        e[i].open = true;
+      }
+    }
+
+    function userjsTableViewCollapseAll() {
+      var e = document.getElementsByClassName("det");
+      for (var i = 0, j = e.length; i < j; i++) {
+        e[i].open = false;
+      }
+    }
+
+    function userjsTableViewToggleInactive() {
+      var b = document.getElementById("inactiveButton");
+      var e = document.getElementsByClassName("tr_tview_inactive");
+      if (/\u{25A2}/u.test(b.textContent)) {
+        for (var i = 0, j = e.length; i < j; i++) {
+          e[i].style.display = null;
+        }
+        b.textContent = b.textContent.replace(/^\u{25A2}/u, "\u25A3");
+      }
+      else {
+        for (var i = 0, j = e.length; i < j; i++) {
+          e[i].style.display = "none";
+        }
+        b.textContent = b.textContent.replace(/^\u{25A3}/u, "\u25A2");
+      }
+    }
+
+    ////////////////////////////////////////////////////////
+    // TODO: the "TableView" is work in progress
+    //       (there might be TODO tags in this function)
+    ////////////////////////////////////////////////////////
+
+    function userjsTableView(input_box_name) {
+
+      var input_box = document.getElementById(input_box_name);
+
+      var theme = document.body.className.replace( /(^| *)[^_]+_/ , '');
+
+      var content_html =
+          '<div style="width: 100%;" id="tview_div">'
+
+        + '<button type="button" class="controls borders'
+        + ' controls_' + theme + ' borders_' + theme
+        + '" onclick="userjsTableViewExpandAll();"'
+        + '>Expand All</button>'
+
+        + '<button type="button" class="controls borders'
+        + ' controls_' + theme + ' borders_' + theme
+        + '" onclick="userjsTableViewExpandDescriptions();"'
+        + '>Expand Descr</button>'
+
+        + '<button type="button" class="controls borders'
+        + ' controls_' + theme + ' borders_' + theme
+        + '" onclick="userjsTableViewCollapseAll();"'
+        + '>Collapse All</button>'
+
+        + '<button type="button" class="controls borders'
+        + ' controls_' + theme + ' borders_' + theme
+        + '" id="inactiveButton" '
+        + 'onclick="userjsTableViewToggleInactive();"'
+        + '>&#x25A3;&#x00A0;Show Inactive</button>'
+        + '<br><br><br>'
+
+        + '<br><span class="false">Please note: this "Table View" is work '
+        + 'in progress, be careful:<br>it might be working well or '
+        + 'there may be issues<br>(it needs verifying to ensure the user.js '
+        + 'is displaying correctly).'
+        + '<br>Info column currently *tries* to indicate: '
+        + 'Inactive/Warning/Hidden/Setup.</span>'
+        + '<br>Use [Goto] button or symbols for navigation.<br>';
+
+      var goto_select_html = ''
+        + '<option value="" disabled selected hidden>&#x25BE;Goto</option>\n'
+        + '<option>(TOP)</option>\n';
+
+      var groups_container_html = '';
+
+      var stats = {
+        'total': { 'id': -2, 'sub': false, 'count': 0, 'name': "Total" },
+        'totala': { 'id': -2, 'sub': true,  'count': 0, 'name': "Active" },
+        'totali': { 'id': -2, 'sub': true,  'count': 0, 'name': "Inactive" },
+      }
+
+      ////////////////////////////////////////
+      // convert in-block comments to in-line
+      ////////////////////////////////////////
+
+      // (for inactive pref recognition)
+
+      var input_content = amendCodeComments(input_box.value, true)
+        .replace(/(\r\n|\r)/g,'\n').split("\n");
+
+
+      ////////////////////////////////////////
+      // start of parsing (save into prefArray)
+      ////////////////////////////////////////
+
+      var prefArray = [];
+
+      // create a first section heading
+      prefArray.push( {
+        'type': "section", 'title': "Introduction", 'desc': "",
+        'id': "", 'name': "", 'state': "", 'value': "",
+        'comment': "", 'info': ""
+      } );
+
+      var regexes = {
+        'user_pref': {
+          'f': new RegExp(
+            "^([ \t]*user_pref|.*//.*user_pref)"  // $1 user_pref  //user_pref  etc
+            + "([ \t]*\\([ \t]*[\"'])"     // $2 ("  ('
+            + "([^\"']+)"                  // $3 prefname
+            + "([\"'][ \t]*,[ \t]*)"       // $4 ",  ',
+            + "(.*)"                       // $5 prefvalue  "prefvalue"  'prefvalue'
+            + "([ \t]*\\)[ \t]*;)"         // $6 );
+            + "(.*)$", "gi"                // $7 afters/comment
+          )
+        },
+        'http': {
+          // linkify a/href for HTTP/HTTPS URLs
+          'f':
+            new RegExp("(https?:[/][/][^ \"']+[^\\)\\], \"'.;])", "gi"),
+          'r':
+            '<a target="_blank" rel="external noopener noreferrer" '
+              + 'href="$1" class="http"><span class="hidden">__</span>$1</A>'
+        },
+        'warning': {
+          // span/class for:  [WARNING]
+          'f': new RegExp("(\\[WARNING\\])", "gi"),
+          'r': '<span class="warn">$1</span>'
+        },
+        'hidden': {
+          // span/class for:  (hidden pref...)  [HIDDEN PREF...]
+          'f': new RegExp("([\\[\\(]hidden pref[^\\)\\]]*[\\)\\]])", "gi"),
+          'r': "<span class=\"hid\">$1<\/span>"
+        },
+        'setup': {
+          // span/class for:  [SETUP]  [SETUP-...]
+          'f':
+            new RegExp("(\\[SETUP\\]|\\[SETUP-[^\\]]+\\]"
+              + "|\/\/[ \t]NOTICE-DISABLED:)", "gi"),
+          'r': "<span class=\"setup\">$1<\/span>"
+        }
+      }
+
+      // tagFlags (make sure these names also have an entry in regexes above)
+      // TODO more tags
+      var tagFlags = {
+        'warning':false, 'hidden':false, 'setup':false
+      }
+
+      var ic = 0, x, r, line = "", linetype = "",
+        prefid = "0000", prefid_prefix = "",
+        prefName = "", prefState = "", prefValue = "",
+        prefDesc = "", prefComment = "", found,
+        prefInfoSaved = true,  // add title+desc as own entry if not put on a pref
+        ISawAParrot = -1, lastSection = 1,
+        descMore = true, // we start in the first description
+        prefDescMore = false,
+        last_index = (prefArray.length - 1);
+
+      for (ic in input_content) {
+        line = input_content[ic];
+
+        ////////////////////////////////////////
+        // detect the type of line
+        ////////////////////////////////////////
+
+        // section/desc sub/desc pref-title/pref-desc/pref
+
+        if (new RegExp("^// /\\*+[ \\t]*\\[SECTION[ \\t]*[^:]+:").test(line)) {
+          // line starting  /*...  followed by [SECTION xxxx:
+          linetype = "section";
+          lastSection++;
+        }
+        else if (new RegExp("^\/\/ /[*/]+ +(START|END|[0-9][^:]+):").test(line)) {
+          // line starting  /*... or //...  followed by  START: END: 1234: 1234a:
+          linetype = "pref-title";
+        }
+        else if (regexes["user_pref"].f.test(line)) {
+          linetype = "pref";
+          descMore = false;
+          prefDescMore = false;
+        }
+        else if (new RegExp("^// \\/[\\*\\/][ \t\\*\\/]*$").test(line)) {
+          // line just  /* //
+          continue;
+        }
+        else if (new RegExp("^// [ \\t]*\\*+\\/[ \\t]*$").test(line)) {
+          // line just  */
+          descMore = false;
+          prefDescMore = false;
+          continue;
+        }
+        else if (prefDescMore == true) {
+          linetype = "pref-desc"
+        }
+        else if (descMore == true) {
+          if (new RegExp("^// [ \\t]*\/\/[ \\t]*FF[0-9]+\\+*[ \\t]*$").test(line)) {
+            linetype = "sub"
+          }
+          else {
+            linetype = "desc"
+          }
+        }
+        else if (/^[ \t]*$/.test(line)) {
+          // ignore empty line (as we are not within a description)
+          continue;
+        }
+        else {
+          linetype = "sub"
+        }
+
+        ////////////////////////////////////////
+        // save unused prefTitle prefDesc
+        ////////////////////////////////////////
+
+        // (eg ghacks-user.js 0105 0902 sub-sections have no user_pref)
+
+        switch (linetype) {
+          case "section":
+          case "sub":
+          case "pref-title":
+            if (prefInfoSaved == false) {
+              prefArray.push( {
+                'type': "prefx", 'title': prefTitle, 'desc': prefDesc,
+                'id': "" + prefid_prefix + prefid,
+                'name': "", 'state': "", 'value': "",
+                'comment': "", 'info': ""
+              } );
+              last_index = (prefArray.length - 1);
+              prefInfoSaved = true;
+              // add to info
+              // TODO more tags
+              for (const i of [ "warning", "hidden", "setup" ]) {
+                if (tagFlags[i]) {
+                  switch (i) {
+                    case "warning":
+                      prefArray[last_index].info += '<span class="warn">W</span> ';
+                      break;
+                    case "hidden":
+                      prefArray[last_index].info += '<span class="hid">H</span> ';
+                      break;
+                    case "setup":
+                      prefArray[last_index].info += '<span class="setup">S</span> ';
+                      break;
+                  }
+                }
+              }
+            }
+        }
+
+        ////////////////////////////////////////
+        // reset some flags/variables
+        ////////////////////////////////////////
+
+        // (some are also reset in the line type detect above)
+
+        if (linetype == "pref-title") {
+          prefInfoSaved = false;
+        }
+
+        if (linetype == "section" || linetype == "pref-title") {
+          prefTitle = "";
+          prefDesc = "";
+          tagFlags["warning"] = false;
+          tagFlags["hidden"] = false;
+          tagFlags["setup"] = false;
+        }
+
+        ////////////////////////////////////////
+        // detect tags
+        ////////////////////////////////////////
+
+        // TODO more tags
+
+        switch (linetype) {
+          case "section":
+          case "sub":
+          case "desc":
+          case "pref-title":
+          case "pref-desc":
+            if (regexes["warning"].f.test(line)) { tagFlags["warning"] = true; };
+            if (regexes["hidden"].f.test(line)) { tagFlags["hidden"] = true; };
+            if (regexes["setup"].f.test(line)) { tagFlags["setup"] = true; };
+        }
+
+        ////////////////////////////////////////
+        // escape the text
+        ////////////////////////////////////////
+
+        // replace & < > characters with HTML escape codes
+        line = escapeHtml(line);
+
+        ////////////////////////////////////////
+        // capture pref id (ghacks-user.js ref)
+        ////////////////////////////////////////
+
+        if (linetype == "section" || linetype == "pref-title") {
+          prefid = line;
+          x = new RegExp("^(?:\/\/ )/[*/]+[ \\t]+\\[SECTION ([^\\]]+)\\]:.*$");
+          prefid = prefid.replace(x, "$1");
+          x = new RegExp("^(?:\/\/ )/[*/]+[ \\t]+([^:]+):.*$");
+          prefid = prefid.replace(x, "$1");
+          if (/^9999/.test(prefid)) {
+            prefid_prefix = '9999:';
+          }
+          else if (/^END/.test(prefid)) {
+            prefid_prefix = '';
+          }
+        }
+
+        ////////////////////////////////////////
+        // style/linkify
+        ////////////////////////////////////////
+
+        // (pref done later as we only do //comment part)
+
+        if (linetype != "pref") {
+          for (const i of [ "http", "warning", "hidden", "setup" ]) {
+            line = line.replace(regexes[i].f, regexes[i].r);
+          }
+        }
+
+        ////////////////////////////////////////
+        // section / sub / desc
+        ////////////////////////////////////////
+
+        // title (first line)
+        if (linetype == "section" || linetype == "sub") {
+          prefArray.push( {
+            'type': linetype,
+            'title':
+              line.replace(/^\/\/ /, "")
+                .replace(/^\/\*+[ \t]*/, "")
+                .replace(/[ \t]*\*+\/[ \t]*$/, ""),
+            'desc': "", 'id': "",
+            'name': "", 'state': "", 'value': "", 'comment': "", 'info': ""
+          } );
+          last_index = (prefArray.length - 1);
+          // if line has a */ ending it is the last part of desc
+          if (new RegExp("\\*\\*\\*\\/[ \\t]*$").test(line)) {
+            descMore = false;
+          }
+          else {
+            descMore = true;
+          }
+        }
+
+        // desc (append to last saved entry in array)
+        if (linetype == "desc") {
+          prefArray[last_index].desc +=
+            line.replace(/^\/\/ /, "")
+              .replace(/^\/\*+[ \t]*/, "")
+              .replace(/[ \t]*\*+\/[ \t]*$/, "")
+            + "<br>";
+        }
+
+        ////////////////////////////////////////
+        // pref-title / pref-desc / pref
+        ////////////////////////////////////////
+
+        // pref-title/pref-desc can apply to multiple prefs
+        // also not saved until we get to user_pref on subsequent lines
+
+        // pref-title (first line)
+        if (linetype == "pref-title") {
+          prefTitle = line;
+          x = new RegExp("^(?:\/\/ )/[*/]+ +[^:]+:[ \t]*(.*)[ \t]*$");
+          prefTitle = prefTitle.replace(x, "$1");
+          x = new RegExp("[ \\t]*\\*+/[ \\t]*$");
+          prefTitle = prefTitle.replace(x, "");
+          x = new RegExp("[ \\t]*\\*+/[ \\t]*$");
+          prefTitle = prefTitle.replace(x, "");
+          prefTitle += "<br>"
+          if (new RegExp("\\*\\*\\*\\/[ \\t]*$").test(line)) {
+            prefDescMore = false;
+          }
+          else {
+            prefDescMore = true;
+          }
+        }
+
+        // pref-desc
+        if (linetype == "pref-desc") {
+          prefDesc += line.replace(/^\/\/ /, "");
+          x = new RegExp("[ \\t]*\\*+/[ \\t]*$");
+          prefDesc = prefDesc.replace(x, "");
+          prefDesc += "<br>"
+          if (new RegExp("\\*\\*\\*\\/[ \\t]*$").test(line)) {
+            prefDescMore = false;
+          }
+          else {
+            prefDescMore = true;
+          }
+        }
+
+        // pref
+        // (pref-title/pref-desc collected from previous lines saved too)
+        if (linetype == "pref") {
+          prefState = "";
+          prefName = "";
+          prefValue = "";
+          prefComment = "";
+          prefState = line.replace(regexes["user_pref"].f, "$1");
+          prefName = line.replace(regexes["user_pref"].f, "$3");
+          prefValue = line.replace(regexes["user_pref"].f,"$5");
+          // do not remove preceeding '//' (for output clarity later)
+          prefComment = line.replace(regexes["user_pref"].f, "$7")
+            .replace(/^[ \t]*/, "");
+
+          // determine if inactive
+          if (new RegExp("^.*[/][/*].*user_pref", "i").test(prefState)) {
+            prefState = "Inactive ";
+          }
+          else {
+            prefState = "";
+          }
+
+          // if we already seen the parrot pref only update the value
+          if (prefName == "_user.js.parrot") {
+            if (ISawAParrot > -1) {
+              prefArray[ISawAParrot].value = prefValue;
+              continue;
+            }
+            ISawAParrot = (prefArray.length);
+          }
+
+          // save to array
+          prefArray.push( {
+            'type': "pref", 'title': prefTitle, 'desc': prefDesc,
+            'id': "" + prefid_prefix + prefid,
+            'name': prefName, 'state': prefState, 'value': prefValue,
+            'comment': prefComment, 'info': ""
+          } );
+          last_index = (prefArray.length - 1);
+
+          // flag so we know prefTitle/prefDesc used
+          // (those vars are not cleared as may be needed for next user_pref)
+          prefInfoSaved = true;
+
+          // add to info
+          // TODO more tags
+          for (const i of [ "warning", "hidden", "setup" ]) {
+            if (tagFlags[i] || regexes[i].f.test(prefArray[last_index].comment)
+            ) {
+              switch (i) {
+                case "warning":
+                  prefArray[last_index].info += '<span class="warn">W</span> ';
+                  break;
+                case "hidden":
+                  prefArray[last_index].info += '<span class="hid">H</span> ';
+                  break;
+                case "setup":
+                  prefArray[last_index].info += '<span class="setup">S</span> ';
+                  break;
+              }
+            }
+          }
+
+          // style/linkify comment
+          for (const i of [ "http", "warning", "hidden", "setup" ]) {
+            prefArray[last_index].comment = prefArray[last_index].comment
+              .replace(regexes[i].f, regexes[i].r);
+          }
+
+        } // "pref"
+
+      }
+      input_content = [];
+      lastSection++;
+
+      ////////////////////////////////////////
+      // end of parsing
+      ////////////////////////////////////////
+
+
+      ////////////////////////////////////////
+      // calculate: stats
+      ////////////////////////////////////////
+
+      var statBase = "", statSuffix = "";
+      for (var i = 0, len = prefArray.length; i < len; i++) {
+        if (prefArray[i].type == "pref") {
+          if (prefArray[i].state == '') {
+            stats["total"].count++;
+            stats["totala"].count++;
+          }
+          else {
+            stats["total"].count++;
+            stats["totali"].count++;
+          }
+        }
+      }
+
+
+      ////////////////////////////////////////
+      // build results table
+      ////////////////////////////////////////
+
+      // loop through array and build each table row
+      // (either: section heading or user_pref rows)
+
+      content_html += '<br><table id="table_tview">'
+
+      content_html +=
+          '<tr>'
+        + '<td class="tr_tview_all td_tview_id">ID</td>'
+        + '<td class="tr_tview_all td_tview_name">Preference Name</td>'
+        + '<td class="tr_tview_all td_tview_value">Value</td>'
+        + '<td class="tr_tview_all td_tview_desc">Description</td>'
+        + '<td class="tr_tview_all td_tview_info">Info</td>'
+        + '</tr>';
+
+      var section_heading = "";
+      var sectionCount = 0;
+      var group_user_pref_list = '';
+
+      for (var i = 0, len = prefArray.length; i < len; i++) {
+
+        if (prefArray[i].type == "section") {
+
+          // section heading
+
+          // navigation links row
+          sectionCount++;
+          content_html +=
+              '<tr id="' + sectionCount + '" class="">'
+            + '<td class="tr_tview_all td_tview_nav" colspan="5">'
+            + '<br><br><br><br>'
+            + "<a href=\"#" + ((sectionCount == 1) ? "" : (sectionCount - 1))
+            + "\">[&#9650;]</a>" // [back]
+            + " <a href=\"#" + (sectionCount + 1)
+            + "\">[&#9660;]</a>" // [next]
+            + " <a href=#>[&#9651;]</a>" // [top]
+          for (var l = 1; l < lastSection; l++) {
+            content_html += "<a href=\"#" + l + "\">.</a>";
+          }
+          content_html +=
+              "<a href=#" + lastSection + ">[&#9661;]</a><br><br>" // [bottom]
+            + '</td></tr>';
+
+          // section heading row
+          content_html +=
+              '<tr class="tr_tview_heading">'
+            + '<td class="tr_tview_all" colspan="5">'
+            + ((prefArray[i].desc=="") ? ""
+              : '<details class="det secDet"><summary>')
+            + '<span class="ref" style="font-weight: normal">'
+            + prefArray[i].title + '</span>'
+            + ((prefArray[i].desc=="") ? "" : "</summary><br>")
+            + prefArray[i].desc
+            + ((prefArray[i].desc=="") ? "" : "</details>")
+            + '</td></tr>';
+
+          // end and start about:config bookmarks groups
+          if (sectionCount > 1) {
+            group_user_pref_list = group_user_pref_list.replace(/\|$/, '');
+            groups_container_html += group_user_pref_list + ')(;|$)|^$/i">-'
+              + section_heading + '</A><br>\n';
+            group_user_pref_list = '';
+          }
+          groups_container_html +=
+            '<a target="_blank" href="about:config?filter=/^\\*$|^(';
+          // note current section_heading for next time
+          section_heading = "[" + sectionCount + "] " + prefArray[i].title;
+          // add for goto button
+          goto_select_html += '<option>' + section_heading + '</option>\n';
+
+        }
+        else {
+
+          // user_pref row
+
+          content_html +=
+              '<tr class="tr_tview_pref'
+
+            // class for inactive user_pref
+            + ((prefArray[i].state=="") ? "" : " tr_tview_inactive") + '">'
+
+            // pref id (ghacks-user.js ref)
+            + '<td class="tr_tview_all td_tview_id">'
+            + '<span class="ref">' + prefArray[i].id.replace(":", "<br>")
+            + '</span></td>'
+
+            // pref name
+            + '<td class="tr_tview_all td_tview_name">'
+            + "<a target=\"_blank\" href=\"about:config?filter=/^\\*\$|^("
+            + prefArray[i].name.replace(/([*.+])/g, "\\$1")
+            + ")(;|\$)|^\$/i\">" + prefArray[i].name + "</a>"
+            + '</td>'
+
+            // pref value (add class for color)
+            + '<td class="tr_tview_all td_tview_value">'
+            + '<span class="' + prefArray[i].value
+                .replace(/^[0-9.+-]+$/, "integer")
+                .replace(/^(".*"|'.*')$/, "string")
+            + '">' + prefArray[i].value + '</span></td>'
+
+            // pref desc (title+desc+comment) (details tag)
+            + '<td class="tr_tview_all td_tview_desc">'
+              // only use details tag if we have desc or comment
+            + ( ((prefArray[i].desc=="" && prefArray[i].comment=="")
+                || (prefArray[i].title=="" && prefArray[i].desc=="") ) ? ""
+              : '<details class="det prefDet"><summary>')
+            // title
+            + ((prefArray[i].type == "sub")
+                ? '<span class="pref" style="font-weight: normal">'
+                : '<span class="ref" style="font-weight: normal">')
+            + prefArray[i].title + '</span>'
+            // close the summary (if used)
+            + ( ((prefArray[i].desc=="" && prefArray[i].comment=="")
+                || (prefArray[i].title=="" && prefArray[i].desc=="") ) ? ""
+              : "</summary>")
+            // desc + comment
+            + prefArray[i].desc + prefArray[i].comment
+            // close the details (if used)
+            + ( ((prefArray[i].desc=="" && prefArray[i].comment=="")
+                || (prefArray[i].title=="" && prefArray[i].desc=="") ) ? ""
+              : "</details>")
+            + '</td>'
+
+            // pref info (state etc)
+            + '<td class="tr_tview_all td_tview_info">'
+            + '<span class="pref">' + prefArray[i].state + '</span>'
+            + ((prefArray[i].state=="") ? "" : "<br>")
+            + prefArray[i].info + '</td></tr>';
+
+            // collect prefname for pref groups
+            group_user_pref_list +=
+              prefArray[i].name.replace(/([*.+])/g, "\\$1") + "|";
+        }
+
+        // add navigation links at table end (as last row of table)
+        if (i == (len - 1)) {
+          sectionCount++;
+          content_html +=
+              '<tr id="' + sectionCount +'">'
+            + '<td class="tr_tview_all td_tview_nav" colspan="5">'
+            + '<br><br><br><br>'
+            + '<a href="#' + (sectionCount - 1)
+            + "\">[&#9650;]</a>" // [back]
+            + ' <a href="#' + sectionCount
+            + "\">[&#9660;]</a>" // [next]
+            + " <a href=#>[&#9651;]</a>"; // [top]
+          for (var l = 1; l < lastSection; l++) {
+            content_html += "<a href=\"#" + l + "\">.</a>";
+          }
+          content_html +=
+              "<a href=#bottom>[&#9661;]</a><br><br>" // [bottom]
+            + '</td></tr>'
+        }
+
+      }
+      content_html += '</table>';
+
+      // end about:config bookmarks groups
+      group_user_pref_list = group_user_pref_list.replace(/\|$/, '');
+      groups_container_html += group_user_pref_list + ')(;|$)|^$/i">-'
+        + section_heading + '</A><br>\n';
+
+      ////////////////////////////////////////
+      // add stats totals table
+      ////////////////////////////////////////
+
+      content_html += '<br><table id="table_stats">'
+        + '<colgroup><col width="10%" /><col width="10%" />'
+        + '<col width="80%"/> </colgroup><tbody>';
+      Object.keys(stats).forEach(function(key){
+        content_html += '<tr><td class="td1_stats_count">'
+          + stats[key].count
+          + '</td><td class="td3b_stats_name" colspan="2">'
+          + stats[key].name
+          + '</td></tr>';
+      });
+      content_html += "</tbody></table><br>";
+
+      ////////////////////////////////////////
+      // end content and add into document
+      ////////////////////////////////////////
+
+      content_html += '<br><br><br></div>\n';
+      goto_select_html += '<option>[' + sectionCount + '] (BOTTOM)</option>\n';
+      document.getElementById("view_area").innerHTML = content_html;
+      document.getElementById("goto_select").innerHTML = goto_select_html;
+      document.getElementById("groups_container").innerHTML = groups_container_html;
+      content_html = null;
+      goto_select_html = null;
+      groups_container_html = null;
+
+      // refresh as per UI settings
+      togglePrefixAboutConfigLinks("refresh");
+      if (toggleExpandAllOnView("status")) { userjsTableViewExpandAll(true); }
+      if (toggleGroupsOnView("status")) { toggleGroupsPanel(true); }
+
+    } /* end function userjsTableView */
+
+
+
 
     // *************************************
     // convertListToGroup
@@ -3592,10 +4353,10 @@ function diff( o, n ) {
 
     function refocusSection() {
       if (!section_focus) {
-        section_focus = document.getElementById("(TOP)");
+        section_focus = document.getElementById("(TOP) / Introduction");
       }
       section_focus.focus();
-      // if (section_focus == document.getElementById("(TOP)")) {
+      // if (section_focus == document.getElementById("(TOP) / Introduction")) {
       //   section_focus.scrollIntoView(false);
       // }
       // else {
@@ -3732,8 +4493,8 @@ function diff( o, n ) {
         optInSelect = findMenuSelectOption("\\[Groups\\]$");
         optButton = "groups_button";
       }
-      else if (div_name == "examples_panel") {
-        optInSelect = findMenuSelectOption("\\[Examples\\]$");
+      else if (div_name == "links_panel") {
+        optInSelect = findMenuSelectOption("\\[Links\\]$");
       }
       else if (div_name == "functions_panel") {
         optInSelect = findMenuSelectOption("\\[about:config Functions\\]$");
@@ -3815,9 +4576,9 @@ function diff( o, n ) {
         else {
           // hide panels and un-highlight menu/buttons
           show(false, "display", [ "actions_panel", "groups_panel",
-            "examples_panel", "functions_panel", "help_panel" ] );
+            "links_panel", "functions_panel", "help_panel" ] );
           show(false, "menu", [ "\\[Actions\\]$", "\\[Groups\\]$",
-            "\\[Examples\\]$", "\\[about:config Functions\\]$",
+            "\\[Links\\]$", "\\[about:config Functions\\]$",
             "\\[help/info\\]$" ] );
           show(false, "button", [ "groups_button", "actions_button" ] );
           // highlight menu and show close button
@@ -3878,7 +4639,7 @@ function diff( o, n ) {
 
     function toggleActionsPanel(force) { togglePanel("actions_panel", force); }
     function toggleGroupsPanel(force) { togglePanel("groups_panel", force); }
-    function toggleExamplesPanel(force) { togglePanel("examples_panel", force); }
+    function toggleLinksPanel(force) { togglePanel("links_panel", force); }
     function toggleFunctionsPanel(force) { togglePanel("functions_panel", force); }
     function toggleHelpPanel(force) { togglePanel("help_panel", force); }
     function closePanel(force) { togglePanel("close_panel_button", force); }
@@ -4153,7 +4914,13 @@ function diff( o, n ) {
         case "compare:4:4":
           userjsCompareLauncher(action);
           break;
-        case "examples":
+        case "table1":
+        case "table2":
+        case "table3":
+        case "table4":
+          userjsTableViewLauncher(action);
+          break;
+        case "links":
         case "append":
         case "skeleton":
         case "collect":
@@ -4166,7 +4933,7 @@ function diff( o, n ) {
           document.getElementById(action+"_button").click();
           break;
       }
-    }
+    } /* end of function handleActionURLparameter */
 
 
 
@@ -4235,12 +5002,8 @@ function diff( o, n ) {
           }
         }
 
-        document.getElementById(id).innerHTML +=
-          '<option value="" disabled>'
-          + '<b>See [Examples] for more/info (*=github)</b></option>';
-
-        // pickup URLs from examples_panel where name is tagged with '#'
-        var o = document.getElementById("examples_panel").getElementsByTagName("a");
+        // pickup URLs from links_panel where name is tagged with '#'
+        var o = document.getElementById("links_panel").getElementsByTagName("a");
         for (var i=0,j=o.length;i<j;i++) {
           if (/# *$/.test(o[i].innerHTML)) {
             document.getElementById(id).innerHTML +=
@@ -4336,8 +5099,10 @@ function diff( o, n ) {
         // expand, focus, and scroll to the chosen section
         var id = document.getElementById("goto_select").value;
         if (id != "") {
-          if (/compare_div/.test(document.getElementById("view_area").innerHTML)) {
-            if (id == "(TOP)") {
+
+          /* for: compare or tableview */
+          if (/(compare_div|tview_div)/.test(document.getElementById("view_area").innerHTML)) {
+            if ( (id == "(TOP)") || (id == "(TOP) / Introduction") ) {
               scroll(0,0);
             }
             else {
@@ -4345,7 +5110,7 @@ function diff( o, n ) {
                 id = "bottom";
               }
               else {
-                id = "stat" + id.replace(/^\[([0-9]+)\] .*$/, "$1");
+                id = id.replace(/^\[([0-9]+)\] .*$/, "$1");
               }
               var e = document.getElementById(id);
               e.scrollIntoView();
@@ -4358,7 +5123,7 @@ function diff( o, n ) {
               section_focus = e;
               refocusSection();
             }
-            else if (id == "(TOP)") {
+            else if (id == "(TOP) / Introduction") {
               scroll(0,0);
             }
           }
@@ -4399,15 +5164,25 @@ function diff( o, n ) {
           toggleExpandAllOnView();
         }
         else if (/collapse all/i.test(this.value)) {
-          setExpandAll(false);
-          if (section_focus) {
-            refocusSection();
+          if (/tview_div/.test(document.getElementById("view_area").innerHTML)) {
+            userjsTableViewCollapseAll();
+          }
+          else {
+            setExpandAll(false);
+            if (section_focus) {
+              refocusSection();
+            }
           }
         }
         else if (/expand all/i.test(this.value)) {
-          setExpandAll(true);
-          if (section_focus) {
-            refocusSection();
+          if (/tview_div/.test(document.getElementById("view_area").innerHTML)) {
+            userjsTableViewExpandAll();
+          }
+          else {
+            setExpandAll(true);
+            if (section_focus) {
+              refocusSection();
+            }
           }
         }
         else if (/collapse current/i.test(this.value)) {
@@ -4451,8 +5226,8 @@ function diff( o, n ) {
           return_to_panel = "";
           toggleGroupsPanel();
         }
-        else if (/\[Examples\]/i.test(this.value)) {
-          toggleExamplesPanel();
+        else if (/\[Links\]/i.test(this.value)) {
+          toggleLinksPanel();
         }
         else if (/\[about:config Functions\]/i.test(this.value)) {
           toggleFunctionsPanel();
@@ -4708,11 +5483,11 @@ function diff( o, n ) {
       // action buttons
       // *************************************
 
-      // examples
+      // links
 
-      document.getElementById("examples_button").addEventListener("click", function() {
+      document.getElementById("links_button").addEventListener("click", function() {
         return_to_panel = "actions_panel";
-        toggleExamplesPanel(true);
+        toggleLinksPanel(true);
       });
 
       // compare
@@ -4723,6 +5498,14 @@ function diff( o, n ) {
         var boxes_chosen = this.value;
         this.selectedIndex = 0;
         userjsCompareLauncher(boxes_chosen);
+      });
+
+      // tableview
+
+      document.getElementById("tableview_select").addEventListener("change", function() {
+        var box_chosen = this.value;
+        this.selectedIndex = 0;
+        userjsTableViewLauncher(box_chosen);
       });
 
       // append
@@ -4766,7 +5549,8 @@ function diff( o, n ) {
             "view_userjs_button", "view_other_button",
             "load_template_select", "load_overrides_select",
             "clear_template_button", "clear_overrides_button",
-            "compare_select", "skeleton_button", "collect_button",
+            "compare_select", "tableview_select",
+            "skeleton_button", "collect_button",
             "byvalue_button", "togroup_button"
           ] ) {
             document.getElementById(id).style.textDecoration = "line-through";
@@ -4804,7 +5588,8 @@ function diff( o, n ) {
             "view_userjs_button", "view_other_button",
             "load_template_select", "load_overrides_select",
             "clear_template_button", "clear_overrides_button",
-            "compare_select", "skeleton_button", "collect_button",
+            "compare_select", "tableview_select",
+            "skeleton_button", "collect_button",
             "byvalue_button", "togroup_button"
           ] ) {
             document.getElementById(id).style.textDecoration = null;
@@ -5066,7 +5851,7 @@ function diff( o, n ) {
 title="Go to section">
 <!-- >>>> section headings (between here) are replaced later <<<< -->
   <option value="" disabled selected hidden>&#x25BE;Goto</option>
-  <option>(TOP)</option>
+  <option>(TOP) / Introduction</option>
 <!-- >>>> section headings (between here) are replaced later <<<< -->
 </select>
 
@@ -5121,7 +5906,7 @@ title="Select menu option">
   <option value="" disabled></option>
   <option>&#x25A2;&#x00A0;&#x00A0;[Actions]</option>
   <option>&#x25A2;&#x00A0;&#x00A0;[Groups]</option>
-  <option>&#x25A2;&#x00A0;&#x00A0;[Examples]</option>
+  <option>&#x25A2;&#x00A0;&#x00A0;[Links]</option>
   <option>&#x25A2;&#x00A0;&#x00A0;[about:config Functions]</option>
   <option>&#x25A2;&#x00A0;&#x00A0;[Help/Info]</option>
   <option value="" disabled></option>
@@ -5156,10 +5941,10 @@ title="Close panel" onclick="closePanel();">&#935;</button>
 
 <div id="view_area">
 <!-- >>>> section contents (between here) are replaced later <<<< -->
-  <button type="button" class="controls borders heading_buttons" id="(TOP)"
->(TOP)</button>
+  <button type="button" class="controls borders heading_buttons"
+id="(TOP) / Introduction" >(TOP) / Introduction</button>
   <div class="content">
-(Please add user.js content in [Menu]&gt;[Actions] then [View])
+(Please add user.js content in [Menu]&gt;[Actions] then [View] or [Compare])
   </div>
 <!-- >>>> section contents (between here) are replaced later <<<< -->
 </div><!-- end: view_area -->
@@ -5230,7 +6015,7 @@ name="file" accept=".js" id="load_template_input" />
 
 </td><td class="td2_actions">
 <a target="_blank" rel="external noopener noreferrer"
-class="local_folder" href="user-template.js">Template</a>
+class="local_folder" href="user-template.js">Template</a> eg ghacks-user.js
 <textarea id="box_1_template" autofocus="true"
 ondrop="dropHandler1(event);" ondragover="dragOverHandler(event);"
 placeholder="&#10; Add user.js template here ([Load], drag or paste)&#10;&#10; Then use [View], [Compare], or another action button"
@@ -5361,10 +6146,6 @@ placeholder="&#10; Add other/user.js here ([Load], drag or paste)&#10;&#10; (or 
 
 <div id="actions_buttons_div"><!--
 
---><button type="button" class="controls borders" id="examples_button"
-title="Display links for example user.js templates"
->Examples</button><!--
-
 --><select class="controls borders" id="compare_select"
 title="Compare the user_pref of 2 boxes">
 <option value="" disabled selected hidden>&#x25BE;Compare</option>
@@ -5384,6 +6165,15 @@ title="Compare the user_pref of 2 boxes">
 <option>Compare box 4 &amp; 2</option>
 <option>Compare box 4 &amp; 3</option>
 <option>Compare box 4 &amp; 4 &#x00A0;&#x00A0;A-Z</option>
+</select><!--
+
+--><select class="controls borders" id="tableview_select"
+title="View ghacks-user.js in a table (work in progress)">
+<option value="" disabled selected hidden>&#x25BE;Table View</option>
+<option>Table view box 1</option>
+<option>Table view box 2</option>
+<option>Table view box 3</option>
+<option>Table view box 4</option>
 </select><!--
 
 --><button type="button" class="controls borders" id="append_button"
@@ -5431,13 +6221,17 @@ title="Encode/Decode text (Base64, URI)">
 title="Functions for about:config (find (filter/list)/reset/set)"
 >a:c Functions</button><!--
 
+--><button type="button" class="controls borders" id="links_button"
+title="Display some useful links (eg: ghacks-user.js, profile folders)"
+>Links</button><!--
+
 --><button type="button" class="controls borders" id="help_button"
 >Help/Info</button>
 <br><br><br>Get started info (scroll down):<br>
 <div class="indentdiv">
 <br><li>Place user.js text into a box above using the [Load] button (or
-drag/drop, copy/paste, [Examples] has template links) then click the [View]
-button, or use [Compare] button after loading two boxes.</li>
+drag/drop, copy/paste) then click the [View] button, or use [Compare] button
+after loading two boxes. &nbsp;([Actions] button returns here)</li>
 <br><li>Hover other buttons for their info, or use [Help/Info] button.</li>
 <br><li>The numbers on the buttons indicate the input>output boxes, contents
 of the output box are replaced, [Collect] amends the output box.</li>
@@ -5468,7 +6262,7 @@ title="Close [Groups] panel">&times;</span>
 <br><br>
 <!-- >>>> user pref groups (between here) are replaced later <<<< -->
 <div id="groups_container">
-(Please add user.js content in [Menu]&gt;[Actions] then [View])
+(Please add user.js content in [Menu]&gt;[Actions] then [View] or [Compare])
 </div>
 <!-- >>>> user pref groups (between here) are replaced later <<<< -->
 <br><br><br><br><br>
@@ -5478,367 +6272,99 @@ title="Close [Groups] panel">&times;</span>
 
 
 <!-- *************************************
-     examples_panel
+     links_panel
      ************************************* -->
 
-<div id="examples_panel" class="panels borders">
-<span class="close_panel_x" onclick="toggleExamplesPanel();"
-title="Close [Examples] panel">&times;</span>
+<div id="links_panel" class="panels borders">
+<span class="close_panel_x" onclick="toggleLinksPanel();"
+title="Close [Links] panel">&times;</span>
 <!-- hidden heading (H1/H3/DL tags for bookmarks import compatibility) -->
-<span class="hidden"><H3>[Examples] (user.js templates/information)</H3></span>
-<b>[Examples] (user.js templates/information)</b> ([X] closes)<br><br>
-Example links for user.js templates/projects/information,
-
-search online for others.
-&nbsp;You will need to consider if these are suitable, good quality,
-or up to date.
-&nbsp;Some are based on, or supplement others.
-
+<span class="hidden"><H3>[Links]</H3></span>
+<b>[Links]</b> ([X] closes)<br><br>
+Example link for user.js template/project/information.
+&nbsp;This user.js viewer is compatible with ghacks-user.js.
+&nbsp;When choosing a user.js template you need to consider if
+it is suitable, good quality, and up to date, at your own risk.
 <br><br>
-
 <!-- note about URL parameters -->
 If required you can auto-load using URL parameters (see [Help/Info])<br>eg:
+
 <a target="_blank" rel="external noopener noreferrer"
 href="?box=a&load1=https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js"
 >load-ghacksuserjs</a>,
+
 <a target="_blank" rel="external noopener noreferrer"
 href="?action=view1&box=a&load1=https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js"
->load+view<span class="hidden">-ghacksuserjs</span></a>,
-<a target="_blank" rel="external noopener noreferrer"
-href="?action=compare:1:4&box=a&load1=https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js&load4=https://raw.githubusercontent.com/pyllyukko/user.js/master/user.js"
->load+compare<span class="hidden">-ghacksuserjs+pyllyukko</span></a>,
+>load+view-ghacksuserjs</a>,
+
 <a target="_blank" rel="external noopener noreferrer"
 href="?load2=data:text/plain;base64,Ly8gdGhpcyB0ZXh0IHdhcyBpbiB0aGUgbGluay9ib29rbWFyayAodXNpbmcgQmFzZTY0KQovLyAoZG8gbm90IHB1dCBhbnl0aGluZyBwcml2YXRlKQoKLy8gdXNlci1vdmVycmlkZXMuanMKLy8vLyAtLS0gYWRkLW92ZXJyaWRlLWNvbW1lbnQgLS0tCi8qKiogVElUTEUgKioqLwp1c2VyX3ByZWYoInByZWYubmFtZSIsIG51bGwpOwovLy8vIC0tLSBjb21tZW50LW91dCAtLS0gJ3ByZWYubmFtZScK"
 >load-non-private-text</a>
 
-<br><br>
+<br><br><br>
 
-<table id="table_examples"><tr>
-<th class="td1_examples">File/List (# on [Load] buttons)</th>
-<th class="td2_examples">Project/Other</th></tr>
 
 <!-- ghacksuserjs -->
-<tr><td class="td1_examples">
+<table class="table_links"><tr>
+<th class="td1_links">File/List</th>
+<th class="td2_links">Project/Other</th></tr>
+<tr><td class="td1_links">
 <a target="_blank" rel="external noopener noreferrer"
 href="https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js"
 >ghacksuserjs (user.js) #</a>
-<br>(good start, read their wiki, privacytools.io listed)
-<br><a target="_blank" rel="external noopener noreferrer"
+<br><br>(read their wiki) (listed on privacytools.io)
+<br><br><a target="_blank" rel="external noopener noreferrer"
 href="https://github.com/ghacksuserjs/ghacks-user.js/issues/123"
 >ghacksuserjs/removed (list)</a>
-</td><td class="td2_examples">
+</td><td class="td2_links">
 <a target="_blank" rel="external noopener noreferrer"
 href="https://github.com/ghacksuserjs/ghacks-user.js"
 ><span class="hidden">__ghacksuserjs </span>github</a>
-</td></tr>
-
-<!-- pyllyukko -->
-<tr><td class="td1_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://raw.githubusercontent.com/pyllyukko/user.js/master/user.js"
->pyllyukko (user.js) (see ISSUES) #</a>
-<br><br><a target="_blank" rel="external noopener noreferrer"
-href="https://raw.githubusercontent.com/pyllyukko/user.js/relaxed/user.js"
->pyllyukko/relaxed (user.js) (see ISSUES) #</a>
-<br><br>(no longer privacytools.io listed)
-</td><td class="td2_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://github.com/pyllyukko/user.js"
-><span class="hidden">__pyllyukko </span>github</a>
-<!-- pyllyukko relaxed -->
-<br><br><a target="_blank" rel="external noopener noreferrer"
-href="https://github.com/pyllyukko/user.js/tree/relaxed"
-><span class="hidden">__pyllyukko/relaxed </span>github</a>
-<!-- link stating possible issues -->
-<br><br><a target="_blank" rel="external noopener noreferrer"
-href="https://github.com/privacytoolsIO/privacytools.io/issues/1240"
-><span class="hidden">__pyllyukko privacytools.io </span>ISSUES</a>
-</td></tr>
-
-
-<!-- ***** ghacksuserjs supplement ***** -->
-<tr><td class="td1_examples td3_examples" colspan="2"><br>
-ghacksuserjs supplement</td></tr>
-
-<!-- 12bytes.org -->
-<tr><td class="td1_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://codeberg.org/12bytes.org/Firefox-user.js-supplement/raw/branch/master/user-overrides.js"
->12bytes.org (user-overrides.js) #</a>
-</td><td class="td2_examples">
-<!-- previously: https://github.com/atomGit/Firefox-user.js -->
-<!-- previously: https://gitlab.com/labwrat/Firefox-user.js -->
-<a target="_blank" rel="external noopener noreferrer"
-href="https://codeberg.org/12bytes.org/Firefox-user.js-supplement"
-><span class="hidden">__12bytes.org </span>codeberg</a>
-</td></tr>
-
-<!-- crssi -->
-<tr><td class="td1_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://raw.githubusercontent.com/crssi/Firefox/master/user-overrides.js"
->crssi (user-overrides.js) #</a>
-</td><td class="td2_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://github.com/crssi/Firefox"
-><span class="hidden">__crssi </span>github</a>
-</td></tr>
-
-<!-- jotyGill -->
-<tr><td class="td1_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://raw.githubusercontent.com/jotyGill/privacy-fighter/master/privacyfighter/profile/advance/user-overrides.js"
->jotyGill/privacy-fighter (user-overrides.js) #</a>
-</td><td class="td2_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://github.com/jotyGill/privacy-fighter"
-><span class="hidden">__jotyGill/privacy-fighter </span>github</a>
-</td></tr>
-
-<!-- krathalan -->
-<tr><td class="td1_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://git.sr.ht/~krathalan/firefox-complement/blob/master/user.js"
->krathalan (user-overrides.js) #</a>
-</td><td class="td2_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://git.sr.ht/~krathalan/firefox-complement"
-><span class="hidden">__krathalan </span>sr.ht</a>
-</td></tr>
-<!-- https://github.com/krathalan -->
-<!-- previously: https://gitlab.com/krathalan/firefox-tweaks/raw/master/user.js -->
-<!-- previously: https://gitlab.com/krathalan/firefox-tweaks -->
-
-<!-- nachoparker -->
-<tr><td class="td1_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://raw.githubusercontent.com/nachoparker/firefox-ownyourbits-user.js/master/user-overrides.js"
->nachoparker/ownyourbits (user-overrides.js) #</a>
-</td><td class="td2_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://github.com/nachoparker/firefox-ownyourbits-user.js"
-><span class="hidden">__nachoparker/ownyourbits </span>github</a>
-</td></tr>
-
-<!-- loganmarchione -->
-<tr><td class="td1_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://raw.githubusercontent.com/loganmarchione/Firefox-tweaks/master/user.js"
->loganmarchione (user.js) #</a>
-</td><td class="td2_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://github.com/loganmarchione/Firefox-tweaks"
-><span class="hidden">__loganmarchione </span>github</a>
-</td></tr>
-
-
-<!-- ***** pyllyukko supplement ***** -->
-<tr><td class="td1_examples td3_examples" colspan="2"><br>
-pyllyukko supplement</td></tr>
-
-<!-- OrangeManBad -->
-<tr><td class="td1_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://git.nixnet.xyz/OrangeManBad/user.js/raw/branch/master/user.js"
->OrangeManBad (user.js) #</a>
-</td><td class="td2_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://git.nixnet.xyz/OrangeManBad/user.js"
-><span class="hidden">__OrangeManBad </span>nixnet.xyz</a>
-</td></tr>
-
-
-<!-- ***** Other ***** -->
-<tr><td class="td1_examples td3_examples" colspan="2"><br>Other Info</td></tr>
-
-<!-- privacytools -->
-<tr><td class="td1_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://www.privacytools.io/browsers/#about_config"
->privacytools.io (list)</a>
-</td><td class="td2_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://www.privacytools.io/"
-><span class="hidden">__privacytools.io </span>webpage</a>
-</td></tr>
-
-<!-- 0XDE57 -->
-<tr><td class="td1_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://gist.github.com/0XDE57/fbd302cef7693e62c769"
->0XDE57 (list)</a>
-<br>(dormant?)
-</td><td class="td2_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://github.com/0XDE57"
-><span class="hidden">__0XDE57 </span>github</a>
-</td></tr>
-
-<!-- allo- -->
-<tr><td class="td1_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://github.com/allo-/firefox-profilemaker/tree/master/settings"
->allo-/firefox-profilemaker (list/files)</a>
-</td><td class="td2_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://github.com/allo-/firefox-profilemaker"
-><span class="hidden">__allo-/firefox-profilemaker </span>github</a>
-</td></tr>
-
-<!-- quindecim -->
-<tr><td class="td1_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://git.nixnet.xyz/quindecim/mozilla.cfg/raw/branch/master/config/mozilla.cfg"
->quindecim (mozilla.cfg)</a>
-</td><td class="td2_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://git.nixnet.xyz/quindecim/mozilla.cfg"
-><span class="hidden">__quindecim </span>nixnet.xyz</a>
-</td></tr>
-
-<!-- reddit -->
-<tr><td class="td1_examples">
-reddit firefox
-</td><td class="td2_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://old.reddit.com/r/firefox/"
-><span class="hidden">__reddit firefox </span>webpage</a>
-</td></tr>
-
-<!-- ghacks -->
-<tr><td class="td1_examples">
-ghacks firefox
-</td><td class="td2_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://www.ghacks.net/category/firefox/"
-><span class="hidden">__ghacks firefox </span>webpage</a>
-</td></tr>
-
-
-<!-- ***** Fennec ***** -->
-<tr><td class="td1_examples td3_examples" colspan="2"><br>
-Fennec/Android Firefox</td></tr>
-
-<!-- v1nc (Fennec) -->
-<tr><td class="td1_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://raw.githubusercontent.com/v1nc/user.js/master/user.js"
->v1nc (Fennec/Android user.js) #</a>
-</td><td class="td2_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://github.com/v1nc/user.js"
-><span class="hidden">__v1nc </span>github</a>
-</td></tr>
-
-<!-- quindecim (Fennec) -->
-<tr><td class="td1_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://git.nixnet.xyz/quindecim/mobile_user.js/raw/branch/master/user.js"
->quindecim (Fennec/Android user.js) #</a>
-</td><td class="td2_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://git.nixnet.xyz/quindecim/mobile_user.js"
-><span class="hidden">__quindecim </span>nixnet.xyz</a>
-</td></tr>
-
-
-<!-- ***** thunderbird ***** -->
-<tr><td class="td1_examples td3_examples" colspan="2"><br>Thunderbird</td></tr>
-
-<!-- privacy-handbuch thunderbird -->
-<tr><td class="td1_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://www.privacy-handbuch.de/download/tb/user.js"
->Privacy-Handbuch (Thunderbird user.js) #</a>
-</td><td class="td2_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://www.privacy-handbuch.de/handbuch_31d.htm"
-><span class="hidden">__Privacy-Handbuch </span>webpage</a>
-</td></tr>
-
-<!-- torbirdy thunderbird -->
-<tr><td class="td1_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://gitweb.torproject.org/torbirdy.git/plain/components/torbirdy.js"
->Torbirdy (Thunderbird list)</a>
-<br>(dormant?)
-</td><td class="td2_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://gitweb.torproject.org/torbirdy.git/"
-><span class="hidden">__Torbirdy </span>webpage</a>
-</td></tr>
-
-<!-- HorlogeSkynet thunderbird -->
-<tr><td class="td1_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://raw.githubusercontent.com/HorlogeSkynet/thunderbird-user.js/master/user.js"
->HorlogeSkynet (Thunderbird user.js) #</a>
-<br><br>(see Discussion, ghacksuserjs port)
-</td><td class="td2_examples">
-<!-- previously: https://github.com/dngray/thunderbird-user.js -->
-<a target="_blank" rel="external noopener noreferrer"
-href="https://github.com/HorlogeSkynet/thunderbird-user.js"
-><span class="hidden">__HorlogeSkynet </span>github</a>
-<br><br><a target="_blank" rel="external noopener noreferrer"
-href="https://github.com/ghacksuserjs/ghacks-user.js/issues/646"
-><span class="hidden">__HorlogeSkynet ghacksuserjs </span>Discussion</a>
-</td></tr>
-
-<!-- 12bytes.org thunderbird -->
-<tr><td class="td1_examples">
-<a target="_blank" rel="external noopener noreferrer"
-href="https://codeberg.org/12bytes.org/thunderbird-user.js-supplement/raw/branch/master/user-overrides.js"
->12bytes.org (Thunderbird user-overrides.js) #</a>
-<br>(HorlogeSkynet supplement)
-</td><td class="td2_examples">
-<!-- previously: https://gitlab.com/labwrat/thunderbird-user.js -->
-<a target="_blank" rel="external noopener noreferrer"
-href="https://codeberg.org/12bytes.org/thunderbird-user.js-supplement"
-><span class="hidden">__12bytes.org </span>codeberg</a>
-</td></tr>
+</td></tr></table>
 
 
 <!-- ***** profile locations ***** -->
-<tr><td class="td1_examples td3_examples" colspan="2">
-<br><br><br>Profile Locations (see
-<a target="_blank" rel="external noopener noreferrer"
-href="about:profiles">about:profiles</a> in a new tab)</td></tr>
+<br>
+<br>
+Profile Locations (see <a target="_blank" rel="external noopener noreferrer"
+href="about:profiles">about:profiles</a> in a new tab)
+<table class="table_links">
 
-<tr><td class="td1_examples">
+<tr><td class="td1_links">
 file:///C:/Users/USERNAME/AppData/Roaming/Mozilla/Firefox/Profiles
-</td><td class="td2_examples">
+</td><td class="td2_links">
 <a target="_blank" rel="external noopener noreferrer"
 href="file:///C:/Users/USERNAME/AppData/Roaming/Mozilla/Firefox/Profiles"
 ><span class="hidden">Firefox profile: </span>Windows</a>
 </td></tr>
 
-<tr><td class="td1_examples">
+<tr><td class="td1_links">
 file:///data/data/org.mozilla.firefox/files/mozilla
-</td><td class="td2_examples">
+</td><td class="td2_links">
 <a target="_blank" rel="external noopener noreferrer"
 href="file:///data/data/org.mozilla.firefox/files/mozilla"
 ><span class="hidden">Firefox profile: </span>Android</a>
 </td></tr>
 
-<tr><td class="td1_examples">
+<tr><td class="td1_links">
 file:///data/data/org.mozilla.fenix/files/mozilla
-</td><td class="td2_examples">
+</td><td class="td2_links">
 <a target="_blank" rel="external noopener noreferrer"
 href="file:///data/data/org.mozilla.fenix/files/mozilla"
 ><span class="hidden">Firefox profile: </span>Android Preview</a>
 </td></tr>
 
-<tr><td class="td1_examples">
+<tr><td class="td1_links">
 file:///Users/USERNAME/Library/Application Support/Firefox/Profiles
-</td><td class="td2_examples">
+</td><td class="td2_links">
 <a target="_blank" rel="external noopener noreferrer"
 href="file:///Users/USERNAME/Library/Application Support/Firefox/Profiles"
 ><span class="hidden">Firefox profile: </span>OS X</a>
 </td></tr>
 
-<tr><td class="td1_examples">
+<tr><td class="td1_links">
 file:///home/USERNAME/.mozilla/firefox
-</td><td class="td2_examples">
+</td><td class="td2_links">
 <a target="_blank" rel="external noopener noreferrer"
 href="file:///home/USERNAME/.mozilla/firefox"
 ><span class="hidden">Firefox profile: </span>Linux</a>
@@ -5846,7 +6372,8 @@ href="file:///home/USERNAME/.mozilla/firefox"
 
 </table>
 
-<br><br><br><br><br></div><!-- end: examples_panel -->
+
+<br><br><br><br><br></div><!-- end: links_panel -->
 
 
 
@@ -5891,10 +6418,9 @@ an extension such as: uBlock Origin, uMatrix, NoScript.<br>
 
 <!-- version/links -->
 <br>
-Interactive view, compare, and more for Firefox user.js
-(ghacksuserjs, pyllyukko, etc).<br>
+Interactive view, compare, and more for Firefox user.js (eg ghacks-user.js).<br>
 <br>
-Version&nbsp;&nbsp;&nbsp;: 2020.02.24 (alpha/experimental)<br>
+Version&nbsp;&nbsp;&nbsp;: 2020.02.27 (alpha/experimental)<br>
 
 Project&nbsp;&nbsp;&nbsp;:
 <a target="_blank" rel="external noopener noreferrer"
@@ -5990,9 +6516,8 @@ to help find this. &nbsp;Make a backup copy of your Firefox
 profile folder.
 
 <br><br>Various online sites provide details of user_pref settings.
-&nbsp;Some projects publish their user.js template, with instructions
-and information/wiki, some example template links are given under
-the [Menu]&gt;[Examples] option.
+&nbsp;Some projects (ie ghacks-user.js) publish their user.js
+template, with instructions and information/wiki.
 &nbsp;These projects may update their content regularly,
 keep your user.js up to date, settings may also change with
 each Firefox version.
@@ -6026,7 +6551,7 @@ Load user.js content into the text boxes by:<br>
 <div class="indentdiv"><br>
 Paste the content into the text boxes under [Menu]&gt;[Actions].
 &nbsp;Open the user.js first in a text editor or in a browser tab to copy it.
-&nbsp;Some user.js links are provided under [Menu]&gt;[Examples].
+&nbsp;A link for ghacks-user.js is provided under [Menu]&gt;[Links].
 <br><br>
 The links shown above the text input boxes can also be used to open files in
 a browser tab for copy/paste.
@@ -6239,10 +6764,11 @@ above the input boxes), default: same folder as userjs-tool.html)</li>
 <li>box=a&nbsp;&nbsp;(open to [Actions] box 0(none)|1|2|3|4|a(all)|v(vertical)</li>
 <li>loadX=URL&nbsp;&nbsp;(auto-load file from URL into box number X)</li>
 <li>loadX=data:text/plain;base64,bm90IHByaXZhdGU=&nbsp;&nbsp;(load non-private text)</li>
-<li>action=ACTION&nbsp;&nbsp;show examples,functions,help (eg ACTION=functions)
+<li>action=ACTION&nbsp;&nbsp;show functions|links|help (eg ACTION=functions)
 <li>action=ACTION&nbsp;&nbsp;(when loadX=URL used), ACTION:
 <div class="indentdiv">
 viewX&nbsp;&nbsp;(view box number 0(none)|1|2|3|4)<br>
+tableX&nbsp;&nbsp;(table view (ghacks-user.js) of box number 1|2|3|4)<br>
 groupsX&nbsp;&nbsp;(show [Groups] for box number 1|2|3|4)<br>
 compare:X:Y&nbsp;&nbsp;(compare box numbers 1|2|3|4 and 1|2|3|4)<br>
 append,skeleton,collect,reduce,clean,byvalue,togroup<br>
@@ -6261,6 +6787,7 @@ append,skeleton,collect,reduce,clean,byvalue,togroup<br>
 <li>?folder=file:///C:/Users/USERNAME/AppData/Roaming/Mozilla/Firefox/Profiles/XXXXXXXX.default-release</li>
 <li>?folder=file:///home/USERNAME/.mozilla/firefox/XXXXXXXX.default-release</li>
 <li>?action=view1&amp;box=a&amp;load1=https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js
+<li>?action=compare:1:4&box=a&load1=https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js&load4=https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/72.0/user.js</b>
 </div></div></details>
 <br></div><hr></details>
 
@@ -6285,14 +6812,8 @@ href="http://www.ghacks.net/"
 href="https://github.com/rndme/download"
 >https://github.com/rndme/download</a>
 for embedded JavaScript library download.js which enables [Save].
-&nbsp;(<a target="_blank" rel="external noopener noreferrer"
-href="https://github.com/pyllyukko/user.js"
->https://github.com/pyllyukko/user.js</a>
-once posted about
-<a target="_blank" rel="external noopener noreferrer"
-href="https://github.com/Genbox/HardenIT"
->https://github.com/Genbox/HardenIT (dormant?)</a>
-which used that).</li>
+&nbsp;(pyllyukko once posted on github about
+https://github.com/Genbox/HardenIT (dormant?) which used that).</li>
 <br>
 <li><a target="_blank" rel="external noopener noreferrer"
 href="https://github.com/claustromaniac/Compare-UserJS"
@@ -6360,15 +6881,6 @@ These action buttons are below the text input boxes. &nbsp;The numbers on
 the buttons indicate the input&gt;output boxes, contents of the output box
 are usually replaced, [Collect] amends the output box.<br>
 
-<!-- Actions - [Examples] -->
-
-<br>
-<details><summary>[Examples]</summary>
-<div class="indentdiv"><br>
-Display links for user.js templates. &nbsp;The button takes you to
-[Menu]&gt;[Examples], use [Menu]&gt;[Actions] to return.
-</div></details>
-
 <!-- Actions - [Compare] -->
 
 <br>
@@ -6403,7 +6915,7 @@ Display options:<br><br>
 <details><summary>[Append 1+2&gt;3]</summary>
 <div class="indentdiv"><br>
 
-Take the user-template.js (eg ghacks/pyllyukko/etc user.js) (from Box 1) and
+Take the user-template.js (eg ghacks-user.js) (from Box 1) and
 append your user-overrides.js (from Box 2), place the result into Box 3.
 <br><br>
 This will also process any lines from Box 2 of the format:
@@ -6544,6 +7056,15 @@ recommended, as needs constant maintaining, better to just
 Show JavaScript functions for Mozilla Firefox/Thunderbird about:config,
 and information on how to use them. &nbsp;To find (filter/list)/reset/set
 user preferences and values.
+</div></details>
+
+<!-- Actions - [Links] -->
+
+<br>
+<details><summary>[Links]</summary>
+<div class="indentdiv"><br>
+Display some useful links (ghacks-user.js, profile locations). &nbsp;The
+button takes you to [Menu]&gt;[Links], use [Menu]&gt;[Actions] to return.
 </div></details>
 
 <br></div><hr></details>
