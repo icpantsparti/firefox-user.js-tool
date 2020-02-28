@@ -1,8 +1,25 @@
+version 2020.02.27 (alpha/experimental)
++ added [Table View] (which works with ghacks-user.js)
+  Please note: this "Table View" is work in progress, be careful:
+  it might be working well or there may be issues
+  (it needs verifying to ensure the user.js is displaying correctly)
+* renamed examples panel/button to links
+* load button and links only show ghacks-user.js as an example
+  (choose a user.js template at your own risk)
+  (This user.js viewer is compatible with ghacks-user.js)
+* removed the extra section button inserted for 9999+ ESR when
+  viewing ghacks-user.js, no longer need to divide it
+
+
+
+
 version 2020.02.24 (alpha/experimental)
 + add panel close Xs
 * help text edit
 version 2020.02.23 (alpha/experimental)
 * help text and button size edits
+  (button on view area placeholder was visible beyond Actions panel
+   making it seem like a hidden element, reduced its width)
 
 
 
