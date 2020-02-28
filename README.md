@@ -1,6 +1,6 @@
 #### userjs-tool.html
 
-Interactive view, compare, and more for Firefox user.js (ghacksuserjs, pyllyukko, etc).
+Interactive view, compare, and more for Firefox user.js (eg ghacksuserjs).
 
 Display a Mozilla Firefox user.js settings file contents in your Firefox browser, with:
 * highlighting, links, themes*, re-size, wrap, about:config links/regex/groups
@@ -23,11 +23,6 @@ Disclaimer: Use with care at your own risk, and verify any results
 
 #### Live auto-load and view ghacks-user.js master (example)
 [https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?action=view1&box=a&load1=https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js](https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?action=view1&box=a&load1=https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js)
-
-#### Live auto-load and compare ghacks-user.js with pyllyukko-user.js (example)
-(Note: pyllyukko-user.js has some [issues](https://github.com/privacytoolsIO/privacytools.io/issues/1240))
-
-[https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?action=compare:1:4&box=a&load1=https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js&load4=https://raw.githubusercontent.com/pyllyukko/user.js/master/user.js](https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?action=compare:1:4&box=a&load1=https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js&load4=https://raw.githubusercontent.com/pyllyukko/user.js/master/user.js)
 
 #### Version 2020.02.22 (alpha/experimental)
 added user.js compare, improved file/URL loading, updated layout and more<br>
