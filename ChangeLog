@@ -1,3 +1,26 @@
+version 2020.03.21 (alpha/experimental)
+* added a [<Back] button (it replaces [Actions] and close [X] buttons)
+  ([Menu] still has an Actions option, panels still have a close X)
+* "Goto" button renamed as "Index"
++ [Table View] buttons now below [View] buttons
+* load and save buttons combined
++ [Compare] and [Table View]: added navigation buttons and slider (fixed at top)
++ [Table View] added a filter button
+  tags are detected automatically (if they are not hardcoded for Info column)
+* [Table View] Info column tag detection improved:
+  more tags hardcoded and indicated in the Info column
+  sub-header tags now carried down (eg ghacks user.js section 1200 Ciphers)
+  (Note: section header tags are not carried down, NOTES/TEST type)
++ Acknowledgment: @overdodactyl made a work in progress prototype
+  (on shinyapps.io) in early 2019 which inspired [Table View] (not a port)
++ shortcut parameters for ghacks user.js live auto-loading/view/table view:
+  https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?g
+  https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?gv
+  https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?gt
+
+
+
+
 version 2020.02.27 (alpha/experimental)
 + added [Table View] (which works with ghacks-user.js)
   Please note: this "Table View" is work in progress, be careful:
