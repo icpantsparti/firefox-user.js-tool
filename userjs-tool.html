@@ -2,7 +2,9 @@
 <html xml:lang="en" lang="en">
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+  <meta name="viewport" content="height=device-height, width=device-width,
+    initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0,
+    user-scalable=no, target-densitydpi=device-dpi, shrink-to-fit=no">
   <!-- <style>* {-webkit-text-size-adjust: none}</style> -->
 
   <!-- *************************************
@@ -11,7 +13,7 @@
 
        Name         : userjs-tool.html
        Project      : https://github.com/icpantsparti/firefox-user.js-tool
-       Version      : 2020.02.27 (alpha/experimental)
+       Version      : 2020.03.21 (alpha/experimental)
        File         : https://raw.githubusercontent.com/icpantsparti/firefox-user.js-tool/master/userjs-tool.html
        On-line      : https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html
        License (MIT): https://raw.githubusercontent.com/icpantsparti/firefox-user.js-tool/master/LICENSE
@@ -47,7 +49,6 @@
       /* word-wrap: normal|break-word|initial|inherit; */
       /* overflow: visible|hidden|scroll|auto|initial|inherit; */
       /* float: none|left|right|initial|inherit; */
-      /* white-space: nowrap; */
     }
 
     /* actions/groups/links/functions/help panels */
@@ -55,16 +56,16 @@
       display: none;
       position: fixed;
       top: 5em;
-      width: 85%;
-      min-width: 85%;
-      max-width: 85%;
-      height: 75%;
-      min-height: 0%;
-      max-height: 75%;
+      width: 85vw;
+      min-width: 85vw;
+      max-width: 85vw;
+      height: 75vh;
+      min-height: 0vh;
+      max-height: 75vh;
       padding: 20px;
       overflow: auto;
       white-space: normal;
-      /* theme will override this */
+      /* theme will override the following */
       background-color: #FFFFFF; /*White*/
       box-shadow: 3px 3px 4px #000000; /*Black*/
       border: 1px solid #000000; /*Black*/
@@ -119,25 +120,17 @@
       height: 2.6em;
       padding: 0;
     }
-    /* close button for panels */
-    #close_panel_button {
-      display: none;
-      width: 2.6em;
-      max-width: 2.6em;
-      height: 2.6em;
-      padding: 0;
-      font-weight: bold;
-    }
+
+
     .close_panel_x {
       font-weight: bold;
       font-size: 300%;
       cursor: pointer;
       position: fixed; /*absolute;*/
-      top: 5%;
-      right: 16%;
+      top: 5vh;
+      left: 80.5vw;
       transform: translate(100%, 100%);
     }
-
 
 
     /* within actions panel */
@@ -254,11 +247,6 @@
     }
 
     /* compare */
-    #compare_div .controls
-    {
-      height: 2.3em;
-      width: 6.5em;
-    }
     /* compare stats table */
     #table_stats {
       width: 95%;
@@ -294,12 +282,6 @@
     /* #table_comp tr:hover { outline: 3px dashed #FF0000; } */
 
     /* tableview */
-    #tview_div .controls
-    {
-      height: 2.6em;
-      min-width: 6.5em;
-      width: auto;
-    }
     #table_tview {
       table-layout: fixed;
       width: 100%;
@@ -307,38 +289,89 @@
       white-space: normal;
       border-collapse: collapse;
     }
-    #table_tview td {
-      border-left: 0px;
-      border-right: 0px;
-    }
     .tr_tview_heading {
-      /*background-color: #191970;*/ /*MidnightBlue*/
-      /*color: #b3b3b3; */ /*(gray)*/
       border: solid 3px;
       white-space: pre;
       border-left: 0px;
       border-right: 0px;
     }
-    .tr_tview_inactive {
-      background-color: #404040;
-      /*color: #b3b3b3; */ /*(gray)*/
+    /* https://css-tricks.com/hash-tag-links-padding/ */
+    .anchor {
+      margin-top: -165px;
+      padding-bottom: 165px;
+      display: block;
     }
-    .tr_tview_all {
+    .anav {
+      display: inline-block;
+      cursor: pointer;
+    }
+    .tr_tview_inactive {
+      background-color: #373737;
+    }
+    .td_tview_all {
       border: 1px dotted;
+      border-left: 0px;
+      border-right: 0px;
       vertical-align: top;
       word-break: break-all;
       padding: 10px;
-    }
-    .td_tview_nav {
-      border-left: 0px;
-      border-right: 0px;
     }
     /* .tr_tview_pref:hover { outline: 3px dashed #FF0000; } */
     .td_tview_id { width: 3.5em;  }
     .td_tview_name { width: 20%; }
     .td_tview_value { width: 10%; }
     .td_tview_desc { width: auto; }
-    .td_tview_info { width: 6em; }
+    .td_tview_info { width: 5em; }
+
+
+    /* buttons bar and navigation (on compare and tableview) */
+    /* https://www.w3schools.com/howto/howto_js_rangeslider.asp */
+    #compare_buttons_bar, #tableview_buttons_bar {
+      width: auto;
+      position: fixed;
+      top: 5em;
+      /*background-color: inherit;*/
+    }
+    #compare_buttons_bar .controls, #tableview_buttons_bar .controls {
+      height: 2em;
+      /*min-width: 6.5em;*/
+      /*width: auto;*/
+    }
+    #compare_buttons_bar .controls {
+      padding: 0 0.2em 0 0.2em;
+      min-width: 4em;
+    }
+    #tableview_buttons_bar .controls {
+      padding: 0;
+    }
+    #viewer_slider {
+      -webkit-appearance: none;
+      width: calc(100% - 22em);
+      max-width: 75vw;
+      height: 2.2em;
+      background: #d3d3d3;
+      outline: none;
+      opacity: 0.7;
+      -webkit-transition: .2s;
+      transition: opacity .2s;
+      float: left;
+    }
+    #viewer_slider:hover { opacity: 1; }
+    #viewer_slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 2.1em;
+      height: 2.1em;
+      background: #4CAF50;
+      cursor: pointer;
+    }
+    #viewer_slider::-moz-range-thumb {
+      width: 2.1em;
+      height: 2.1em;
+      background: #4CAF50;
+      cursor: pointer;
+    }
+
 
     /* within view area */
     #collect_mode_pad { display: none; }
@@ -1054,33 +1087,48 @@ function diff( o, n ) {
     // loadButtonAction
     // *************************************
 
-    function loadButtonAction(select, input, text_box){
+    function loadButtonAction(select, input, text_box, filenameforsave){
       var url = select.value;
       select.selectedIndex = 0;
       if (url == "LOCAL") {
-        // trigger the local file load selector (does not work for Fennec)
+        // trigger the (hidden) local file load selector (does not work for Fennec)
+        if (
+          document.getElementById("collect_button").style.textDecoration == "line-through"
+          && (text_box == "box_1_template" || text_box == "box_2_overrides")
+        ) {
+          return;
+        }
         document.getElementById(input).click();
       }
       else if (url == "BUTTON") {
         // show the Browse button (Fennec workaround)
-        for (const id of [ "load_template_", "load_overrides_",
-          "load_userjs_", "load_other_" ])
+        for (const id of [ "template", "overrides", "userjs", "other" ])
         {
-          if (document.getElementById(id + "input").style.display === "block") {
-            document.getElementById(id + "input").style.display = "none";
-            document.getElementById(id + "select").options[2].textContent =
-              document.getElementById(id + "select").options[2].textContent
+          if (document.getElementById("load_" + id + "_input").style.display === "block") {
+            document.getElementById("load_" + id + "_input").style.display = "none";
+            document.getElementById("loadsave_" + id + "_select").options[2].textContent =
+              document.getElementById("loadsave_" + id + "_select").options[2].textContent
               .replace(/\u{25A3}/u, "\u25A2");
           }
           else {
-            document.getElementById(id + "input").style.display = "block";
-            document.getElementById(id + "select").options[2].textContent =
-              document.getElementById(id + "select").options[2].textContent
+            document.getElementById("load_" + id + "_input").style.display = "block";
+            document.getElementById("loadsave_" + id + "_select").options[2].textContent =
+              document.getElementById("loadsave_" + id + "_select").options[2].textContent
               .replace(/\u{25A2}/u, "\u25A3");
           }
         }
       }
+      else if (url == "SAVE") {
+        download(document.getElementById(text_box).value,
+          filenameforsave, "application/javascript");
+      }
       else if (/^.+$/.test(url)) {
+        if (
+          document.getElementById("collect_button").style.textDecoration == "line-through"
+          && (text_box == "box_1_template" || text_box == "box_2_overrides")
+        ) {
+          return;
+        }
         if (url == "URL") {
           url = "";
           url = prompt("Please input URL of file to load\n"
@@ -1287,10 +1335,22 @@ function diff( o, n ) {
       ev.preventDefault();
     }
 
-    function dropHandler1(ev, text_box) { loadLocalFile(ev, "box_1_template"); }
-    function dropHandler2(ev, text_box) { loadLocalFile(ev, "box_2_overrides"); }
-    function dropHandler3(ev, text_box) { loadLocalFile(ev, "box_3_userjs"); }
-    function dropHandler4(ev, text_box) { loadLocalFile(ev, "box_4_other"); }
+    function dropHandler1(ev) {
+      if (
+        document.getElementById("collect_button").style.textDecoration != "line-through"
+      ) {
+        loadLocalFile(ev, "box_1_template");
+      }
+    }
+    function dropHandler2(ev) {
+      if (
+        document.getElementById("collect_button").style.textDecoration != "line-through"
+      ) {
+        loadLocalFile(ev, "box_2_overrides");
+      }
+    }
+    function dropHandler3(ev) { loadLocalFile(ev, "box_3_userjs"); }
+    function dropHandler4(ev) { loadLocalFile(ev, "box_4_other"); }
 
     // *************************************
     // amendCodeComments
@@ -1583,7 +1643,7 @@ function diff( o, n ) {
           output_box.selectionEnd = ne;
           output_box.selectionStart = ns;
           // it loses focus despite next line
-          output_box.focus;
+          output_box.focus();
         }
       }
     }  /* end function clickActionForCollectMode */
@@ -1809,8 +1869,8 @@ function diff( o, n ) {
       var theme = document.body.className.replace( /(^| *)[^_]+_/ , '');
 
       // variables for holding HTML that we build from the content
-      var goto_select_html = ''
-        + '      <option value="" disabled selected hidden>&#x25BE;Goto</option>\n';
+      var index_select_html = ''
+        + '      <option value="" disabled selected hidden>&#x25BE;Index</option>\n';
       var groups_container_html = '';
       var content_html = '';
 
@@ -1824,7 +1884,7 @@ function diff( o, n ) {
       // some common HTML used for each section_heading
 
       function appendSectionStartHtml() {
-        goto_select_html += '      <option>' + section_heading + '</option>\n';
+        index_select_html += '      <option>' + section_heading + '</option>\n';
         groups_container_html += '<a target="_blank" href="about:config?filter=/^\\*$|^(';
         content_html += ""  // plus below
           // hidden heading (H1/H3/DL tags for bookmarks import compatibility)
@@ -1847,7 +1907,7 @@ function diff( o, n ) {
       /* work through each line of the user.js content */
       // detect headings, user_pref, values, and URLs
       // insert color class styles and section blocks
-      // by appending code to:  goto_select_html  groups_container_html  content_html
+      // by appending code to:  index_select_html  groups_container_html  content_html
 
       appendSectionStartHtml();
       var i = 0;
@@ -1914,68 +1974,68 @@ function diff( o, n ) {
           if (new RegExp("([/][/*]+[ \t]*user_pref)", "i").test(line_userpref_part)) {
             // for:  "// user_pref"  "/* user_pref"
             x = new RegExp("([/][/*]+[ \t]*user_pref)", "i");
-            r = "<span class=\"pref\">$1<\/span>";
+            r = '<span class="pref">$1</span>';
             line_userpref_part = line_userpref_part.replace(x, r);
           }
           else {
             // for:  "user_pref"  (without // or /* immediately before)
             //x = new RegExp("([ /*\t]*user_pref)", "i");
             x = new RegExp("(user_pref)", "i");
-            r = "<span class=\"pref\">$1<\/span>";
+            r = '<span class="pref">$1</span>';
             line_userpref_part = line_userpref_part.replace(x, r);
           }
 
           // span/class for:  false  (prefvalue)
           if (new RegExp(",[ \t]*false[ \t]*\\);", "i").test(line_userpref_part)) {
             x = new RegExp("(,[ \t]*)(false)([ \t]*\\);)", "i");
-            r = "$1<span class=\"false\">$2<\/span>$3";
+            r = '$1<span class="false">$2</span>$3';
             line_userpref_part = line_userpref_part.replace(x, r);
           }
           // span/class for:  true  (prefvalue)
           else if (new RegExp(",[ \t]*true[ \t]*\\);", "i").test(line_userpref_part)) {
             x = new RegExp("(,[ \t]*)(true)([ \t]*\\);)", "i");
-            r = "$1<span class=\"true\">$2<\/span>$3";
+            r = '$1<span class="true">$2</span>$3';
             line_userpref_part = line_userpref_part.replace(x, r);
           }
           // span/class for:  integer  (prefvalue)
           else if (new RegExp(",[ \t]*[0-9.+-]+[ \t]*\\);", "i").test(line_userpref_part)) {
             x = new RegExp("(,[ \t]*)([0-9.+-]+)([ \t]*\\);)", "i");
-            r = "$1<span class=\"integer\">$2<\/span>$3";
+            r = '$1<span class="integer">$2</span>$3';
             line_userpref_part = line_userpref_part.replace(x, r);
           }
           // span/class for:  "string"  'string'  (prefvalue)
           else {
             x = new RegExp("(,[ \t]*)([\"']*.*[\"']*)([ \t]*\\);)", "i");
-            r = "$1<span class=\"string\">$2<\/span>$3";
+            r = '$1<span class="string">$2</span>$3';
             line_userpref_part = line_userpref_part.replace(x, r);
           }
 
           // span/class for:  ////OVERRIDE:  ////COMMENT-OUT:
           x = new RegExp("\/\/\/\/(OVERRIDE|COMMENT-OUT):", "gi");
-          r = "<span class=\"overrides\">$&<\/span>";
+          r = '<span class="overrides">$&</span>';
           line_userpref_part = line_userpref_part.replace(x, r);
 
         }
 
         // a/href for:  HTTP/HTTPS URLs  (turn into a link)
         x = new RegExp("(https?:[/][/][^ \"']+[^\\)\\], \"'.;])", "gi");
-        r = "<a target=\"_blank\" rel=\"external noopener noreferrer\" href=\"$1\" class=\"http\">"
-          + "<span class=\"hidden\">__</span>$1</A>";
+        r = '<a target="_blank" rel="external noopener noreferrer" href="$1" class="http">'
+          + '<span class="hidden">__</span>$1</A>';
         line = line.replace(x, r);
 
         // span/class for:  [WARNING]
-        x = new RegExp("(\\[WARNING\\])", "gi");
-        r = "<span class=\"warn\">$1<\/span>";
+        x = new RegExp("(\\[WARNING\\]|\\[WARNING.)", "gi");
+        r = '<span class="warn">$1</span>';
         line = line.replace(x, r);
 
         // span/class for:  (hidden pref)  [HIDDEN PREF]
         x = new RegExp("([\\[\\(]hidden pref[^\\)\\]]*[\\)\\]])", "gi");
-        r = "<span class=\"hid\">$1<\/span>";
+        r = '<span class="hid">$1</span>';
         line = line.replace(x, r);
 
         // span/class for:  [SETUP]  [SETUP-...]
         x = new RegExp("(\\[SETUP\\]|\\[SETUP-[^\\]]+\\]|\/\/[ \t]NOTICE-DISABLED:)", "gi");
-        r = "<span class=\"setup\">$1<\/span>";
+        r = '<span class="setup">$1</span>';
         line = line.replace(x, r);
 
         // span/class for:  ghacks ref
@@ -1990,13 +2050,13 @@ function diff( o, n ) {
             if (!previousLineWasBlank) { r = "\n" }
             if (x.test(line)) { previousLineWasBlank = true; }
           }
-          r += "$1<span class=\"ref\">$2<\/span><span class=\"ref\" style=\"font-weight: normal\">$3$4<\/span>$5";
+          r += '$1<span class="ref">$2</span><span class="ref" style="font-weight: normal">$3$4</span>$5';
           line = line.replace(x, r);
 
           // for:  /*** [SECTION 1234]:
           // ref in bold and color whole line
           x = new RegExp("^((?:\/\/ )?[/*]+ )(\\[SECTION [0-9][0-9][0-9][0-9][^\\]]*\\])(:)(.*?)([ /*]*)?$", "gi");
-          r = "$1<span class=\"ref\">$2<\/span><span class=\"ref\" style=\"font-weight: normal\">$3$4<\/span>$5";
+          r = '$1<span class="ref">$2</span><span class="ref" style="font-weight: normal">$3$4</span>$5';
           line = line.replace(x, r);
 
           // for:  /* /** /***
@@ -2014,7 +2074,7 @@ function diff( o, n ) {
           // for:  * SECTION:  and  // PREF:
           x = new RegExp("^((?:\/\/ )?[ *\t]*)((?:SECTION|PREF):.*)([ *\t]*)$", "gi");
           // color
-          r = "$1<span class=\"ref\" style=\"font-weight: normal\">$2<\/span>$3";
+          r = '$1<span class="ref" style="font-weight: normal">$2</span>$3';
           line = line.replace(x, r);
         }
 
@@ -2030,11 +2090,12 @@ function diff( o, n ) {
 
 
       /* update HTML page with the new content */
-      content_html += '  <br><br><br></DL>\n';
-      document.getElementById("goto_select").innerHTML = goto_select_html;
+      content_html += '  <span class="anchor" id="(BOTTOM)"></span><br><br><br></DL>\n';
+      index_select_html += '<option>(BOTTOM)</option>\n';
+      document.getElementById("index_select").innerHTML = index_select_html;
       document.getElementById("groups_container").innerHTML = groups_container_html;
       document.getElementById("view_area").innerHTML = content_html;
-      goto_select_html = null;
+      index_select_html = null;
       groups_container_html = null;
       content_html = null;
 
@@ -2536,7 +2597,8 @@ function diff( o, n ) {
       var theme = document.body.className.replace( /(^| *)[^_]+_/ , '');
 
       var content_html = ""
-        + '<div style="width: 100%;" id="compare_div">'
+
+        + '<div id="compare_buttons_bar">'
 
         + '<button type="button" class="controls borders'
         + ' controls_' + theme + ' borders_' + theme
@@ -2566,28 +2628,44 @@ function diff( o, n ) {
         + '<button type="button" class="controls borders'
         + ' controls_' + theme + ' borders_' + theme
         + '" id="compare_diffstring_button" '
-        + 'title="Show string difference">DiffStr</button>';
+        + 'title="Show string difference">DiffStr</button>'
 
-      if (show != "diffstring") {
-        content_html +=
-          '<button type="button" class="controls borders'
-          + ' controls_' + theme + ' borders_' + theme
-          + '" id="compare_layout_button" '
-          + 'title="">Layout</button>';
-      }
+        + '<button type="button" class="controls borders'
+        + ' controls_' + theme + ' borders_' + theme
+        + '" id="compare_layout_button" '
+        + 'title="" style="margin-right:0.5em;">Layout</button>'
 
-      content_html += '<br><br><br><br>Compare '
+        + '<br>'
+
+        // ref: http://www.amp-what.com/unicode/search/triangle
+
+        + '<button type="button" id="jumpback_button" class="controls borders'
+        + ' controls_' + theme + ' borders_' + theme
+        + '" style="width:1.9em;min-width:1.9em;" '
+        + 'title="Jump back a section">&#9650;</button>'
+
+        + '<button type="button" id="jumpnext_button" class="controls borders'
+        + ' controls_' + theme + ' borders_' + theme
+        + '" style="width:1.9em;min-width:1.9em;margin-right:0.5em;" '
+        + 'title="Jump to next section">&#9660;</button>'
+
+        + '<input type="range" id="viewer_slider" min="0" max="50" value="0">'
+        + '</div>'
+        + '<div style="width: 100%;" id="compare_div">'
+
+        + '<br><br><br><br>Compare ';
+
       if (show == "az") {
-        content_html += "[A-Z] (by alphabetical)"
+        content_html += "[A-Z] (by alphabetical)";
       }
       else if (show == "groupx12") {
-        content_html += "[Group x12] (by value/state/active/inactive)"
+        content_html += "[Group x12] (by value/state/active/inactive)";
       }
       else if (show == "groupx6") {
-        content_html += "[Group x6] (by value/state)"
+        content_html += "[Group x6] (by value/state)";
       }
       else if (show == "multiple") {
-        content_html += "[Multiple] (by multiple occurrence/alphabetical)"
+        content_html += "[Multiple] (by multiple occurrence/alphabetical)";
       }
       else if (show == "diffstring") {
         content_html += "[DiffStr] (string difference)"
@@ -2597,22 +2675,31 @@ function diff( o, n ) {
           + '&nbsp;&nbsp;(<del>2nd</del>: ' + input_box_short_name_2 + ')<hr>';
       }
       else {
-        content_html += "[Unsorted] (by order found)"
+        content_html += "[Unsorted] (by order found)";
       }
 
       if (show != "diffstring") {
         content_html += ' [Layout: ' + layout + ']<br><br>';
       }
 
-      var goto_select_html = ''
-        + '<option value="" disabled selected hidden>&#x25BE;Goto</option>\n'
-        + '<option>(TOP) / Introduction</option>\n';
+      var index_select_html = ''
+        + '<option value="" disabled selected hidden>&#x25BE;Index</option>\n'
+        + '<option value="0">(TOP)</option>\n';
 
       var groups_container_html = '';
 
+      var sectionCount = 0;
+
       if (show == "diffstring") {
+
+        ////////////////////////////////////////
+        // diffString (userjsCompare)
+        ////////////////////////////////////////
+
+        sectionCount++;
         // diffString(old, new)
-        content_html += '<a href=#bottom>[&#9661;]</a>\n'
+        content_html +=
+          '<span class="anchor" id="1"></span>'
           + '<div id=diffstr_area>'
           + escapeHtml(diffString(input_box_2.value, input_box.value))
             .replace(/&lt;del&gt;/g, "<del>")
@@ -2620,9 +2707,15 @@ function diff( o, n ) {
             .replace(/&lt;ins&gt;/g, "<ins>")
             .replace(/&lt;\/ins&gt;/g, "</ins>")
           + '</div>'
-          + '<div id="bottom"><a href=#>[&#9651;]</a></div>\n';
+          + '<span class="anchor" id="2"></span></div>\n';
+        sectionCount++;
+
       }
       else {
+
+        ////////////////////////////////////////
+        // read content into an array (userjsCompare)
+        ////////////////////////////////////////
 
         var prefArray = [];
 
@@ -2667,6 +2760,7 @@ function diff( o, n ) {
           'only2a': { 'id': 0, 'sub': true,  'count': 0, 'name': "Only in 2nd - active" },
           'only2i': { 'id': 0, 'sub': true,  'count': 0, 'name': "Only in 2nd - inactive" }
         }
+
         // set id for sub-sections we want (depending on view required)
         if (show == "groupx12") {
           // want those with default id of 0
@@ -2747,7 +2841,8 @@ function diff( o, n ) {
         var line, prefState, prefName, prefValue, found, ic = 0;
 
         ////////////////////////////////////////
-        // add 1st input to prefArray
+        // add 1st input to prefArray (userjsCompare)
+        ////////////////////////////////////////
 
         // convert in-block comments to in-line (improves inactive pref recognition)
         var input_content = amendCodeComments(input_box.value, true)
@@ -2800,7 +2895,8 @@ function diff( o, n ) {
         input_content = [];
 
         ////////////////////////////////////////
-        // add 2nd input to prefArray
+        // add 2nd input to prefArray (userjsCompare)
+        ////////////////////////////////////////
 
         if (input_box_name == input_box_name_2) {
           // just viewing stats etc on one box
@@ -2859,7 +2955,8 @@ function diff( o, n ) {
         input_content = [];
 
         ////////////////////////////////////////
-        // calculate: differences and stats
+        // calculate: differences and stats (userjsCompare)
+        ////////////////////////////////////////
 
         var statBase = "", statSuffix = "";
 
@@ -2991,7 +3088,9 @@ function diff( o, n ) {
         }
 
         ////////////////////////////////////////
-        // sort
+        // sort (userjsCompare)
+        ////////////////////////////////////////
+
         if (show != "unsorted") {
           prefArray.sort((a, b) => a.name.localeCompare(b.name));
         }
@@ -3000,8 +3099,10 @@ function diff( o, n ) {
         }
 
         ////////////////////////////////////////
-        // add stats totals table
-        content_html += '<br><details><summary>Summary'
+        // add stats totals table (userjsCompare)
+        ////////////////////////////////////////
+
+        content_html += '<details><summary>Summary'
           + '&nbsp;&nbsp;(1st: ' + input_box_short_name + ')'
           + '&nbsp;&nbsp;(2nd: ' + input_box_short_name_2 + ')'
           + '</summary><br><table id="table_stats">'
@@ -3022,12 +3123,13 @@ function diff( o, n ) {
           }
           if ( stats[key].id > 0 ) {
             // stat name as a link
-            content_html += '<a href="#' + stats[key].id + '">';
+            content_html += '<span class="anav http" id="#' + stats[key].id + '">';
             content_html += stats[key].name;
-            content_html += ' [' + stats[key].id + ']' + '</a>';
-            // add to the goto button
-            goto_select_html += '<option>[' + stats[key].id + '] '
-              + stats[key].name + ' (' + stats[key].count + ')</option>\n';
+            content_html += ' [' + stats[key].id + ']' + '</span>';
+            // add to the index_select button
+            index_select_html += '<option value="' + stats[key].id
+              + '">[' + stats[key].id + '] ' + stats[key].name
+              + ' (' + stats[key].count + ')</option>\n';
           }
           else {
             // stat name as plain (no link)
@@ -3035,10 +3137,11 @@ function diff( o, n ) {
           }
           content_html += '</td></tr>';
         });
-        content_html += "</tbody></table></details><br>";
+        content_html += "</tbody></table></details>";
 
         ////////////////////////////////////////
-        // add results table
+        // add results table (userjsCompare)
+        ////////////////////////////////////////
 
         content_html += '<br><table id="table_comp">';
 
@@ -3085,9 +3188,9 @@ function diff( o, n ) {
 
 
         // each row
-        var title, titlebm, titleid;
+        var titlebm;
         var diff_state1, diff_value1, diff_state2, diff_value2;
-        var section_heading = '(TOP) / Introduction';
+        var section_heading = '(TOP)';
         var group_user_pref_list = '';
         groups_container_html +=
           '<a target="_blank" href="about:config?filter=/^\\*$|^(';
@@ -3111,65 +3214,18 @@ function diff( o, n ) {
           if (prefArray[i].value1 == "-") { diff_value1 = ""; }
           if (prefArray[i].value2 == "-") { diff_value2 = ""; }
 
-
-          // start: build title info
-          title = "";
-          titleid = "";
-          if (prefArray[i].state1 == "-" && prefArray[i].state2 == "-" ) {
-            titleid = " id=\"" + prefArray[i].diff + "\"";
-            // go through the stats type object
-            // and find the one that matches the diff
-            Object.keys(stats).forEach(function(key){
-              if (prefArray[i].diff == stats[key].id) {
-
-                title += "<br><br><br><br><br>";
-
-                // (first line) add jump to links
-                // ref: http://www.amp-what.com/unicode/search/triangle
-                //   jump link for [back]
-                title += "<a href=\"#";
-                if (i != 0) { title += (prefArray[i].diff - 1) }
-                title += "\">[&#9650;]</a>"; // [back]
-                // jump link for [next]
-                title += " <a href=\"#";
-                if (prefArray[i].diff == prefArray[(len - 1)].diff) {
-                  // this title is same diff as last row ie this is last title
-                  title += "bottom"
-                }
-                else { title += (prefArray[i].diff + 1) }
-                title += "\">[&#9660;]</a>"; // [next]
-                //   jump link for [top]
-                title += " <a href=#>[&#9651;]</a>"; // [top]
-                //   jump link for [1] ... (each stat)
-                Object.keys(stats).forEach(function(key2){
-                  if (stats[key2].id > 0) {
-                    title += " <a href=\"#" + stats[key2].id
-                      + "\">[" + stats[key2].id + "]</a>";
-                  }
-                });
-                //   jump link for [bottom]
-                title += " <a href=#bottom>[&#9661;]</a>"; // [bottom]
-
-                // (second line) add: [#] name (count)
-                title += "<br><br><a href=\"#" + prefArray[i].diff
-                  + "\">[" + prefArray[i].diff + "]</a>"
-                  + " <b>" + stats[key].name + "</b>"
-                  + "  (" + stats[key].count + ")<br><br>";
-                // note name for [Groups] bookmark: [#] name (count)
-                titlebm = "[" + prefArray[i].diff + "] "
-                  + stats[key].name + " (" + stats[key].count + ")";
-              }
-            });
-          }
-          // end: build title info
-
-
           // row/cell contents
-          if (title) {
-            // name (title)
-            content_html += '<tr' + titleid
-              + '><td class="td_comp ';
 
+          if (prefArray[i].state1 == "-" && prefArray[i].state2 == "-") {
+
+            ////////////////////////
+            // section heading row
+            ////////////////////////
+
+            sectionCount++;
+
+            // name (title)
+            content_html += '<tr><td class="td_comp ';
             if (layout == "5 column") {
               content_html += 'td1a_comp_name" colspan="5">';
             }
@@ -3179,8 +3235,27 @@ function diff( o, n ) {
             else if (layout == "2 column") {
               content_html += 'td1b_comp_name td_comp_dashed" colspan="2">';
             }
+            // anchor
+            content_html +=
+              '<br><span class="anchor" id="' + sectionCount + '"></span>';
 
-            content_html += title + '</td>'
+            // add the title info
+            // go through the stats type object
+            // and find the one that matches the diff
+            Object.keys(stats).forEach(function(key){
+              if (prefArray[i].diff == stats[key].id) {
+                // add: [#] name (count)
+                content_html += '<span class="anav http" id="#' + prefArray[i].diff
+                  + '">[' + prefArray[i].diff + "]</span>"
+                  + " <b>" + stats[key].name + "</b>"
+                  + "  (" + stats[key].count + ")<br><br>";
+                // note name for [Groups] bookmark: [#] name (count)
+                titlebm = "[" + prefArray[i].diff + "] "
+                  + stats[key].name + " (" + stats[key].count + ")";
+              }
+            });
+
+            content_html += '</td>';
 
             // end and start about:config bookmarks groups
             group_user_pref_list = group_user_pref_list.replace(/\|$/, '');
@@ -3192,6 +3267,10 @@ function diff( o, n ) {
               '<a target="_blank" href="about:config?filter=/^\\*$|^(';
           }
           else {
+
+            /////////////////
+            // user_pref row
+            /////////////////
 
             // pref name
             content_html += '<tr>';
@@ -3213,7 +3292,7 @@ function diff( o, n ) {
               // if multiples show the count
               if ( prefArray[i].count1 > 1 || prefArray[i].count2 > 1) {
                 content_html += ' (x' + prefArray[i].count1 + ' x'
-                                + prefArray[i].count2 + ')</td>';
+                  + prefArray[i].count2 + ')</td>';
               }
             }
 
@@ -3246,7 +3325,7 @@ function diff( o, n ) {
                   .replace(/^(".*"|'.*')$/, "string")
               + '">' + prefArray[i].value1 + '</span>';
             if ((layout == "2 column") && (prefArray[i].value1 != "-")) {
-              content_html += ');'
+              content_html += ');';
             }
             content_html += '</td>';
             if (layout != "5 column") { content_html += '</tr>' + '<tr>'; }
@@ -3274,7 +3353,7 @@ function diff( o, n ) {
                   .replace(/^(".*"|'.*')$/, "string")
               + '">' + prefArray[i].value2 + '</span>';
             if ((layout == "2 column") && (prefArray[i].value2 != "-")) {
-              content_html += ');'
+              content_html += ');';
             }
             content_html += '</td>';
 
@@ -3282,37 +3361,12 @@ function diff( o, n ) {
 
           content_html += '</tr>';
 
-          if (i == (len - 1)) {
-
-            title = "<br><br><br><br><br>";
-            //   jump link for [back] [next] [top]
-            title += "<a href=\"#" + prefArray[i].diff + "\">[&#9650;]</a>";
-            title += " <a href=\"#bottom\">[&#9660;]</a>";
-            title += " <a href=#>[&#9651;]</a>";
-            //   jump link for [1] ... (each stat)
-            Object.keys(stats).forEach(function(key2){
-              if (stats[key2].id > 0) {
-                title += " <a href=\"#" + stats[key2].id
-                  + "\">[" + stats[key2].id + "]</a>";
-              }
-            });
-            //   jump link for [bottom]
-            title += " <a href=#bottom>[&#9661;]</a><br><br>";
-
-            // last row of table (bottom)
-            content_html += '<tr id=\"bottom\"><td class="td_comp ';
-            if (layout != "5 column") {
-              content_html += 'td1b_comp_name td_comp_dashed" colspan="3">';
-            }
-            else {
-              content_html += 'td1a_comp_name" colspan="5">';
-            }
-            content_html += title + '</td>'
-
-          }
-
         }
-        content_html += '</table></div>';
+        sectionCount++;
+        content_html +=
+            '</table>'
+          + '<span class="anchor" id="' + sectionCount + '"></span>'
+          + '</div>';
 
         // end about:config bookmarks groups
         group_user_pref_list = group_user_pref_list.replace(/\|$/, '');
@@ -3322,15 +3376,18 @@ function diff( o, n ) {
       }
 
       ////////////////////////////////////////
-      // end content
+      // end content (userjsCompare)
+      ////////////////////////////////////////
 
       content_html += '  <br><br><br>\n';
-      goto_select_html += '<option>(BOTTOM)</option>\n';
+      index_select_html += '<option value="' + sectionCount
+        + '">(BOTTOM)</option>\n';
+
       document.getElementById("view_area").innerHTML = content_html;
-      document.getElementById("goto_select").innerHTML = goto_select_html;
+      document.getElementById("index_select").innerHTML = index_select_html;
       document.getElementById("groups_container").innerHTML = groups_container_html;
       content_html = null;
-      goto_select_html = null;
+      index_select_html = null;
       groups_container_html = null;
 
       scroll(0,0);
@@ -3345,6 +3402,9 @@ function diff( o, n ) {
           changeClass(e[i], "", "invert");
         }
         invertColorForClass("invert");
+
+        // hide layout button
+        document.getElementById("compare_layout_button").style.display = "none";
       }
 
       document.getElementById("compare_unsorted_button").addEventListener("click", function() {
@@ -3377,6 +3437,76 @@ function diff( o, n ) {
         else { layout = "5 column" }
         userjsCompare(input_box_name, input_box_name_2, show, layout);
       });
+
+      // back
+      document.getElementById("jumpback_button").addEventListener("click", function() {
+        var e = document.getElementsByClassName("anchor");
+        var id = 0;
+        for (var i = 0, j = e.length; i<j; i++) {
+          if (e[i].getBoundingClientRect().y >= 0) {
+            break;
+          }
+          else {
+            id = i + 1;
+          }
+        }
+        document.getElementById("viewer_slider").value = id;
+        if (id == 0) {
+          scroll(0,0);
+        }
+        else {
+          document.getElementById(id).scrollIntoView();
+        }
+      });
+
+      // next
+      document.getElementById("jumpnext_button").addEventListener("click", function() {
+        var e = document.getElementsByClassName("anchor");
+        var id = 1;
+        for (var i = 0, j = e.length; i<j; i++) {
+          if (e[i].getBoundingClientRect().y > 1) {
+            break;
+          }
+          else {
+            id = i + 2;
+          }
+        }
+        document.getElementById("viewer_slider").value = id;
+        if (id == 0) {
+          scroll(0,0);
+        }
+        else {
+          document.getElementById(id).scrollIntoView();
+        }
+      });
+
+      // slider
+      document.getElementById("viewer_slider").max = sectionCount;
+      for (const event of [ "input", "click" ]) {
+        document.getElementById("viewer_slider").addEventListener(event, function() {
+          if (this.value == 0) {
+            scroll(0,0);
+          }
+          else {
+            document.getElementById(this.value).scrollIntoView();
+          }
+        });
+      }
+
+      // when the back next symbols are clicked update the nav slider
+      var e = document.getElementsByClassName("anav");
+      for (var i = 0, j = e.length; i<j; i++) {
+        e[i].addEventListener("click", function() {
+          var id = this.id.replace(/^.*#$/, "0").replace(/^.*#/, "");
+          document.getElementById("viewer_slider").value = id;
+          if (id == 0) {
+            scroll(0,0);
+          }
+          else {
+            document.getElementById(id).scrollIntoView();
+          }
+        });
+      }
 
       togglePrefixAboutConfigLinks("refresh");
       if (toggleGroupsOnView("status")) { toggleGroupsPanel(true); }
@@ -3429,24 +3559,6 @@ function diff( o, n ) {
     // userjsTableView
     // *************************************
 
-    function userjsTableViewLauncher(box_chosen) {
-      // determine the box numbers to compare from the choice text
-      var box = box_chosen.replace(/^.*([0-9]).*$/, "$1");
-      switch (box) {
-        case "1": box="box_1_template"; break;
-        case "2": box="box_2_overrides"; break;
-        case "3": box="box_3_userjs"; break;
-        case "4": box="box_4_other"; break;
-      }
-      if (
-        document.getElementById("collect_button").style.textDecoration != "line-through"
-        && ( !(document.getElementById(box).value == "") )
-      ) {
-        userjsTableView(box);
-        toggleActionsPanel(false);
-      }
-    } /* end function userjsTableViewLauncher */
-
     function userjsTableViewExpandAll() {
       var e = document.getElementsByClassName("det");
       for (var i = 0, j = e.length; i < j; i++) {
@@ -3454,10 +3566,17 @@ function diff( o, n ) {
       }
     }
 
-    function userjsTableViewExpandDescriptions() {
+    function userjsTableViewExpandPrefDesc() {
       var e = document.getElementsByClassName("prefDet");
       for (var i = 0, j = e.length; i < j; i++) {
         e[i].open = true;
+      }
+    }
+
+    function userjsTableViewCollapseSectionDesc() {
+      var e = document.getElementsByClassName("secDet");
+      for (var i = 0, j = e.length; i < j; i++) {
+        e[i].open = false;
       }
     }
 
@@ -3468,26 +3587,133 @@ function diff( o, n ) {
       }
     }
 
-    function userjsTableViewToggleInactive() {
-      var b = document.getElementById("inactiveButton");
-      var e = document.getElementsByClassName("tr_tview_inactive");
-      if (/\u{25A2}/u.test(b.textContent)) {
-        for (var i = 0, j = e.length; i < j; i++) {
-          e[i].style.display = null;
+    function userjsTableViewTagFilter() {
+      var s = document.getElementById("filter_select");
+      var svalue = s.value;
+      s.selectedIndex = 0;
+      var hideheadingsoption = 2;
+      var hideinactiveoption = 3;
+      var hideactiveoption = 4;
+      var invertoption = 5;
+      var e = document.getElementById("table_tview").querySelectorAll("tr");
+
+      // get menu status
+      var hideinactive =
+        /\u{25A3}/u.test(s.options[hideinactiveoption].textContent) ? true : false;
+      var hideactive =
+        /\u{25A3}/u.test(s.options[hideactiveoption].textContent) ? true : false;
+      var hideheadings =
+        /\u{25A3}/u.test(s.options[hideheadingsoption].textContent) ? true : false;
+      var invert =
+        /\u{25A3}/u.test(s.options[invertoption].textContent) ? true : false;
+      var filteron = "";
+      for (var si = invertoption + 1, sj = s.options.length; si < sj; si++) {
+        if (/\u{25A3}/u.test(s.options[si].textContent)) {
+          filteron = s.options[si].value;
         }
-        b.textContent = b.textContent.replace(/^\u{25A2}/u, "\u25A3");
+      }
+
+      if (svalue == "SHOWALL") {
+        hideinactive = false;
+        hideactive = false;
+        hideheadings = false;
+        invert = false;
+        filteron = "";
+      }
+      else if (svalue == "HIDEHEADINGS") {
+        svalue = "";
+        hideheadings = !hideheadings;
+      }
+      else if (svalue == "HIDEINACTIVE") {
+        svalue = "";
+        hideinactive = !hideinactive;
+        hideactive = false;
+      }
+      else if (svalue == "HIDEACTIVE") {
+        svalue = "";
+        hideactive = !hideactive;
+        hideinactive = false;
+      }
+      else if (svalue == "INVERT") {
+        svalue = "";
+        invert = !invert;
+      }
+      else if (svalue == filteron) {
+        svalue = "SHOWALL";
+        filteron = "";
+        hideheadings = false;
       }
       else {
-        for (var i = 0, j = e.length; i < j; i++) {
-          e[i].style.display = "none";
-        }
-        b.textContent = b.textContent.replace(/^\u{25A3}/u, "\u25A2");
+        filteron = svalue;
+        hideheadings = true;
       }
-    }
+
+      // loop through all tr and apply/re-apply filter
+      for (var i = 1, j = e.length; i < j; i++) {
+        e[i].style.display =
+          (svalue == "SHOWALL" || new RegExp(filteron + " ").test(e[i].className))
+          ? null : "none";
+      }
+      // if invert
+      if (invert) {
+        for (var i = 1, j = e.length; i < j; i++) {
+          e[i].style.display = (e[i].style.display == "none") ? null : "none";
+        }
+      }
+      // if hide inactive
+      if (hideinactive) {
+        for (var i = 1, j = e.length; i < j; i++) {
+          if (/TAGS_Inactive /.test(e[i].className)) {
+            e[i].style.display = "none";
+          }
+        }
+      }
+      // if hide active
+      if (hideactive) {
+        for (var i = 1, j = e.length; i < j; i++) {
+          if (/TAGS_Active /.test(e[i].className)) {
+            e[i].style.display = "none";
+          }
+        }
+      }
+      // hide/unhide headings
+      for (var i = 1, j = e.length; i < j; i++) {
+        if (/HEADING /.test(e[i].className)) {
+          e[i].style.display = hideheadings ? "none" : null;
+        }
+      }
+
+      // mark the filter options on/off on the filter select/button
+      s.options[hideinactiveoption].textContent = hideinactive
+        ? s.options[hideinactiveoption].textContent.replace(/\u{25A2}/u, "\u25A3")
+        : s.options[hideinactiveoption].textContent.replace(/\u{25A3}/u, "\u25A2");
+      s.options[hideactiveoption].textContent = hideactive
+        ? s.options[hideactiveoption].textContent.replace(/\u{25A2}/u, "\u25A3")
+        : s.options[hideactiveoption].textContent.replace(/\u{25A3}/u, "\u25A2");
+      s.options[hideheadingsoption].textContent = hideheadings
+        ? s.options[hideheadingsoption].textContent.replace(/\u{25A2}/u, "\u25A3")
+        : s.options[hideheadingsoption].textContent.replace(/\u{25A3}/u, "\u25A2");
+      s.options[invertoption].textContent = invert
+        ? s.options[invertoption].textContent.replace(/\u{25A2}/u, "\u25A3")
+        : s.options[invertoption].textContent.replace(/\u{25A3}/u, "\u25A2");
+      // mark the filter used and unmark others (except hide/invert)
+      for (var si = invertoption + 1, sj = s.options.length; si < sj; si++) {
+        s.options[si].textContent = (s.options[si].value == filteron)
+          ? s.options[si].textContent.replace(/\u{25A2}/u, "\u25A3")
+          : s.options[si].textContent.replace(/\u{25A3}/u, "\u25A2");
+      }
+      // filter button (indicates if any filter is used)
+      s.options[0].textContent =
+        (hideinactive || hideactive || hideheadings || invert || filteron)
+        ? s.options[0].textContent.replace(/\u{25A2}/u, "\u25A3")
+        : s.options[0].textContent.replace(/\u{25A3}/u, "\u25A2");
+
+      s.blur();
+
+    } /* end function userjsTableViewTagFilter */
 
     ////////////////////////////////////////////////////////
-    // TODO: the "TableView" is work in progress
-    //       (there might be TODO tags in this function)
+    // userjsTableView
     ////////////////////////////////////////////////////////
 
     function userjsTableView(input_box_name) {
@@ -3496,77 +3722,241 @@ function diff( o, n ) {
 
       var theme = document.body.className.replace( /(^| *)[^_]+_/ , '');
 
-      var content_html =
-          '<div style="width: 100%;" id="tview_div">'
-
-        + '<button type="button" class="controls borders'
-        + ' controls_' + theme + ' borders_' + theme
-        + '" onclick="userjsTableViewExpandAll();"'
-        + '>Expand All</button>'
-
-        + '<button type="button" class="controls borders'
-        + ' controls_' + theme + ' borders_' + theme
-        + '" onclick="userjsTableViewExpandDescriptions();"'
-        + '>Expand Descr</button>'
-
-        + '<button type="button" class="controls borders'
-        + ' controls_' + theme + ' borders_' + theme
-        + '" onclick="userjsTableViewCollapseAll();"'
-        + '>Collapse All</button>'
-
-        + '<button type="button" class="controls borders'
-        + ' controls_' + theme + ' borders_' + theme
-        + '" id="inactiveButton" '
-        + 'onclick="userjsTableViewToggleInactive();"'
-        + '>&#x25A3;&#x00A0;Show Inactive</button>'
-        + '<br><br><br>'
-
-        + '<br><span class="false">Please note: this "Table View" is work '
-        + 'in progress, be careful:<br>it might be working well or '
-        + 'there may be issues<br>(it needs verifying to ensure the user.js '
-        + 'is displaying correctly).'
-        + '<br>Info column currently *tries* to indicate: '
-        + 'Inactive/Warning/Hidden/Setup.</span>'
-        + '<br>Use [Goto] button or symbols for navigation.<br>';
-
-      var goto_select_html = ''
-        + '<option value="" disabled selected hidden>&#x25BE;Goto</option>\n'
-        + '<option>(TOP)</option>\n';
-
-      var groups_container_html = '';
-
-      var stats = {
-        'total': { 'id': -2, 'sub': false, 'count': 0, 'name': "Total" },
-        'totala': { 'id': -2, 'sub': true,  'count': 0, 'name': "Active" },
-        'totali': { 'id': -2, 'sub': true,  'count': 0, 'name': "Inactive" },
+      // tags (shown under filter button in this order)
+      // (these are used on the table row eg: <tr class="TAGS_WARNING "...>)
+      var tags = {
+        // tags to show first
+        'WARNING': {
+          'rx': new RegExp("(\\[WARNING\\]|\\[WARNING.)", "gi"),
+          're': '<span class="warn">$1</span>',
+          'indicator': '<span class="warn">W</span>',
+          'secflag': false,
+          'subflag': false,
+          'titleflag': false,
+          'count': 0
+        },
+        'HIDDEN': {
+          'rx': new RegExp("(\\[HIDDEN[^\\]]*\\])", "gi"),
+          're': '<span class="hid">$1</span>',
+          'indicator': '<span class="hid">H</span>',
+          'secflag': false,
+          'subflag': false,
+          'titleflag': false,
+          'count': 0
+        },
+        'SETUP...': {
+          'rx': new RegExp("(\\[SETUP[^\\]]*\\])", "gi"),
+          're': '<span class="setup">$1</span>',
+          'indicator': '<span class="setup">S</span>',
+          'secflag': false,
+          'subflag': false,
+          'titleflag': false,
+          'count': 0
+        },
+        'DEFAULT': {
+          'rx': new RegExp("(\\[DEFAULT[^\\]]*\\])", "gi"),
+          're': "",
+          'indicator': "D",
+          'secflag': false,
+          'subflag': false,
+          'titleflag': false,
+          'count': 0
+        },
+        // other tags
+        'FF...': {
+          'rx': new RegExp("(\\[FF[^\\]]*\\])", "gi"),
+          're': "",
+          'indicator': "F",
+          'secflag': false,
+          'subflag': false,
+          'titleflag': false,
+          'count': 0
+        },
+        'NOTE': {
+          'rx': new RegExp("(\\[NOTE[^\\]]*\\])", "gi"),
+          're': "",
+          'indicator': "N",
+          'secflag': false,
+          'subflag': false,
+          'titleflag': false,
+          'count': 0
+        },
+        'RESTART': {
+          'rx': new RegExp("(\\[RESTART[^\\]]*\\])", "gi"),
+          're': "",
+          'indicator': "R",
+          'secflag': false,
+          'subflag': false,
+          'titleflag': false,
+          'count': 0
+        },
+        'SETTING': {
+          'rx': new RegExp("(\\[SETTING[^\\]]*\\])", "gi"),
+          're': "",
+          'indicator': "X",
+          'secflag': false,
+          'subflag': false,
+          'titleflag': false,
+          'count': 0
+        },
+        'TEST': {
+          'rx': new RegExp("(\\[TEST[^\\]]*\\])", "gi"),
+          're': "",
+          'indicator': "T",
+          'secflag': false,
+          'subflag': false,
+          'titleflag': false,
+          'count': 0
+        },
+        'TIP': {
+          'rx': new RegExp("(\\[TIP[^\\]]*\\])", "gi"),
+          're': "",
+          'indicator': "I",
+          'secflag': false,
+          'subflag': false,
+          'titleflag': false,
+          'count': 0
+        },
+        // os
+        'WINDOWS': {
+          'rx': new RegExp("(\\[WINDOWS[^\\]]*\\])", "gi"),
+          're': "",
+          'indicator': "M",
+          'secflag': false,
+          'subflag': false,
+          'titleflag': false,
+          'count': 0
+        },
+        'NON-WINDOWS': {
+          'rx': new RegExp("(\\[NON-WINDOWS[^\\]]*\\])", "gi"),
+          're': "",
+          'indicator': "O",
+          'secflag': false,
+          'subflag': false,
+          'titleflag': false,
+          'count': 0
+        },
+        'MAC': {
+          'rx': new RegExp("(\\[MAC[^\\]]*\\])", "gi"),
+          're': "",
+          'indicator': "A",
+          'secflag': false,
+          'subflag': false,
+          'titleflag': false,
+          'count': 0
+        },
+        'LINUX': {
+          'rx': new RegExp("(\\[LINUX[^\\]]*\\])", "gi"),
+          're': "",
+          'indicator': "L",
+          'secflag': false,
+          'subflag': false,
+          'titleflag': false,
+          'count': 0
+        },
+        'SETUP-CHROME': {
+          'rx': new RegExp("(\\[SETUP-CHROME[^\\]]*\\])", "gi"),
+          're': '',
+          // 'indicator': '<span class="setup">SC</span>',
+          'indicator': "",
+          'secflag': false,
+          'subflag': false,
+          'titleflag': false,
+          'count': 0
+        },
+        'SETUP-HARDEN': {
+          'rx': new RegExp("(\\[SETUP-HARDEN[^\\]]*\\])", "gi"),
+          're': '',
+          // 'indicator': '<span class="setup">SH</span>',
+          'indicator': "",
+          'secflag': false,
+          'subflag': false,
+          'titleflag': false,
+          'count': 0
+        },
+        'SETUP-non-RFP': {
+          'rx': new RegExp("(\\[SETUP-non-RFP[^\\]]*\\])", "gi"),
+          're': '',
+          // 'indicator': '<span class="setup">SR</span>',
+          'indicator': "",
+          'secflag': false,
+          'subflag': false,
+          'titleflag': false,
+          'count': 0
+        },
+        'SETUP-PERF': {
+          'rx': new RegExp("(\\[SETUP-PERF[^\\]]*\\])", "gi"),
+          're': '',
+          // 'indicator': '<span class="setup">SP</span>',
+          'indicator': "",
+          'secflag': false,
+          'subflag': false,
+          'titleflag': false,
+          'count': 0
+        },
+        'SETUP-SECURITY': {
+          'rx': new RegExp("(\\[SETUP-SECURITY[^\\]]*\\])", "gi"),
+          're': '',
+          // 'indicator': '<span class="setup">SS</span>',
+          'indicator': "",
+          'secflag': false,
+          'subflag': false,
+          'titleflag': false,
+          'count': 0
+        },
+        'SETUP-WEB': {
+          'rx': new RegExp("(\\[SETUP-WEB[^\\]]*\\])", "gi"),
+          're': '',
+          // 'indicator': '<span class="setup">SW</span>',
+          'indicator': "",
+          'secflag': false,
+          'subflag': false,
+          'titleflag': false,
+          'count': 0
+        }
       }
 
-      ////////////////////////////////////////
-      // convert in-block comments to in-line
-      ////////////////////////////////////////
-
-      // (for inactive pref recognition)
-
-      var input_content = amendCodeComments(input_box.value, true)
-        .replace(/(\r\n|\r)/g,'\n').split("\n");
-
-
-      ////////////////////////////////////////
-      // start of parsing (save into prefArray)
-      ////////////////////////////////////////
-
-      var prefArray = [];
-
-      // create a first section heading
-      prefArray.push( {
-        'type': "section", 'title': "Introduction", 'desc': "",
-        'id': "", 'name': "", 'state': "", 'value': "",
-        'comment': "", 'info': ""
-      } );
+      // check for "[TAGS]" not hardcoded above
+      var extraTags = input_box.value.replace(/(\[[^\]]*\])/gm,'\n$1\n')
+        .split("\n").filter(function(value) { return /^\[.*\]$/.test(value) })
+        .filter(function(value, index, self) { return self.indexOf(value) === index })
+        .sort()
+        .filter(function(value) {
+          var newtag = true;
+          if (new RegExp("^(\\[SECTION |\\[[^A-Z])").test(value) ) {
+            newtag = false;
+          }
+          else {
+            for (var i in tags) {
+              tags[i].rx.lastIndex = 0;
+              if (i == "SETUP..." || i == "FF...")  {
+                continue;
+              }
+              else if (tags[i].rx.test(value)) {
+                newtag = false;
+              }
+            }
+          }
+          if (newtag) { return value }
+        });
+      // include the extra tags for detection
+      for (var i in extraTags) {
+        var iv = extraTags[i].replace(/[\[\]]/g, "");
+        tags[iv] = {
+          'rx': new RegExp("(\\[" + RegExp.escape(iv) + "\\])", "gi"),
+          're': "",
+          'indicator': "",
+          'secflag': false,
+          'subflag': false,
+          'titleflag': false,
+          'count': 0
+        }
+      }
 
       var regexes = {
         'user_pref': {
-          'f': new RegExp(
+          'rx':
+            new RegExp(
             "^([ \t]*user_pref|.*//.*user_pref)"  // $1 user_pref  //user_pref  etc
             + "([ \t]*\\([ \t]*[\"'])"     // $2 ("  ('
             + "([^\"']+)"                  // $3 prefname
@@ -3574,73 +3964,76 @@ function diff( o, n ) {
             + "(.*)"                       // $5 prefvalue  "prefvalue"  'prefvalue'
             + "([ \t]*\\)[ \t]*;)"         // $6 );
             + "(.*)$", "gi"                // $7 afters/comment
-          )
+            )
         },
         'http': {
           // linkify a/href for HTTP/HTTPS URLs
-          'f':
+          'rx':
             new RegExp("(https?:[/][/][^ \"']+[^\\)\\], \"'.;])", "gi"),
-          'r':
+          're':
             '<a target="_blank" rel="external noopener noreferrer" '
-              + 'href="$1" class="http"><span class="hidden">__</span>$1</A>'
-        },
-        'warning': {
-          // span/class for:  [WARNING]
-          'f': new RegExp("(\\[WARNING\\])", "gi"),
-          'r': '<span class="warn">$1</span>'
-        },
-        'hidden': {
-          // span/class for:  (hidden pref...)  [HIDDEN PREF...]
-          'f': new RegExp("([\\[\\(]hidden pref[^\\)\\]]*[\\)\\]])", "gi"),
-          'r': "<span class=\"hid\">$1<\/span>"
-        },
-        'setup': {
-          // span/class for:  [SETUP]  [SETUP-...]
-          'f':
-            new RegExp("(\\[SETUP\\]|\\[SETUP-[^\\]]+\\]"
-              + "|\/\/[ \t]NOTICE-DISABLED:)", "gi"),
-          'r': "<span class=\"setup\">$1<\/span>"
+            + 'href="$1" class="http"><span class="hidden">__</span>$1</A>'
         }
       }
 
-      // tagFlags (make sure these names also have an entry in regexes above)
-      // TODO more tags
-      var tagFlags = {
-        'warning':false, 'hidden':false, 'setup':false
-      }
+      ////////////////////////////////////////
+      // start parsing (userjsTableView)
+      ////////////////////////////////////////
+
+      // convert in-block comments to in-line (for inactive pref recognition)
+      var input_content = amendCodeComments(input_box.value, true)
+        .replace(/(\r\n|\r)/g,'\n').split("\n");
+
+      var prefArray = [];
+
+      // create a first section heading
+      prefArray.push( {
+        'type': "section", 'title': "Introduction", 'desc': "",
+        'id': "", 'name': "", 'state': "", 'value': "", 'comment': "",
+        'info': "", 'tagclass': "HEADING "
+      } );
 
       var ic = 0, x, r, line = "", linetype = "",
-        prefid = "0000", prefid_prefix = "",
+        prefid = "", prefid_prefix = "",
         prefName = "", prefState = "", prefValue = "",
-        prefDesc = "", prefComment = "", found,
+        prefTitle = "", prefDesc = "", prefComment = "", found,
         prefInfoSaved = true,  // add title+desc as own entry if not put on a pref
         ISawAParrot = -1, lastSection = 1,
-        descMore = true, // we start in the first description
-        prefDescMore = false,
+        secMore = true, // we start in the first description
+        subMore = false,
+        titleMore = false,
         last_index = (prefArray.length - 1);
 
       for (ic in input_content) {
         line = input_content[ic];
 
         ////////////////////////////////////////
-        // detect the type of line
+        // detect the type of line (userjsTableView)
         ////////////////////////////////////////
 
-        // section/desc sub/desc pref-title/pref-desc/pref
+        // section/section+ sub/sub+ title/title+/user_pref
 
-        if (new RegExp("^// /\\*+[ \\t]*\\[SECTION[ \\t]*[^:]+:").test(line)) {
+        regexes["user_pref"].rx.lastIndex = 0;
+
+        if ( (new RegExp("^// /\\*+[ \\t]*\\[SECTION[ \\t]*[^:]+:").test(line))
+          || (new RegExp("^//[ *\t]*SECTION:").test(line))
+        ) {
           // line starting  /*...  followed by [SECTION xxxx:
+          // line starting  * SECTION:
           linetype = "section";
           lastSection++;
         }
-        else if (new RegExp("^\/\/ /[*/]+ +(START|END|[0-9][^:]+):").test(line)) {
+        else if ( (new RegExp("^\/\/ /[*/]+ +(START|END|[0-9][^:]+):").test(line))
+          || (new RegExp("^//[ *\t]*PREF:").test(line))
+        ) {
           // line starting  /*... or //...  followed by  START: END: 1234: 1234a:
-          linetype = "pref-title";
+          linetype = "title";
         }
-        else if (regexes["user_pref"].f.test(line)) {
-          linetype = "pref";
-          descMore = false;
-          prefDescMore = false;
+        else if (regexes["user_pref"].rx.test(line)) {
+          linetype = "user_pref";
+          secMore = false;
+          subMore = false;
+          titleMore = false;
         }
         else if (new RegExp("^// \\/[\\*\\/][ \t\\*\\/]*$").test(line)) {
           // line just  /* //
@@ -3648,31 +4041,40 @@ function diff( o, n ) {
         }
         else if (new RegExp("^// [ \\t]*\\*+\\/[ \\t]*$").test(line)) {
           // line just  */
-          descMore = false;
-          prefDescMore = false;
+          secMore = false;
+          subMore = false;
+          titleMore = false;
           continue;
         }
-        else if (prefDescMore == true) {
-          linetype = "pref-desc"
+        else if (titleMore == true) {
+          linetype = "title+"
         }
-        else if (descMore == true) {
+        else if (secMore == true) {
+          linetype = "section+"
+        }
+        else if (subMore == true) {
           if (new RegExp("^// [ \\t]*\/\/[ \\t]*FF[0-9]+\\+*[ \\t]*$").test(line)) {
-            linetype = "sub"
+            // new 'sub' for: // FF99  (so tags from sub carried over)
+            linetype = "ff"
           }
           else {
-            linetype = "desc"
+            linetype = "sub+"
           }
         }
         else if (/^[ \t]*$/.test(line)) {
           // ignore empty line (as we are not within a description)
           continue;
         }
+        else if (new RegExp("^// [ \\t]*\/\/[ \\t]*FF[0-9]+\\+*[ \\t]*$").test(line)) {
+          // new 'sub' for: // FF99  (so tags from sub carried over)
+          linetype = "ff"
+        }
         else {
           linetype = "sub"
         }
 
         ////////////////////////////////////////
-        // save unused prefTitle prefDesc
+        // save unused prefTitle prefDesc (userjsTableView)
         ////////////////////////////////////////
 
         // (eg ghacks-user.js 0105 0902 sub-sections have no user_pref)
@@ -3680,198 +4082,259 @@ function diff( o, n ) {
         switch (linetype) {
           case "section":
           case "sub":
-          case "pref-title":
+          case "ff":
+          case "title":
             if (prefInfoSaved == false) {
               prefArray.push( {
                 'type': "prefx", 'title': prefTitle, 'desc': prefDesc,
                 'id': "" + prefid_prefix + prefid,
-                'name': "", 'state': "", 'value': "",
-                'comment': "", 'info': ""
+                'name': "", 'state': "", 'value': "", 'comment': "",
+                'info': "", 'tagclass': ""
               } );
               last_index = (prefArray.length - 1);
               prefInfoSaved = true;
               // add to info
-              // TODO more tags
-              for (const i of [ "warning", "hidden", "setup" ]) {
-                if (tagFlags[i]) {
-                  switch (i) {
-                    case "warning":
-                      prefArray[last_index].info += '<span class="warn">W</span> ';
-                      break;
-                    case "hidden":
-                      prefArray[last_index].info += '<span class="hid">H</span> ';
-                      break;
-                    case "setup":
-                      prefArray[last_index].info += '<span class="setup">S</span> ';
-                      break;
+              for (var i in tags) {
+                tags[i].rx.lastIndex = 0;
+                if (
+                  // (tags[i].secflag) ||    // ignore tags in section headings
+                  (tags[i].subflag)
+                  || (tags[i].titleflag)
+                  || (tags[i].rx.test(prefArray[last_index].comment))
+                ) {
+                  if (tags[i].indicator) {
+                    prefArray[last_index].info += tags[i].indicator + ' ';
                   }
+                  prefArray[last_index].tagclass += "TAGS_"
+                    + i.replace(/[^A-Za-z0-9_]/, "__") + " ";
+                  tags[i].count++;
                 }
               }
             }
         }
 
         ////////////////////////////////////////
-        // reset some flags/variables
+        // reset some flags/variables (userjsTableView)
         ////////////////////////////////////////
 
         // (some are also reset in the line type detect above)
 
-        if (linetype == "pref-title") {
-          prefInfoSaved = false;
-        }
-
-        if (linetype == "section" || linetype == "pref-title") {
-          prefTitle = "";
-          prefDesc = "";
-          tagFlags["warning"] = false;
-          tagFlags["hidden"] = false;
-          tagFlags["setup"] = false;
-        }
-
-        ////////////////////////////////////////
-        // detect tags
-        ////////////////////////////////////////
-
-        // TODO more tags
-
         switch (linetype) {
           case "section":
           case "sub":
-          case "desc":
-          case "pref-title":
-          case "pref-desc":
-            if (regexes["warning"].f.test(line)) { tagFlags["warning"] = true; };
-            if (regexes["hidden"].f.test(line)) { tagFlags["hidden"] = true; };
-            if (regexes["setup"].f.test(line)) { tagFlags["setup"] = true; };
+          case "ff":
+          case "title":
+            prefTitle = "";
+            prefDesc = "";
+        }
+
+        switch (linetype) {
+          case "section":
+            for (var i in tags) { tags[i].secflag = false; }
+            for (var i in tags) { tags[i].subflag = false; }
+            for (var i in tags) { tags[i].titleflag = false; }
+            break;
+          case "sub":
+            for (var i in tags) { tags[i].subflag = false; }
+            break;
+          case "title":
+            for (var i in tags) { tags[i].titleflag = false; }
+            prefInfoSaved = false;
+            break;
         }
 
         ////////////////////////////////////////
-        // escape the text
+        // detect tags (userjsTableView)
+        ////////////////////////////////////////
+
+        switch (linetype) {
+          case "section":
+          case "section+":
+            for (var i in tags) {
+              tags[i].rx.lastIndex = 0;
+              if (tags[i].rx.test(line)) { tags[i].secflag = true; };
+            }
+            break;
+          case "sub":
+          case "sub+":
+            for (var i in tags) {
+              tags[i].rx.lastIndex = 0;
+              if (tags[i].rx.test(line)) { tags[i].subflag = true; };
+            }
+            break;
+          case "title":
+          case "title+":
+            for (var i in tags) {
+              tags[i].rx.lastIndex = 0;
+              if (tags[i].rx.test(line)) { tags[i].titleflag = true; };
+            }
+        }
+
+        ////////////////////////////////////////
+        // escape the text (userjsTableView)
         ////////////////////////////////////////
 
         // replace & < > characters with HTML escape codes
         line = escapeHtml(line);
 
         ////////////////////////////////////////
-        // capture pref id (ghacks-user.js ref)
+        // capture pref id (ghacks-user.js ref) (userjsTableView)
         ////////////////////////////////////////
 
-        if (linetype == "section" || linetype == "pref-title") {
-          prefid = line;
-          x = new RegExp("^(?:\/\/ )/[*/]+[ \\t]+\\[SECTION ([^\\]]+)\\]:.*$");
-          prefid = prefid.replace(x, "$1");
-          x = new RegExp("^(?:\/\/ )/[*/]+[ \\t]+([^:]+):.*$");
-          prefid = prefid.replace(x, "$1");
-          if (/^9999/.test(prefid)) {
-            prefid_prefix = '9999:';
-          }
-          else if (/^END/.test(prefid)) {
-            prefid_prefix = '';
+        if (linetype == "section" || linetype == "title") {
+          if (
+            (new RegExp("^(?:\/\/ )/[*/]+[ \\t]+\\[SECTION ([^\\]]+)\\]:.*$").test(line))
+            || (new RegExp("^(?:\/\/ )/[*/]+[ \\t]+([^:]+):.*$").test(line))
+          ) {
+            prefid = line;
+            x = new RegExp("^(?:\/\/ )/[*/]+[ \\t]+\\[SECTION ([^\\]]+)\\]:.*$");
+            prefid = prefid.replace(x, "$1");
+            x = new RegExp("^(?:\/\/ )/[*/]+[ \\t]+([^:]+):.*$");
+            prefid = prefid.replace(x, "$1");
+            if (/^9999/.test(prefid)) {
+              prefid_prefix = '9999:';
+            }
+            else if (/^END/.test(prefid)) {
+              prefid_prefix = '';
+            }
           }
         }
 
         ////////////////////////////////////////
-        // style/linkify
+        // style/linkify (userjsTableView)
         ////////////////////////////////////////
 
         // (pref done later as we only do //comment part)
 
-        if (linetype != "pref") {
-          for (const i of [ "http", "warning", "hidden", "setup" ]) {
-            line = line.replace(regexes[i].f, regexes[i].r);
+        if (linetype != "user_pref") {
+          regexes["http"].rx.lastIndex = 0;
+          line = line.replace(regexes["http"].rx, regexes["http"].re);
+          for (var i in tags) {
+            if (tags[i].re) {
+              tags[i].rx.lastIndex = 0;
+              line = line.replace(tags[i].rx, tags[i].re);
+            }
           }
         }
 
         ////////////////////////////////////////
-        // section / sub / desc
+        // section/section+/sub/sub+ (userjsTableView)
         ////////////////////////////////////////
 
-        // title (first line)
-        if (linetype == "section" || linetype == "sub") {
+        // heading (first line)
+        if (linetype == "section" || linetype == "sub" || linetype == "ff") {
           prefArray.push( {
-            'type': linetype,
+            'type': linetype.replace(/^ff$/, "sub"),
             'title':
               line.replace(/^\/\/ /, "")
                 .replace(/^\/\*+[ \t]*/, "")
-                .replace(/[ \t]*\*+\/[ \t]*$/, ""),
+                .replace(/[ \t]*\*+\/[ \t]*$/, "")
+                .replace(/^(\/\/ |   \/\/ |      \/\/ | \* |\* )/, ""),
             'desc': "", 'id': "",
-            'name': "", 'state': "", 'value': "", 'comment': "", 'info': ""
+            'name': "", 'state': "", 'value': "", 'comment': "",
+            'info': "", 'tagclass': "HEADING "
           } );
           last_index = (prefArray.length - 1);
-          // if line has a */ ending it is the last part of desc
-          if (new RegExp("\\*\\*\\*\\/[ \\t]*$").test(line)) {
-            descMore = false;
+          // if line has a */ ending there will be no desc
+          if (linetype == "section") {
+            if (new RegExp("\\*\\*\\*\\/[ \\t]*$").test(line)) {
+              secMore = false;
+            }
+            else {
+              secMore = true;
+            }
+          }
+          if (linetype == "ff") {
+            subMore = false;
           }
           else {
-            descMore = true;
+            if (new RegExp("\\*\\*\\*\\/[ \\t]*$").test(line)) {
+              subMore = false;
+            }
+            else {
+              subMore = true;
+            }
           }
         }
 
-        // desc (append to last saved entry in array)
-        if (linetype == "desc") {
+        // section+/sub+ (append to last saved entry in array)
+        if (linetype == "section+" || linetype == "sub+") {
           prefArray[last_index].desc +=
             line.replace(/^\/\/ /, "")
               .replace(/^\/\*+[ \t]*/, "")
               .replace(/[ \t]*\*+\/[ \t]*$/, "")
+              // .replace(/^(\/\/ |   \/\/ |      \/\/ | \* |\* )/, "")
             + "<br>";
         }
 
         ////////////////////////////////////////
-        // pref-title / pref-desc / pref
+        // title / title+ (userjsTableView)
         ////////////////////////////////////////
 
-        // pref-title/pref-desc can apply to multiple prefs
-        // also not saved until we get to user_pref on subsequent lines
+        // title/title+ can apply to multiple prefs
+        // (only stored in array when we get to user_pref on subsequent lines)
 
-        // pref-title (first line)
-        if (linetype == "pref-title") {
+        // title (first line)
+        if (linetype == "title") {
           prefTitle = line;
           x = new RegExp("^(?:\/\/ )/[*/]+ +[^:]+:[ \t]*(.*)[ \t]*$");
-          prefTitle = prefTitle.replace(x, "$1");
+          prefTitle = prefTitle.replace(x, "$1")
+            .replace(/^(\/\/ |   \/\/ |      \/\/ | \* |\* )/, "");
           x = new RegExp("[ \\t]*\\*+/[ \\t]*$");
           prefTitle = prefTitle.replace(x, "");
           x = new RegExp("[ \\t]*\\*+/[ \\t]*$");
           prefTitle = prefTitle.replace(x, "");
           prefTitle += "<br>"
           if (new RegExp("\\*\\*\\*\\/[ \\t]*$").test(line)) {
-            prefDescMore = false;
+            titleMore = false;
           }
           else {
-            prefDescMore = true;
+            titleMore = true;
           }
         }
 
-        // pref-desc
-        if (linetype == "pref-desc") {
+        // title+
+        if (linetype == "title+") {
           prefDesc += line.replace(/^\/\/ /, "");
+            //.replace(/^(\/\/ |   \/\/ |      \/\/ | \* |\* )/, "");
           x = new RegExp("[ \\t]*\\*+/[ \\t]*$");
           prefDesc = prefDesc.replace(x, "");
           prefDesc += "<br>"
           if (new RegExp("\\*\\*\\*\\/[ \\t]*$").test(line)) {
-            prefDescMore = false;
+            titleMore = false;
           }
           else {
-            prefDescMore = true;
+            titleMore = true;
           }
         }
 
-        // pref
-        // (pref-title/pref-desc collected from previous lines saved too)
-        if (linetype == "pref") {
+        ////////////////////////////////////////
+        // pref (userjsTableView)
+        ////////////////////////////////////////
+
+        // (also store title/title+ collected from previous lines)
+
+        if (linetype == "user_pref") {
           prefState = "";
           prefName = "";
           prefValue = "";
           prefComment = "";
-          prefState = line.replace(regexes["user_pref"].f, "$1");
-          prefName = line.replace(regexes["user_pref"].f, "$3");
-          prefValue = line.replace(regexes["user_pref"].f,"$5");
+          regexes["user_pref"].rx.lastIndex = 0;
+          prefState = line.replace(regexes["user_pref"].rx, "$1");
+          regexes["user_pref"].rx.lastIndex = 0;
+          prefName = line.replace(regexes["user_pref"].rx, "$3");
+          regexes["user_pref"].rx.lastIndex = 0;
+          prefValue = line.replace(regexes["user_pref"].rx,"$5");
           // do not remove preceeding '//' (for output clarity later)
-          prefComment = line.replace(regexes["user_pref"].f, "$7")
+          regexes["user_pref"].rx.lastIndex = 0;
+          prefComment = line
+            .replace(regexes["user_pref"].rx, "$7")
             .replace(/^[ \t]*/, "");
+            // .replace(/^(\/\/ |   \/\/ |      \/\/ | \* |\* )/, "");
 
           // determine if inactive
           if (new RegExp("^.*[/][/*].*user_pref", "i").test(prefState)) {
-            prefState = "Inactive ";
+            prefState = "Inactive";
           }
           else {
             prefState = "";
@@ -3888,10 +4351,11 @@ function diff( o, n ) {
 
           // save to array
           prefArray.push( {
-            'type': "pref", 'title': prefTitle, 'desc': prefDesc,
+            'type': "user_pref", 'title': prefTitle, 'desc': prefDesc,
             'id': "" + prefid_prefix + prefid,
             'name': prefName, 'state': prefState, 'value': prefValue,
-            'comment': prefComment, 'info': ""
+            'comment': prefComment, 'info': "",
+            'tagclass': ((prefState) ? "TAGS_Inactive " : "TAGS_Active ")
           } );
           last_index = (prefArray.length - 1);
 
@@ -3899,49 +4363,61 @@ function diff( o, n ) {
           // (those vars are not cleared as may be needed for next user_pref)
           prefInfoSaved = true;
 
+
           // add to info
-          // TODO more tags
-          for (const i of [ "warning", "hidden", "setup" ]) {
-            if (tagFlags[i] || regexes[i].f.test(prefArray[last_index].comment)
+          for (var i in tags) {
+            tags[i].rx.lastIndex = 0;
+            if (
+              // (tags[i].secflag) ||    // ignore tags in section headings
+              (tags[i].subflag)
+              || (tags[i].titleflag)
+              || (tags[i].rx.test(prefArray[last_index].comment))
             ) {
-              switch (i) {
-                case "warning":
-                  prefArray[last_index].info += '<span class="warn">W</span> ';
-                  break;
-                case "hidden":
-                  prefArray[last_index].info += '<span class="hid">H</span> ';
-                  break;
-                case "setup":
-                  prefArray[last_index].info += '<span class="setup">S</span> ';
-                  break;
+              if (tags[i].indicator) {
+                prefArray[last_index].info += tags[i].indicator + ' ';
               }
+              prefArray[last_index].tagclass += "TAGS_"
+                + i.replace(/[^A-Za-z0-9_]/, "__") + " ";
+              tags[i].count++;
             }
           }
 
           // style/linkify comment
-          for (const i of [ "http", "warning", "hidden", "setup" ]) {
-            prefArray[last_index].comment = prefArray[last_index].comment
-              .replace(regexes[i].f, regexes[i].r);
+          regexes["http"].rx.lastIndex = 0;
+          prefArray[last_index].comment = prefArray[last_index].comment
+            .replace(regexes["http"].rx, regexes["http"].re);
+          for (var i in tags) {
+            tags[i].rx.lastIndex = 0;
+            if (tags[i].re) {
+              prefArray[last_index].comment = prefArray[last_index].comment
+                .replace(tags[i].rx, tags[i].re);
+            }
           }
 
-        } // "pref"
+        } // "user_pref"
 
       }
       input_content = [];
       lastSection++;
 
       ////////////////////////////////////////
-      // end of parsing
+      // end of parsing (userjsTableView)
       ////////////////////////////////////////
 
 
       ////////////////////////////////////////
-      // calculate: stats
+      // calculate: stats (userjsTableView)
       ////////////////////////////////////////
+
+      var stats = {
+        'total': { 'id': -2, 'sub': false, 'count': 0, 'name': "Total" },
+        'totala': { 'id': -2, 'sub': true,  'count': 0, 'name': "Active" },
+        'totali': { 'id': -2, 'sub': true,  'count': 0, 'name': "Inactive" },
+      }
 
       var statBase = "", statSuffix = "";
       for (var i = 0, len = prefArray.length; i < len; i++) {
-        if (prefArray[i].type == "pref") {
+        if (prefArray[i].type == "user_pref") {
           if (prefArray[i].state == '') {
             stats["total"].count++;
             stats["totala"].count++;
@@ -3955,7 +4431,111 @@ function diff( o, n ) {
 
 
       ////////////////////////////////////////
-      // build results table
+      // start forming HTML (userjsTableView)
+      ////////////////////////////////////////
+
+      var content_html =
+          '<div id="tableview_buttons_bar">'
+        + '<span class="body_' + theme + '">';
+
+      // title eg ghacks user.js (date) (version)
+      if (/^[ \t\\\*]*name[ \t:]*(.*)[ \t]*$/m.test(input_box.value)) {
+        content_html += '<h3 style="padding: 0px; margin: 0px; display:inline;">' +
+          (/^[ \t\\\*]*name[ \t:]*(.*)[ \t]*$/m.exec(input_box.value)[1])
+          + '</h3>&nbsp;'
+      }
+      if (/^[ \t\\\*]*date[ \t:]*(.*)[ \t]*$/m.test(input_box.value)) {
+        content_html += "("
+          + (/^[ \t\\\*]*date[ \t:]*(.*)[ \t]*$/m.exec(input_box.value)[1])
+          + ")&nbsp;";
+      }
+      if (/^[ \t\\\*]*(version.*)[ \t]*$/m.test(input_box.value)) {
+        content_html += "("
+          + (/^[ \t\\\*]*(version.*)[ \t]*$/m.exec(input_box.value)[1])
+          + ")";
+      }
+
+      content_html +=
+          '</span><br>'
+
+        // collapse all button
+        + '<button type="button" style="width:2em;" class="controls borders'
+        + ' controls_' + theme + ' borders_' + theme
+        + '" onclick="userjsTableViewCollapseAll();"'
+        + ' title="Collapse All Descriptions"><b>-</b></button>'
+
+        // expand all button
+        + '<button type="button" style="width:2em;" class="controls borders'
+        + ' controls_' + theme + ' borders_' + theme
+        + '" onclick="userjsTableViewExpandAll();"'
+        + ' title="Expand All Descriptions"><b>+</b></button>'
+
+        // filter button select
+        + '<select style="width:8em;" class="controls borders'
+        + ' controls_' + theme + ' borders_' + theme
+        + '" id="filter_select" onchange="userjsTableViewTagFilter();" '
+        + 'title="Filter tags (multiple choice)">'   // multiple
+        + '  <option value="" disabled selected hidden>&#x25BE;&#x00A0;&#x25A2;&#x00A0;Filter</option>'
+        + '  <option value="SHOWALL">Show all (clear filter)'
+        + '&#x00A0;&#x00A0;&#x00A0;&#x00A0;(' + stats["total"].count + ')</option>'
+        + '  <option value="HIDEHEADINGS">&#x25A2;&#x00A0;&#x00A0;Hide headings</option>'
+        + '  <option value="HIDEINACTIVE">&#x25A2;&#x00A0;&#x00A0;Hide inactive</option>'
+        + '  <option value="HIDEACTIVE">&#x25A2;&#x00A0;&#x00A0;Hide active</option>'
+        + '  <option value="INVERT">&#x25A2;&#x00A0;&#x00A0;Invert (show the opposite)</option>'
+        // + '  <option disabled></option>'
+        + '  <option value="TAGS_Active">&#x25A2;&#x00A0;&#x00A0;'
+        + 'Active'
+        + '&#x00A0;&#x00A0;&#x00A0;&#x00A0;(' + stats["totala"].count + ')</option>'
+        + '  <option value="TAGS_Inactive">&#x25A2;&#x00A0;&#x00A0;'
+        + 'Inactive'
+        + '&#x00A0;&#x00A0;&#x00A0;&#x00A0;(' + stats["totali"].count + ')</option>';
+
+      // add tags to filter select (and show indicator/key plus counts)
+      for (var i in tags) {
+        if (tags[i].count > 0) {
+          content_html += '  <option value="' + "TAGS_"
+            + i.replace(/[^A-Za-z0-9_]/, "__")
+            + '">&#x25A2;&#x00A0;&#x00A0;';
+          if (tags[i].indicator) {
+            content_html += tags[i].indicator
+              + '&#x00A0;&#x00A0;-&#x00A0;&#x00A0;';
+          }
+          content_html += i + '&#x00A0;&#x00A0;&#x00A0;&#x00A0;('
+            + tags[i].count + ')</option>';
+        }
+      }
+
+      content_html +=
+          '</select>'
+
+        // ref: http://www.amp-what.com/unicode/search/triangle
+        // navigation: jumpback_button
+        + '<button type="button" id="jumpback_button" class="controls borders'
+        + ' controls_' + theme + ' borders_' + theme
+        + '" style="width:2em;" title="Jump back a section">&#9650;</button>'
+        // navigation: jumpnext_button
+        + '<button type="button" id="jumpnext_button" class="controls borders'
+        + ' controls_' + theme + ' borders_' + theme
+        + '" style="width:2em;margin-right:0.5em;" '
+        + 'title="Jump to next section">&#9660;</button>'
+
+        // navigation: viewer_slider
+        + '<input type="range" min="0" max="50" value="0" id="viewer_slider">'
+
+        + '</div>'
+        + '<div style="width: 100%;" id="tableview_div">'
+        + '<br><br><br><br>'
+        + '(see [Filter] button for Info key, and other tags)<br>';
+
+      var index_select_html = ''
+        + '<option value="" disabled selected hidden>&#x25BE;Index</option>\n'
+        + '<option value="0">(TOP)</option>\n';
+
+      var groups_container_html = '';
+
+
+      ////////////////////////////////////////
+      // build results table (userjsTableView)
       ////////////////////////////////////////
 
       // loop through array and build each table row
@@ -3965,11 +4545,11 @@ function diff( o, n ) {
 
       content_html +=
           '<tr>'
-        + '<td class="tr_tview_all td_tview_id">ID</td>'
-        + '<td class="tr_tview_all td_tview_name">Preference Name</td>'
-        + '<td class="tr_tview_all td_tview_value">Value</td>'
-        + '<td class="tr_tview_all td_tview_desc">Description</td>'
-        + '<td class="tr_tview_all td_tview_info">Info</td>'
+        + '<td class="td_tview_all td_tview_id">ID</td>'
+        + '<td class="td_tview_all td_tview_name">Preference Name</td>'
+        + '<td class="td_tview_all td_tview_value">Value</td>'
+        + '<td class="td_tview_all td_tview_desc">Description</td>'
+        + '<td class="td_tview_all td_tview_info">Info</td>'
         + '</tr>';
 
       var section_heading = "";
@@ -3980,33 +4560,19 @@ function diff( o, n ) {
 
         if (prefArray[i].type == "section") {
 
-          // section heading
+          // section heading row (but not for sub-heading)
 
-          // navigation links row
           sectionCount++;
           content_html +=
-              '<tr id="' + sectionCount + '" class="">'
-            + '<td class="tr_tview_all td_tview_nav" colspan="5">'
-            + '<br><br><br><br>'
-            + "<a href=\"#" + ((sectionCount == 1) ? "" : (sectionCount - 1))
-            + "\">[&#9650;]</a>" // [back]
-            + " <a href=\"#" + (sectionCount + 1)
-            + "\">[&#9660;]</a>" // [next]
-            + " <a href=#>[&#9651;]</a>" // [top]
-          for (var l = 1; l < lastSection; l++) {
-            content_html += "<a href=\"#" + l + "\">.</a>";
-          }
-          content_html +=
-              "<a href=#" + lastSection + ">[&#9661;]</a><br><br>" // [bottom]
-            + '</td></tr>';
-
-          // section heading row
-          content_html +=
-              '<tr class="tr_tview_heading">'
-            + '<td class="tr_tview_all" colspan="5">'
+              '<tr class="tr_tview_heading '
+            + prefArray[i].tagclass + '">'
+            + '<td class="td_tview_all" colspan="5">'
+            // anchor
+            + '<span class="anchor" id="' + sectionCount + '"></span>'
+            // section heading
             + ((prefArray[i].desc=="") ? ""
               : '<details class="det secDet"><summary>')
-            + '<span class="ref" style="font-weight: normal">'
+            + '<span class="pref">'
             + prefArray[i].title + '</span>'
             + ((prefArray[i].desc=="") ? "" : "</summary><br>")
             + prefArray[i].desc
@@ -4023,42 +4589,45 @@ function diff( o, n ) {
           groups_container_html +=
             '<a target="_blank" href="about:config?filter=/^\\*$|^(';
           // note current section_heading for next time
-          section_heading = "[" + sectionCount + "] " + prefArray[i].title;
-          // add for goto button
-          goto_select_html += '<option>' + section_heading + '</option>\n';
+          section_heading = prefArray[i].title;
+          // add to index_select button
+          index_select_html += '<option value=' + sectionCount
+            + '>' + section_heading + '</option>\n';
 
         }
         else {
 
-          // user_pref row
+          // user_pref and sub-heading row
+          // (note: sub-headings are flagged in their prefArray[i].tagclass)
 
           content_html +=
-              '<tr class="tr_tview_pref'
+              '<tr class="tr_tview_pref '
 
             // class for inactive user_pref
-            + ((prefArray[i].state=="") ? "" : " tr_tview_inactive") + '">'
+            + ((prefArray[i].state=="") ? "" : "tr_tview_inactive ")
+            + prefArray[i].tagclass + '">'
 
             // pref id (ghacks-user.js ref)
-            + '<td class="tr_tview_all td_tview_id">'
+            + '<td class="td_tview_all td_tview_id">'
             + '<span class="ref">' + prefArray[i].id.replace(":", "<br>")
             + '</span></td>'
 
             // pref name
-            + '<td class="tr_tview_all td_tview_name">'
+            + '<td class="td_tview_all td_tview_name">'
             + "<a target=\"_blank\" href=\"about:config?filter=/^\\*\$|^("
             + prefArray[i].name.replace(/([*.+])/g, "\\$1")
             + ")(;|\$)|^\$/i\">" + prefArray[i].name + "</a>"
             + '</td>'
 
             // pref value (add class for color)
-            + '<td class="tr_tview_all td_tview_value">'
+            + '<td class="td_tview_all td_tview_value">'
             + '<span class="' + prefArray[i].value
                 .replace(/^[0-9.+-]+$/, "integer")
                 .replace(/^(".*"|'.*')$/, "string")
             + '">' + prefArray[i].value + '</span></td>'
 
             // pref desc (title+desc+comment) (details tag)
-            + '<td class="tr_tview_all td_tview_desc">'
+            + '<td class="td_tview_all td_tview_desc">'
               // only use details tag if we have desc or comment
             + ( ((prefArray[i].desc=="" && prefArray[i].comment=="")
                 || (prefArray[i].title=="" && prefArray[i].desc=="") ) ? ""
@@ -4081,38 +4650,28 @@ function diff( o, n ) {
             + '</td>'
 
             // pref info (state etc)
-            + '<td class="tr_tview_all td_tview_info">'
-            + '<span class="pref">' + prefArray[i].state + '</span>'
-            + ((prefArray[i].state=="") ? "" : "<br>")
-            + prefArray[i].info + '</td></tr>';
+            + '<td class="td_tview_all td_tview_info">'
+            + ((prefArray[i].state=="") ? ""
+              : '<span class="pref">' + prefArray[i].state + '</span><br>')
+            + prefArray[i].info
+              .replace(new RegExp('<span class="setup">S</span> '
+                + '(<span class="setup">S.</span>)'), "$1")
+            + '</td></tr>';
 
             // collect prefname for pref groups
-            group_user_pref_list +=
-              prefArray[i].name.replace(/([*.+])/g, "\\$1") + "|";
-        }
-
-        // add navigation links at table end (as last row of table)
-        if (i == (len - 1)) {
-          sectionCount++;
-          content_html +=
-              '<tr id="' + sectionCount +'">'
-            + '<td class="tr_tview_all td_tview_nav" colspan="5">'
-            + '<br><br><br><br>'
-            + '<a href="#' + (sectionCount - 1)
-            + "\">[&#9650;]</a>" // [back]
-            + ' <a href="#' + sectionCount
-            + "\">[&#9660;]</a>" // [next]
-            + " <a href=#>[&#9651;]</a>"; // [top]
-          for (var l = 1; l < lastSection; l++) {
-            content_html += "<a href=\"#" + l + "\">.</a>";
-          }
-          content_html +=
-              "<a href=#bottom>[&#9661;]</a><br><br>" // [bottom]
-            + '</td></tr>'
+            if (prefArray[i].name) {
+              group_user_pref_list +=
+                prefArray[i].name.replace(/([*.+])/g, "\\$1") + "|";
+            }
         }
 
       }
       content_html += '</table>';
+      // bottom anchor
+      sectionCount++;
+      content_html += '<span class="anchor" id="' + sectionCount + '"></span>'
+      index_select_html += '<option value="' + sectionCount
+        + '">(BOTTOM)</option>\n';
 
       // end about:config bookmarks groups
       group_user_pref_list = group_user_pref_list.replace(/\|$/, '');
@@ -4120,33 +4679,71 @@ function diff( o, n ) {
         + section_heading + '</A><br>\n';
 
       ////////////////////////////////////////
-      // add stats totals table
+      // end content and add into document (userjsTableView)
       ////////////////////////////////////////
 
-      content_html += '<br><table id="table_stats">'
-        + '<colgroup><col width="10%" /><col width="10%" />'
-        + '<col width="80%"/> </colgroup><tbody>';
-      Object.keys(stats).forEach(function(key){
-        content_html += '<tr><td class="td1_stats_count">'
-          + stats[key].count
-          + '</td><td class="td3b_stats_name" colspan="2">'
-          + stats[key].name
-          + '</td></tr>';
-      });
-      content_html += "</tbody></table><br>";
-
-      ////////////////////////////////////////
-      // end content and add into document
-      ////////////////////////////////////////
-
-      content_html += '<br><br><br></div>\n';
-      goto_select_html += '<option>[' + sectionCount + '] (BOTTOM)</option>\n';
+      content_html += '</div><br><br><br><br>\n';
       document.getElementById("view_area").innerHTML = content_html;
-      document.getElementById("goto_select").innerHTML = goto_select_html;
+      document.getElementById("index_select").innerHTML = index_select_html;
       document.getElementById("groups_container").innerHTML = groups_container_html;
       content_html = null;
-      goto_select_html = null;
+      index_select_html = null;
       groups_container_html = null;
+
+      // back
+      document.getElementById("jumpback_button").addEventListener("click", function() {
+        var e = document.getElementsByClassName("anchor");
+        var id = 0;
+        for (var i = 0, j = e.length; i<j; i++) {
+          if (e[i].getBoundingClientRect().y >= 0) {
+            break;
+          }
+          else {
+            id = i + 1;
+          }
+        }
+        document.getElementById("viewer_slider").value = id;
+        if (id == 0) {
+          scroll(0,0);
+        }
+        else {
+          document.getElementById(id).scrollIntoView();
+        }
+      });
+
+      // next
+      document.getElementById("jumpnext_button").addEventListener("click", function() {
+        var e = document.getElementsByClassName("anchor");
+        var id = 1;
+        for (var i = 0, j = e.length; i<j; i++) {
+          if (e[i].getBoundingClientRect().y > 1) {
+            break;
+          }
+          else {
+            id = i + 2;
+          }
+        }
+        document.getElementById("viewer_slider").value = id;
+        if (id == 0) {
+          scroll(0,0);
+        }
+        else {
+          document.getElementById(id).scrollIntoView();
+        }
+      });
+
+      // nav slider usage jump to position
+      document.getElementById("viewer_slider").max = sectionCount;
+      for (const event of [ "input", "click" ]) {
+        document.getElementById("viewer_slider").addEventListener(event, function() {
+          if (this.value == 0) {
+            scroll(0,0);
+          }
+          else {
+            document.getElementById(this.value).scrollIntoView();
+          }
+        });
+      }
 
       // refresh as per UI settings
       togglePrefixAboutConfigLinks("refresh");
@@ -4336,7 +4933,7 @@ function diff( o, n ) {
       return toggleMenuSelectOption("expand all on view", new_state);
     }
     function toggleGroupsOnView(new_state) {
-      return toggleMenuSelectOption("show \\[groups\\] on view", new_state);
+      return toggleMenuSelectOption("show groups on view", new_state);
     }
     function toggleViewPlusOnView(new_state) {
       return toggleMenuSelectOption("view\\+ style", new_state);
@@ -4474,7 +5071,7 @@ function diff( o, n ) {
 
       var optInSelect = "", optButton = "";
 
-      if (div_name == "close_panel_button") {
+      if (div_name == "back_button") {
         // get the current div_name
         var e = document.getElementsByClassName("panels");
         for (var i = 0, j = e.length; i<j; i++) {
@@ -4485,22 +5082,22 @@ function diff( o, n ) {
         }
       }
 
-      if (div_name == "actions_panel") {
-        optInSelect = findMenuSelectOption("\\[Actions\\]$");
-        optButton = "actions_button";
+      if (div_name == "actions_panel" || div_name == "back_button") {
+        optInSelect = findMenuSelectOption("\\[Actions\\]");
+        div_name = "actions_panel"
       }
       else if (div_name == "groups_panel") {
-        optInSelect = findMenuSelectOption("\\[Groups\\]$");
+        optInSelect = findMenuSelectOption("\\[Groups\\]");
         optButton = "groups_button";
       }
       else if (div_name == "links_panel") {
-        optInSelect = findMenuSelectOption("\\[Links\\]$");
+        optInSelect = findMenuSelectOption("\\[Links\\]");
       }
       else if (div_name == "functions_panel") {
-        optInSelect = findMenuSelectOption("\\[about:config Functions\\]$");
+        optInSelect = findMenuSelectOption("\\[about:config Functions\\]");
       }
       else if (div_name == "help_panel") {
-        optInSelect = findMenuSelectOption("\\[help/info\\]$");
+        optInSelect = findMenuSelectOption("\\[help/info\\]");
       }
       else {
         optButton = div_name + "_button";
@@ -4543,7 +5140,7 @@ function diff( o, n ) {
         if (document.getElementById(div_name).style.display === "block") {
           show(false, "display", [ div_name ] );
           show(false, "menu", [ optInSelect ] );
-          show(false, "display-inline", [ "close_panel_button" ] );
+          document.getElementById("back_button").title = "Back to [Actions] (input panel)"
           if (optButton) { show(false, "button", [ optButton ] ) }
         }
         // if collector mode is on, show actions_panel (which then shows div_2_overrides)
@@ -4577,14 +5174,13 @@ function diff( o, n ) {
           // hide panels and un-highlight menu/buttons
           show(false, "display", [ "actions_panel", "groups_panel",
             "links_panel", "functions_panel", "help_panel" ] );
-          show(false, "menu", [ "\\[Actions\\]$", "\\[Groups\\]$",
-            "\\[Links\\]$", "\\[about:config Functions\\]$",
-            "\\[help/info\\]$" ] );
-          show(false, "button", [ "groups_button", "actions_button" ] );
+          show(false, "menu", [ "\\[Actions\\]", "\\[Groups\\]",
+            "\\[Links\\]", "\\[about:config Functions\\]",
+            "\\[help/info\\]" ] );
+          show(false, "button", [ "groups_button" ] );
           // highlight menu and show close button
           if (optInSelect) { show(true, "menu", [ optInSelect ] ) }
-          show(true, "display-inline", [ "close_panel_button" ] );
-          document.getElementById("close_panel_button").title =
+          document.getElementById("back_button").title =
             "Close ["
             + div_name.replace(/^(.).*$/, "$1").toUpperCase()
             + div_name.replace(/_/, "] ").replace(/^./, "");
@@ -4642,7 +5238,7 @@ function diff( o, n ) {
     function toggleLinksPanel(force) { togglePanel("links_panel", force); }
     function toggleFunctionsPanel(force) { togglePanel("functions_panel", force); }
     function toggleHelpPanel(force) { togglePanel("help_panel", force); }
-    function closePanel(force) { togglePanel("close_panel_button", force); }
+    function backButton(force) { togglePanel("back_button", force); }
 
     function toggleTemplateDiv() { togglePanel("div_1_template", true); }
     function toggleOverridesDiv() { togglePanel("div_2_overrides", true); }
@@ -4713,13 +5309,13 @@ function diff( o, n ) {
 
       // half some top button size on larger font size
       // if (size > 200) {
-      //   for (const id of [ "actions_button", "groups_button" ]) {
+      //   for (const id of [ "groups_button" ]) {
       //     document.getElementById(id).style.width = "2.5em";
       //   }
       // }
       // else if (parseFloat(e.style.fontSize) > 200) {
       //   // re-show the extra button
-      //   for (const id of [ "actions_button", "groups_button" ]) {
+      //   for (const id of [ "groups_button" ]) {
       //     document.getElementById(id).style.width = "5em";
       //   }
       // }
@@ -4880,6 +5476,18 @@ function diff( o, n ) {
         case "view4":
           document.getElementById("view_other_button").click();
           break;
+        case "table1":
+          document.getElementById("tableview_template_button").click();
+          break;
+        case "table2":
+          document.getElementById("tableview_overrides_button").click();
+          break;
+        case "table3":
+          document.getElementById("tableview_userjs_button").click();
+          break;
+        case "table4":
+          document.getElementById("tableview_other_button").click();
+          break;
         case "groups1":
           document.getElementById("view_template_button").click();
           document.getElementById("groups_button").click();
@@ -4913,12 +5521,6 @@ function diff( o, n ) {
         case "compare:4:3":
         case "compare:4:4":
           userjsCompareLauncher(action);
-          break;
-        case "table1":
-        case "table2":
-        case "table3":
-        case "table4":
-          userjsTableViewLauncher(action);
           break;
         case "links":
         case "append":
@@ -4954,7 +5556,7 @@ function diff( o, n ) {
       // hide the "this needs JavaScript" message
       document.getElementById("help_panel_nojs_div").style.display = "none";
 
-      document.getElementById("goto_select").selectedIndex=0;
+      document.getElementById("index_select").selectedIndex=0;
       document.getElementById("size_select").selectedIndex=0;
       document.getElementById("menu_select").selectedIndex=0;
 
@@ -4978,8 +5580,8 @@ function diff( o, n ) {
 
       // add choices (and URLs) to the load buttons
       for (const id of [
-        "load_template_select", "load_overrides_select",
-        "load_userjs_select", "load_other_select",
+        "loadsave_template_select", "loadsave_overrides_select",
+        "loadsave_userjs_select", "loadsave_other_select",
       ] ) {
 
         document.getElementById(id).innerHTML +=
@@ -4990,7 +5592,7 @@ function diff( o, n ) {
           + 'Show [Browse] buttons (if above fails)</option>';
 
         document.getElementById(id).innerHTML +=
-          '<option value="URL">Load file from URL (if site allows)</option>';
+          '<option value="URL">Download file from URL (if site allows)</option>';
 
         // if url parameters where given show these as options
         for (const load of [ "load1", "load2", "load3", "load4" ] ) {
@@ -5008,11 +5610,14 @@ function diff( o, n ) {
           if (/# *$/.test(o[i].innerHTML)) {
             document.getElementById(id).innerHTML +=
               '<option value="' + o[i].href + '" title="' + o[i].href + '">'
-              + o[i].innerHTML.replace(/ *# *$/, "")
-              + (/github/.test(o[i].href) ? ' *' : '')
+              + "Download " + o[i].innerHTML.replace(/ *# *$/, "")
+              //+ (/github/.test(o[i].href) ? ' *' : '')
               + '</option>';
           }
         }
+
+        document.getElementById(id).innerHTML +=
+          '<option value="SAVE">Save box content as a file</option>';
 
       }
 
@@ -5093,27 +5698,26 @@ function diff( o, n ) {
 
     function userjstoolSetupEventListeners() {
 
-      /* goto_select (jump to section) */
+      /* index_select (jump to section) */
 
-      document.getElementById("goto_select").addEventListener("change", function() {
+      document.getElementById("index_select").addEventListener("change", function() {
         // expand, focus, and scroll to the chosen section
-        var id = document.getElementById("goto_select").value;
-        if (id != "") {
-
-          /* for: compare or tableview */
-          if (/(compare_div|tview_div)/.test(document.getElementById("view_area").innerHTML)) {
-            if ( (id == "(TOP)") || (id == "(TOP) / Introduction") ) {
+        var id = document.getElementById("index_select").value;
+        // make the select element show first choice (button title)
+        this.selectedIndex = 0;
+        this.blur();
+        if (id) {
+          if (
+            /(compare_div|tableview_div)/
+            .test(document.getElementById("view_area").innerHTML)
+          ) {
+            /* for compare or tableview */
+            document.getElementById("viewer_slider").value = id;
+            if (id == 0) {
               scroll(0,0);
             }
             else {
-              if (id == "(BOTTOM)") {
-                id = "bottom";
-              }
-              else {
-                id = id.replace(/^\[([0-9]+)\] .*$/, "$1");
-              }
-              var e = document.getElementById(id);
-              e.scrollIntoView();
+              document.getElementById(id).scrollIntoView();
             }
           }
           else {
@@ -5128,8 +5732,6 @@ function diff( o, n ) {
             }
           }
         }
-        // make the select element show first choice (title)
-        this.selectedIndex = 0;
       });
 
       /* groups button */
@@ -5137,13 +5739,7 @@ function diff( o, n ) {
       document.getElementById("groups_button").addEventListener("click", function() {
         return_to_panel = "";
         toggleGroupsPanel();
-      });
-
-      /* actions button */
-
-      document.getElementById("actions_button").addEventListener("click", function() {
-        return_to_panel = "";
-        toggleActionsPanel();
+        this.blur();
       });
 
       /* font size select */
@@ -5155,6 +5751,7 @@ function diff( o, n ) {
         applyFontSize(document.getElementById("size_select").value);
         // make the select element show first choice (title)
         document.getElementById("size_select").selectedIndex = 0;
+        this.blur();
       });
 
       /* menu select (...) */
@@ -5164,7 +5761,7 @@ function diff( o, n ) {
           toggleExpandAllOnView();
         }
         else if (/collapse all/i.test(this.value)) {
-          if (/tview_div/.test(document.getElementById("view_area").innerHTML)) {
+          if (/tableview_div/.test(document.getElementById("view_area").innerHTML)) {
             userjsTableViewCollapseAll();
           }
           else {
@@ -5175,7 +5772,7 @@ function diff( o, n ) {
           }
         }
         else if (/expand all/i.test(this.value)) {
-          if (/tview_div/.test(document.getElementById("view_area").innerHTML)) {
+          if (/tableview_div/.test(document.getElementById("view_area").innerHTML)) {
             userjsTableViewExpandAll();
           }
           else {
@@ -5186,7 +5783,10 @@ function diff( o, n ) {
           }
         }
         else if (/collapse current/i.test(this.value)) {
-          if (section_focus) {
+          if (/tableview_div/.test(document.getElementById("view_area").innerHTML)) {
+            userjsTableViewCollapseSectionDesc();
+          }
+          else if (section_focus) {
             if (section_focus.nextElementSibling != null) {
               section_focus.nextElementSibling.style.display = "none";
             }
@@ -5219,7 +5819,7 @@ function diff( o, n ) {
           return_to_panel = "";
           toggleActionsPanel();
         }
-        else if (/show \[groups\] on view/i.test(this.value)) {
+        else if (/show groups on view/i.test(this.value)) {
           toggleGroupsOnView();
         }
         else if (/\[Groups\]/i.test(this.value)) {
@@ -5238,24 +5838,29 @@ function diff( o, n ) {
 
         // make the select element show first choice (title)
         this.selectedIndex = 0;
+        this.blur();
       });
 
       /* readonly toggles */
 
       document.getElementById("box_1_template_ro").addEventListener("click", function() {
         toggleTextAreaReadOnly("box_1_template");
+        this.blur();
       });
 
       document.getElementById("box_2_overrides_ro").addEventListener("click", function() {
         toggleTextAreaReadOnly("box_2_overrides");
+        this.blur();
       });
 
       document.getElementById("box_3_userjs_ro").addEventListener("click", function() {
         toggleTextAreaReadOnly("box_3_userjs");
+        this.blur();
       });
 
       document.getElementById("box_4_other_ro").addEventListener("click", function() {
         toggleTextAreaReadOnly("box_4_other");
+        this.blur();
       });
 
       /* buttons for actions_panel options */
@@ -5306,6 +5911,52 @@ function diff( o, n ) {
         }
       });
 
+      // tableview
+
+      document.getElementById("tableview_template_button").addEventListener("click", function() {
+        if (
+          document.getElementById("collect_button").style.textDecoration != "line-through"
+          && !(document.getElementById("box_1_template").value == "")
+        ) {
+          toggleTextAreaReadOnly("box_1_template", true);
+          toggleActionsPanel(false);
+          userjsTableView("box_1_template");
+        }
+      });
+
+      document.getElementById("tableview_overrides_button").addEventListener("click", function() {
+        if (
+          document.getElementById("collect_button").style.textDecoration != "line-through"
+          && !(document.getElementById("box_2_overrides").value == "")
+        ) {
+          toggleTextAreaReadOnly("box_2_overrides", true);
+          toggleActionsPanel(false);
+          userjsTableView("box_2_overrides");
+        }
+      });
+
+      document.getElementById("tableview_userjs_button").addEventListener("click", function() {
+        if (
+          document.getElementById("collect_button").style.textDecoration != "line-through"
+          && !(document.getElementById("box_3_userjs").value == "")
+        ) {
+          toggleTextAreaReadOnly("box_3_userjs", true);
+          toggleActionsPanel(false);
+          userjsTableView("box_3_userjs");
+        }
+      });
+
+      document.getElementById("tableview_other_button").addEventListener("click", function() {
+        if (
+          document.getElementById("collect_button").style.textDecoration != "line-through"
+          && !(document.getElementById("box_4_other").value == "")
+        ) {
+          toggleTextAreaReadOnly("box_4_other", true);
+          toggleActionsPanel(false);
+          userjsTableView("box_4_other");
+        }
+      });
+
       // select
 
       document.getElementById("select_template_button").addEventListener("click", function() {
@@ -5350,42 +6001,22 @@ function diff( o, n ) {
         selectTextAreaContents("functions_panel_textarea");
       });
 
-      // save
-
-      document.getElementById("save_template_button").addEventListener("click", function() {
-        download(document.getElementById("box_1_template").value,
-          "user-template.js",
-          "application/javascript");
-      });
-
-      document.getElementById("save_overrides_button").addEventListener("click", function() {
-        download(document.getElementById("box_2_overrides").value,
-          "user-overrides.js",
-          "application/javascript");
-      });
-
-      document.getElementById("save_userjs_button").addEventListener("click", function() {
-        download(document.getElementById("box_3_userjs").value,
-          "user.js",
-          "application/javascript");
-      });
-
-      document.getElementById("save_other_button").addEventListener("click", function() {
-        updateDateTimeStampVariable();
-        download(document.getElementById("box_4_other").value,
-          "user-other-" + date_time_stamp + ".js",
-          "application/javascript");
-      });
-
       // load (hidden input button)
-      // (plus hide on click, because of the unhide option for Fennec)
 
       document.getElementById('load_template_input').addEventListener('change', function() {
-        loadLocalFile("load_template_input", "box_1_template");
+        if (
+          document.getElementById("collect_button").style.textDecoration != "line-through"
+        ) {
+          loadLocalFile("load_template_input", "box_1_template");
+        }
       }, false);
 
       document.getElementById('load_overrides_input').addEventListener('change', function() {
-        loadLocalFile("load_overrides_input", "box_2_overrides");
+        if (
+          document.getElementById("collect_button").style.textDecoration != "line-through"
+        ) {
+          loadLocalFile("load_overrides_input", "box_2_overrides");
+        }
       }, false);
 
       document.getElementById('load_userjs_input').addEventListener('change', function() {
@@ -5396,32 +6027,26 @@ function diff( o, n ) {
         loadLocalFile("load_other_input", "box_4_other");
       }, false);
 
-      // load (select button)
+      // load/save (select button)
 
-      document.getElementById("load_template_select").addEventListener("change", function() {
-        if (
-          document.getElementById("collect_button").style.textDecoration != "line-through"
-        ) {
-          loadButtonAction(this, "load_template_input", "box_1_template");
-        }
-        else { this.selectedIndex = 0; }
+      document.getElementById("loadsave_template_select").addEventListener("change", function() {
+        loadButtonAction(this, "load_template_input", "box_1_template",
+          "user-template.js");
       });
 
-      document.getElementById("load_overrides_select").addEventListener("change", function() {
-        if (
-          document.getElementById("collect_button").style.textDecoration != "line-through"
-        ) {
-          loadButtonAction(this, "load_overrides_input", "box_2_overrides");
-        }
-        else { this.selectedIndex = 0; }
+      document.getElementById("loadsave_overrides_select").addEventListener("change", function() {
+        loadButtonAction(this, "load_overrides_input", "box_2_overrides",
+          "user-overrides.js");
       });
 
-      document.getElementById("load_userjs_select").addEventListener("change", function() {
-        loadButtonAction(this, "load_userjs_input", "box_3_userjs");
+      document.getElementById("loadsave_userjs_select").addEventListener("change", function() {
+        loadButtonAction(this, "load_userjs_input", "box_3_userjs", "user.js");
       });
 
-      document.getElementById("load_other_select").addEventListener("change", function() {
-        loadButtonAction(this, "load_other_input", "box_4_other");
+      document.getElementById("loadsave_other_select").addEventListener("change", function() {
+        updateDateTimeStampVariable();
+        loadButtonAction(this, "load_other_input", "box_4_other",
+          "user-other-" + date_time_stamp + ".js");
       });
 
       // clear
@@ -5500,14 +6125,6 @@ function diff( o, n ) {
         userjsCompareLauncher(boxes_chosen);
       });
 
-      // tableview
-
-      document.getElementById("tableview_select").addEventListener("change", function() {
-        var box_chosen = this.value;
-        this.selectedIndex = 0;
-        userjsTableViewLauncher(box_chosen);
-      });
-
       // append
 
       document.getElementById("append_button").addEventListener("click", function() {
@@ -5547,10 +6164,10 @@ function diff( o, n ) {
           for (const id of [
             "view_template_button", "view_overrides_button",
             "view_userjs_button", "view_other_button",
-            "load_template_select", "load_overrides_select",
+            "tableview_template_button", "tableview_overrides_button",
+            "tableview_userjs_button", "tableview_other_button",
             "clear_template_button", "clear_overrides_button",
-            "compare_select", "tableview_select",
-            "skeleton_button", "collect_button",
+            "compare_select", "skeleton_button", "collect_button",
             "byvalue_button", "togroup_button"
           ] ) {
             document.getElementById(id).style.textDecoration = "line-through";
@@ -5586,10 +6203,10 @@ function diff( o, n ) {
           for (const id of [
             "view_template_button", "view_overrides_button",
             "view_userjs_button", "view_other_button",
-            "load_template_select", "load_overrides_select",
+            "tableview_template_button", "tableview_overrides_button",
+            "tableview_userjs_button", "tableview_other_button",
             "clear_template_button", "clear_overrides_button",
-            "compare_select", "tableview_select",
-            "skeleton_button", "collect_button",
+            "compare_select", "skeleton_button", "collect_button",
             "byvalue_button", "togroup_button"
           ] ) {
             document.getElementById(id).style.textDecoration = null;
@@ -5738,7 +6355,9 @@ function diff( o, n ) {
       toggleActionsPanel(true);
       toggleTemplateDiv();
 
-      // user.js content was saved in this HTML file (divs at the bottom)
+      var timeoutDelay = false;  // gets set true if any content is auto-loaded
+
+      // if user.js content saved in this HTML file (the divs at the bottom)
       // the userjstoolSetupInital function placed that content into a textarea
       if (document.getElementById("box_4_other").value != "") {
         toggleOtherDiv();
@@ -5757,8 +6376,14 @@ function diff( o, n ) {
         document.getElementById("view_overrides_button").click();
       }
 
-      var timeoutDelay = false;  // set true if any content auto-loaded
-      // when load parameters in URL
+      // if load parameters in URL
+      if (/^\?(g|gv|gt)($|&)/.test(location.search)) {
+        toggleTemplateDiv();
+        downloadFile(
+          "https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js",
+          "box_1_template");
+        timeoutDelay = true;
+      }
       if (getURLVariable("load4") != "" && getURLVariable("load4") != null) {
         toggleOtherDiv();
         downloadFile(getURLVariable("load4"), "box_4_other");
@@ -5784,8 +6409,15 @@ function diff( o, n ) {
       //   if the code above loaded the file, the display does not render
       //   before the next code lines can see the text box has contents,
       //   so set a delay, which mostly works, and if it fails it only
-      //   breaks auto view and the user can click the view button anyway
+      //   breaks auto view and the user can click a view button anyway
       setTimeout(function(){
+
+        if (/^\?gv($|&)/.test(location.search)) {
+          document.getElementById("view_template_button").click();
+        }
+        else if (/^\?gt($|&)/.test(location.search)) {
+          document.getElementById("tableview_template_button").click();
+        }
 
         // when box parameter in URL
         switch (getURLVariable("box")) {
@@ -5845,12 +6477,12 @@ function diff( o, n ) {
 
 <div id="top_buttons_bar">
 
-<!-- goto_select -->
+<!-- index_select -->
 <!-- the first option is used as a title/label -->
-<select class="controls borders top_buttons" id="goto_select"
+<select class="controls borders top_buttons" id="index_select"
 title="Go to section">
 <!-- >>>> section headings (between here) are replaced later <<<< -->
-  <option value="" disabled selected hidden>&#x25BE;Goto</option>
+  <option value="" disabled selected hidden>&#x25BE;Index</option>
   <option>(TOP) / Introduction</option>
 <!-- >>>> section headings (between here) are replaced later <<<< -->
 </select>
@@ -5859,11 +6491,6 @@ title="Go to section">
 <button type="button" class="controls borders top_buttons"
 id="groups_button" title="Show/hide about:config Groups panel"
 >Groups</button>
-
-<!-- actions_button (gets hidden on bigger font size) -->
-<button type="button" class="controls borders top_buttons"
-id="actions_button" title="Show/hide Actions panel"
->Actions</button>
 
 <!-- size_select -->
 <!-- the first option is used as a title/label
@@ -5902,11 +6529,11 @@ title="Select menu option">
   <option value="" disabled selected hidden>&#x25BE;Menu</option>
   <option>&#x25EB;&#x00A0;&#x00A0;Collapse all</option>
   <option>&#x25EB;&#x00A0;&#x00A0;Expand all</option>
-  <option>&#x25EB;&#x00A0;&#x00A0;Collapse current</option>
+  <option>&#x25EB;&#x00A0;&#x00A0;Collapse current/headings</option>
   <option value="" disabled></option>
-  <option>&#x25A2;&#x00A0;&#x00A0;[Actions]</option>
-  <option>&#x25A2;&#x00A0;&#x00A0;[Groups]</option>
-  <option>&#x25A2;&#x00A0;&#x00A0;[Links]</option>
+  <option>&#x25A2;&#x00A0;&#x00A0;[Actions] (input panel)</option>
+  <option>&#x25A2;&#x00A0;&#x00A0;[Groups] (about:config search)</option>
+  <option>&#x25A2;&#x00A0;&#x00A0;[Links] (template/profiles/etc)</option>
   <option>&#x25A2;&#x00A0;&#x00A0;[about:config Functions]</option>
   <option>&#x25A2;&#x00A0;&#x00A0;[Help/Info]</option>
   <option value="" disabled></option>
@@ -5915,7 +6542,7 @@ title="Select menu option">
   <option>&#x25A2;&#x00A0;&#x00A0;Function about:config links</option>
   <option value="" disabled></option>
   <option>&#x25A2;&#x00A0;&#x00A0;Expand all on view</option>
-  <option>&#x25A2;&#x00A0;&#x00A0;Show [Groups] on view</option>
+  <option>&#x25A2;&#x00A0;&#x00A0;Show Groups on view</option>
   <option>&#x25A2;&#x00A0;&#x00A0;View+ style on view</option>
   <option value="" disabled></option>
   <option>&#x25A2;&#x00A0;&#x00A0;Theme: default</option>
@@ -5924,8 +6551,8 @@ title="Select menu option">
   <option>&#x25EB;&#x00A0;&#x00A0;Other themes</option>
 </select>
 
-<button type="button" id="close_panel_button" class="controls borders"
-title="Close panel" onclick="closePanel();">&#935;</button>
+<button type="button" id="back_button" class="controls borders top_buttons"
+title="Close panel" onclick="backButton();"><b>&lt;</b>Back</button>
 
 </div><!-- end: top_buttons_bar -->
 
@@ -5944,7 +6571,8 @@ title="Close panel" onclick="closePanel();">&#935;</button>
   <button type="button" class="controls borders heading_buttons"
 id="(TOP) / Introduction" >(TOP) / Introduction</button>
   <div class="content">
-(Please add user.js content in [Menu]&gt;[Actions] then [View] or [Compare])
+Please add user.js content under [Menu]&gt;[Actions],
+then use [View], [Table View], or [Compare].
   </div>
 <!-- >>>> section contents (between here) are replaced later <<<< -->
 </div><!-- end: view_area -->
@@ -5996,16 +6624,16 @@ title="Show all boxes">All</button><!--
 <button type="button" class="controls borders" id="view_template_button"
 title="View box content with HTML, links, etc">View</button><br>
 
+<button type="button" class="controls borders" id="tableview_template_button"
+title="View box content in a table (for ghacks-user.js)">Table View</button><br>
+
+<select class="controls borders" id="loadsave_template_select"
+title="Select a file and load contents into the box">
+<option value="" disabled selected hidden>&#x25BE;Load/Save</option>
+</select><br>
+
 <button type="button" class="controls borders" id="select_template_button"
 title="Select all text in the box">Select</button><br>
-
-<button type="button" class="controls borders" id="save_template_button"
-title="Save box content as a file">Save</button><br>
-
-<select class="controls borders" id="load_template_select"
-title="Select a file and load contents into the box">
-<option value="" disabled selected hidden>&#x25BE;Load</option>
-</select><br>
 
 <button type="button" class="controls borders" id="clear_template_button"
 title="Clear the text in the box">Clear</button>
@@ -6018,7 +6646,7 @@ name="file" accept=".js" id="load_template_input" />
 class="local_folder" href="user-template.js">Template</a> eg ghacks-user.js
 <textarea id="box_1_template" autofocus="true"
 ondrop="dropHandler1(event);" ondragover="dragOverHandler(event);"
-placeholder="&#10; Add user.js template here ([Load], drag or paste)&#10;&#10; Then use [View], [Compare], or another action button"
+placeholder="&#10; Add user.js template here ([Load], drag or paste)&#10;&#10; Then use [View], [Table View], [Compare], or another action button"
 ></textarea>
 </td></tr></table></div>
 
@@ -6036,16 +6664,16 @@ title="End the point and click overrides collection"
 <button type="button" class="controls borders" id="view_overrides_button"
 title="View box content with HTML, links, etc">View</button><br>
 
+<button type="button" class="controls borders" id="tableview_overrides_button"
+title="View box content in a table (for ghacks-user.js)">Table View</button><br>
+
+<select class="controls borders" id="loadsave_overrides_select"
+title="Select a file and load contents into the box">
+<option value="" disabled selected hidden>&#x25BE;Load/Save</option>
+</select><br>
+
 <button type="button" class="controls borders" id="select_overrides_button"
 title="Select all text in the box">Select</button><br>
-
-<button type="button" class="controls borders" id="save_overrides_button"
-title="Save box content as a file">Save</button><br>
-
-<select class="controls borders" id="load_overrides_select"
-title="Select a file and load contents into the box">
-<option value="" disabled selected hidden>&#x25BE;Load</option>
-</select><br>
 
 <button type="button" class="controls borders" id="clear_overrides_button"
 title="Clear the text in the box">Clear</button><br>
@@ -6075,16 +6703,16 @@ placeholder="&#10; Add user-overrides.js here ([Load], drag or paste)&#10;&#10; 
 <button type="button" class="controls borders" id="view_userjs_button"
 title="View box content with HTML, links, etc">View</button><br>
 
+<button type="button" class="controls borders" id="tableview_userjs_button"
+title="View box content in a table (for ghacks-user.js)">Table View</button><br>
+
+<select class="controls borders" id="loadsave_userjs_select"
+title="Select a file and load contents into the box">
+<option value="" disabled selected hidden>&#x25BE;Load/Save</option>
+</select><br>
+
 <button type="button" class="controls borders" id="select_userjs_button"
 title="Select all text in the box">Select</button><br>
-
-<button type="button" class="controls borders" id="save_userjs_button"
-title="Save box content as a file">Save</button><br>
-
-<select class="controls borders" id="load_userjs_select"
-title="Select a file and load contents into the box">
-<option value="" disabled selected hidden>&#x25BE;Load</option>
-</select><br>
 
 <button type="button" class="controls borders" id="clear_userjs_button"
 title="Clear the text in the box">Clear</button><br>
@@ -6110,16 +6738,16 @@ placeholder="&#10; Add user.js here ([Load], drag or paste)&#10;&#10; (or used f
 <button type="button" class="controls borders" id="view_other_button"
 title="View box content with HTML, links, etc">View</button><br>
 
+<button type="button" class="controls borders" id="tableview_other_button"
+title="View box content in a table (for ghacks-user.js)">Table View</button><br>
+
+<select class="controls borders" id="loadsave_other_select"
+title="Select a file and load contents into the box">
+<option value="" disabled selected hidden>&#x25BE;Load/Save</option>
+</select><br>
+
 <button type="button" class="controls borders" id="select_other_button"
 title="Select all text in the box">Select</button><br>
-
-<button type="button" class="controls borders" id="save_other_button"
-title="Save box content as a file">Save</button><br>
-
-<select class="controls borders" id="load_other_select"
-title="Select a file and load contents into the box">
-<option value="" disabled selected hidden>&#x25BE;Load</option>
-</select><br>
 
 <button type="button" class="controls borders" id="clear_other_button"
 title="Clear the text in the box">Clear</button><br>
@@ -6165,15 +6793,6 @@ title="Compare the user_pref of 2 boxes">
 <option>Compare box 4 &amp; 2</option>
 <option>Compare box 4 &amp; 3</option>
 <option>Compare box 4 &amp; 4 &#x00A0;&#x00A0;A-Z</option>
-</select><!--
-
---><select class="controls borders" id="tableview_select"
-title="View ghacks-user.js in a table (work in progress)">
-<option value="" disabled selected hidden>&#x25BE;Table View</option>
-<option>Table view box 1</option>
-<option>Table view box 2</option>
-<option>Table view box 3</option>
-<option>Table view box 4</option>
 </select><!--
 
 --><button type="button" class="controls borders" id="append_button"
@@ -6230,15 +6849,15 @@ title="Display some useful links (eg: ghacks-user.js, profile folders)"
 <br><br><br>Get started info (scroll down):<br>
 <div class="indentdiv">
 <br><li>Place user.js text into a box above using the [Load] button (or
-drag/drop, copy/paste) then click the [View] button, or use [Compare] button
-after loading two boxes. &nbsp;([Actions] button returns here)</li>
+drag/drop, copy/paste) then click the [View] or [Table View] button, or
+use the [Compare] button after loading two boxes.</li>
+<br><li>The [<b>&lt;</b>Back] button closes the current panel, or returns here
+(you can also choose [Actions] under the [Menu] button to return here).</li>
 <br><li>Hover other buttons for their info, or use [Help/Info] button.</li>
 <br><li>The numbers on the buttons indicate the input>output boxes, contents
 of the output box are replaced, [Collect] amends the output box.</li>
-<br><li>[Goto] (section jump) and [Groups] (about:config search) are updated
-when [View]/[Compare] are used.</li>
-<br><li>The [X] button at the top closes the current panel, use [Actions]
-button to return here (or choose via [Menu] button).</li>
+<br><li>[Index] (section jump) and [Groups] (about:config search) are updated
+when [View]/[Table View]/[Compare] are used.</li>
 </div><br><br><br><br><br>
 </div><!-- end: actions_buttons_div -->
 
@@ -6262,7 +6881,8 @@ title="Close [Groups] panel">&times;</span>
 <br><br>
 <!-- >>>> user pref groups (between here) are replaced later <<<< -->
 <div id="groups_container">
-(Please add user.js content in [Menu]&gt;[Actions] then [View] or [Compare])
+Please add user.js content under [Menu]&gt;[Actions],
+then use [View], [Table View], or [Compare].
 </div>
 <!-- >>>> user pref groups (between here) are replaced later <<<< -->
 <br><br><br><br><br>
@@ -6280,34 +6900,16 @@ title="Close [Groups] panel">&times;</span>
 title="Close [Links] panel">&times;</span>
 <!-- hidden heading (H1/H3/DL tags for bookmarks import compatibility) -->
 <span class="hidden"><H3>[Links]</H3></span>
-<b>[Links]</b> ([X] closes)<br><br>
-Example link for user.js template/project/information.
-&nbsp;This user.js viewer is compatible with ghacks-user.js.
-&nbsp;When choosing a user.js template you need to consider if
-it is suitable, good quality, and up to date, at your own risk.
+<b>[Links]</b> ([X] closes)
+
 <br><br>
-<!-- note about URL parameters -->
-If required you can auto-load using URL parameters (see [Help/Info])<br>eg:
-
-<a target="_blank" rel="external noopener noreferrer"
-href="?box=a&load1=https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js"
->load-ghacksuserjs</a>,
-
-<a target="_blank" rel="external noopener noreferrer"
-href="?action=view1&box=a&load1=https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js"
->load+view-ghacksuserjs</a>,
-
-<a target="_blank" rel="external noopener noreferrer"
-href="?load2=data:text/plain;base64,Ly8gdGhpcyB0ZXh0IHdhcyBpbiB0aGUgbGluay9ib29rbWFyayAodXNpbmcgQmFzZTY0KQovLyAoZG8gbm90IHB1dCBhbnl0aGluZyBwcml2YXRlKQoKLy8gdXNlci1vdmVycmlkZXMuanMKLy8vLyAtLS0gYWRkLW92ZXJyaWRlLWNvbW1lbnQgLS0tCi8qKiogVElUTEUgKioqLwp1c2VyX3ByZWYoInByZWYubmFtZSIsIG51bGwpOwovLy8vIC0tLSBjb21tZW50LW91dCAtLS0gJ3ByZWYubmFtZScK"
->load-non-private-text</a>
-
-<br><br><br>
+When choosing a user.js template you need to consider if
+it is suitable, good quality, and up to date. &nbsp;(At your own risk)<br>
 
 
-<!-- ghacksuserjs -->
-<table class="table_links"><tr>
-<th class="td1_links">File/List</th>
-<th class="td2_links">Project/Other</th></tr>
+<br><br>
+user.js template example
+<table class="table_links">
 <tr><td class="td1_links">
 <a target="_blank" rel="external noopener noreferrer"
 href="https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js"
@@ -6315,21 +6917,61 @@ href="https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.
 <br><br>(read their wiki) (listed on privacytools.io)
 <br><br><a target="_blank" rel="external noopener noreferrer"
 href="https://github.com/ghacksuserjs/ghacks-user.js/issues/123"
->ghacksuserjs/removed (list)</a>
+>ghacksuserjs/deprecated-removed-legacy prefs (list)</a>
 </td><td class="td2_links">
 <a target="_blank" rel="external noopener noreferrer"
 href="https://github.com/ghacksuserjs/ghacks-user.js"
-><span class="hidden">__ghacksuserjs </span>github</a>
-</td></tr></table>
+><span class="hidden">__</span>ghacksuserjs github project page</a>
+</td></tr>
+</table>
+
+
+<!-- note about URL parameters -->
+<br><br>
+Auto-loading (also see [Menu]&gt;[Help/Info]&gt;Initial states)
+<table class="table_links">
+<tr><td class="td1_links">
+?g&box=a&nbsp;
+or: ?box=a&load1=https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js
+</td><td class="td2_links">
+<a target="_blank" rel="external noopener noreferrer"
+href="?g&box=a"
+>auto-load ghacksuserjs</a>
+</td></tr>
+
+<tr><td class="td1_links">
+?gv&nbsp;
+or: ?action=view1&load1=https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js
+</td><td class="td2_links">
+<a target="_blank" rel="external noopener noreferrer"
+href="?gv"
+>auto-load ghacksuserjs and view</a>
+</td></tr>
+
+<tr><td class="td1_links">
+?gt&nbsp;
+or: ?action=table1&load1=https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js
+</td><td class="td2_links">
+<a target="_blank" rel="external noopener noreferrer"
+href="?gt"
+>auto-load ghacksuserjs and table view</a>
+</td></tr>
+
+<tr><td class="td1_links">
+?load2=data:text/plain;base64,...
+</td><td class="td2_links">
+<a target="_blank" rel="external noopener noreferrer"
+href="?load2=data:text/plain;base64,Ly8gdGhpcyB0ZXh0IHdhcyBpbiB0aGUgbGluay9ib29rbWFyayAodXNpbmcgQmFzZTY0KQovLyAoZG8gbm90IHB1dCBhbnl0aGluZyBwcml2YXRlKQoKLy8gdXNlci1vdmVycmlkZXMuanMKLy8vLyAtLS0gYWRkLW92ZXJyaWRlLWNvbW1lbnQgLS0tCi8qKiogVElUTEUgKioqLwp1c2VyX3ByZWYoInByZWYubmFtZSIsIG51bGwpOwovLy8vIC0tLSBjb21tZW50LW91dCAtLS0gJ3ByZWYubmFtZScK"
+>load-non-private-text</a>
+</td></tr>
+</table>
 
 
 <!-- ***** profile locations ***** -->
-<br>
-<br>
+<br><br>
 Profile Locations (see <a target="_blank" rel="external noopener noreferrer"
 href="about:profiles">about:profiles</a> in a new tab)
 <table class="table_links">
-
 <tr><td class="td1_links">
 file:///C:/Users/USERNAME/AppData/Roaming/Mozilla/Firefox/Profiles
 </td><td class="td2_links">
@@ -6369,7 +7011,6 @@ file:///home/USERNAME/.mozilla/firefox
 href="file:///home/USERNAME/.mozilla/firefox"
 ><span class="hidden">Firefox profile: </span>Linux</a>
 </td></tr>
-
 </table>
 
 
@@ -6420,7 +7061,7 @@ an extension such as: uBlock Origin, uMatrix, NoScript.<br>
 <br>
 Interactive view, compare, and more for Firefox user.js (eg ghacks-user.js).<br>
 <br>
-Version&nbsp;&nbsp;&nbsp;: 2020.02.27 (alpha/experimental)<br>
+Version&nbsp;&nbsp;&nbsp;: 2020.03.21 (alpha/experimental)<br>
 
 Project&nbsp;&nbsp;&nbsp;:
 <a target="_blank" rel="external noopener noreferrer"
@@ -6460,7 +7101,7 @@ in your Firefox browser, with:<br>
 <br><li>highlighting, links, themes*, re-size, wrap,
 about:config links/regex/groups</li>
 
-<br><li>expanding sections, and "go to" section links
+<br><li>expanding sections, and index to go to sections
 (with compatible user.js projects)</li>
 
 <br><li>compare preferences in two user.js, in a table format with
@@ -6743,7 +7384,7 @@ user.js value on browser restart.
 
 
 <!-- initial states -->
-<br><details><summary>Initial states (URL parameter variable options)</summary>
+<br><details><summary>Initial states (and URL parameter variable options)</summary>
 <div class="indentdiv"><br>
 Some initial states can be set with (one or more) URL parameter variables:<br>
 <br>
@@ -6775,6 +7416,9 @@ append,skeleton,collect,reduce,clean,byvalue,togroup<br>
 </div>
 </li>
 <li>jump=TEXT&nbsp;&nbsp;(expand/focus first section containing TEXT with auto-load)</li>
+<li>g&nbsp;&nbsp;(auto-load ghacks-user.js)</li>
+<li>gv&nbsp;&nbsp;(auto-load ghacks-user.js and view)</li>
+<li>gt&nbsp;&nbsp;(auto-load ghacks-user.js and table view)</li>
 </div></div>
 <br>
 <details><summary>Examples</summary>
@@ -6786,8 +7430,9 @@ append,skeleton,collect,reduce,clean,byvalue,togroup<br>
 <li>?theme=light&amp;size=150</li>
 <li>?folder=file:///C:/Users/USERNAME/AppData/Roaming/Mozilla/Firefox/Profiles/XXXXXXXX.default-release</li>
 <li>?folder=file:///home/USERNAME/.mozilla/firefox/XXXXXXXX.default-release</li>
-<li>?action=view1&amp;box=a&amp;load1=https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js
-<li>?action=compare:1:4&box=a&load1=https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js&load4=https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/72.0/user.js</b>
+<li>?gv or ?action=view1&amp;box=a&amp;load1=https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js</li>
+<li>?gt or ?action=table1&amp;box=a&amp;load1=https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js</li>
+<li>?action=compare:1:4&box=a&load1=https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js&load4=https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/72.0/user.js</li>
 </div></div></details>
 <br></div><hr></details>
 
@@ -6819,6 +7464,11 @@ https://github.com/Genbox/HardenIT (dormant?) which used that).</li>
 href="https://github.com/claustromaniac/Compare-UserJS"
 >https://github.com/claustromaniac/Compare-UserJS &#128570;</a>
 which inspired [Compare] (not a port).</li>
+<br>
+<li><a target="_blank" rel="external noopener noreferrer"
+href="https://github.com/overdodactyl"
+>https://github.com/overdodactyl</a> made a work in progress prototype
+(on shinyapps.io) in early 2019 which inspired [Table View] (not a port).</li>
 <br>
 <li><a target="_blank" rel="external noopener noreferrer"
 href="https://johnresig.com/files/jsdiff.js"
@@ -6857,16 +7507,19 @@ and with ghacks-user.js this also adds some extra line spacing.&nbsp; If you
 toggle [Menu]&gt;"View+ style on view" it is effective on the next use of a
 [View] button.</li>
 <br>
-<li>[Select] highlight all text in the box.</li>
+<li>[Table View] for viewing the user.js in a table format.&nbsp;
+Shows the user.js (that you pasted/loaded into a text box) with
+some nice HTML formatting. Mainly for ghacks-user.js.</li>
 <br>
-<li>[Save] the box contents as a file (Desktop Firefox allows you to
+<li>[&#x25BE;Load/Save] Load file(s) into the box(es) (eg user.js,
+user-overrides.js). &nbsp;Opens the browser file selection dialog.
+&nbsp;Select a single local .js file to load into the current text box, or
+multiple file selections for loading into the corresponding text boxes.
+(Also see Loading content info above)<br><br>
+Save the box contents as a file (Desktop Firefox allows you to
 choose the location and file name).</li>
 <br>
-<li>[&#x25BE;Load] file(s) into the box(es) (eg user.js, user-overrides.js).
-&nbsp;Opens the browser file selection dialog. &nbsp;Select a
-single local .js file to load into the current text box, or
-multiple file selections for loading into the corresponding text
-boxes. (Also see Loading content info above)</li>
+<li>[Select] highlight all text in the box.</li>
 <br>
 <li>[Clear] the text in the box (and switch readonly off).</li>
 </div>
@@ -6960,7 +7613,7 @@ This does not change Box 1 content, the 'amendments' are just collected in Box 2
 The "Actions" panel is displayed with reduced size for viewing of
 Box 2 changes, press the yellow [End Collect] button when you have finished
 (shown next to [Overrides] box only during collect, scroll the actions panel
-or click [Actions] if it is out of view).
+or click [<b>&lt;</b>Back] if it is out of view).
 <br><br>
 Box 2 [Select] button becomes [Select+], and the first instance
 of the pref name toggled is selected, if you wish to select all click
@@ -7056,6 +7709,7 @@ recommended, as needs constant maintaining, better to just
 Show JavaScript functions for Mozilla Firefox/Thunderbird about:config,
 and information on how to use them. &nbsp;To find (filter/list)/reset/set
 user preferences and values.
+&nbsp;Use [Menu]&gt;[Actions], or [<b>&lt;</b>Back] button to return.
 </div></details>
 
 <!-- Actions - [Links] -->
@@ -7064,7 +7718,8 @@ user preferences and values.
 <details><summary>[Links]</summary>
 <div class="indentdiv"><br>
 Display some useful links (ghacks-user.js, profile locations). &nbsp;The
-button takes you to [Menu]&gt;[Links], use [Menu]&gt;[Actions] to return.
+button takes you to [Menu]&gt;[Links].
+&nbsp;Use [Menu]&gt;[Actions], or [<b>&lt;</b>Back] button to return.
 </div></details>
 
 <br></div><hr></details>
