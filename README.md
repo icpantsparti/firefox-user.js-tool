@@ -4,7 +4,7 @@ Interactive view, compare, and more for Firefox user.js (eg ghacksuserjs).
 
 Display a Mozilla Firefox user.js settings file contents in your Firefox browser, with:
 * highlighting, links, themes*, re-size, wrap, about:config links/regex/groups
-* expanding sections, and "go to" section links (with compatible user.js projects)
+* expanding sections, and index to go to sections (with compatible user.js projects)
 * compare preferences in two user.js, in a table format with order/layout options and bold cell border around differences
 * actions including: user-overrides.js* append* (with comment-out*), point and click overrides collector, skeleton, prefs.js cleaner*, group by values
 * load/save, drag/drop, or copy/paste user.js files (can load from some on-line URLs too)
@@ -23,6 +23,10 @@ Disclaimer: Use with care at your own risk, and verify any results
 
 #### Live auto-load and view ghacks-user.js master (example)
 [https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?action=view1&box=a&load1=https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js](https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?action=view1&box=a&load1=https://raw.githubusercontent.com/ghacksuserjs/ghacks-user.js/master/user.js)
+
+shortcut parameter which does the same as the above:<br>[https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?gv](https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?gv)
+
+shortcut parameter similar to above (opens ghacks-user.js in "Table View"):<br>[https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?gt](https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?gt)
 
 #### Version 2020.02.22 (alpha/experimental)
 added user.js compare, improved file/URL loading, updated layout and more<br>
