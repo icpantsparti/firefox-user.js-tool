@@ -3,7 +3,7 @@
 //
 // Name         : userjs-tool-aboutconfig-functions.js
 // Project      : https://github.com/icpantsparti/firefox-user.js-tool
-// Version      : 2020.02.22 (alpha/experimental)
+// Version      : 2020.09.15 (alpha/experimental)
 // File         : https://raw.githubusercontent.com/icpantsparti/firefox-user.js-tool/master/userjs-tool-aboutconfig-functions.js
 // License (MIT): https://raw.githubusercontent.com/icpantsparti/firefox-user.js-tool/master/LICENSE
 // Disclaimer   : Use with care at your own risk, and verify any results
@@ -38,8 +38,8 @@
 //     PC: use 'about:debugging' (older Firefox was WebIDE/Scratchpad)
 //     Target: 'about:config' open, "Remote debugging" enabled in Firefox settings
 //             "USB debugging" enabled in Android Developer settings
-//     re: https://github.com/ghacksuserjs/ghacks-user.js/wiki/1.6-Firefox-Android
-//     also re ghacksuserjs wiki: unblock about:config in newer versions (FF71+?):
+//     re: https://github.com/arkenfox/user.js/wiki/1.6-Firefox-Android
+//     also re arkenfox/user.js/wiki: unblock about:config in newer versions (FF71+?):
 //     user_pref("general.aboutConfig.enable", true);
 //   * set 'user_pref' alias if you want to paste 'user.js' code to run a function
 //     eg enter 'user_pref = ujtSetPref;' or 'user_pref = ujtResetPref;'
@@ -71,11 +71,11 @@
 //     not already exist (these are either hidden preferences, or invalid)
 //
 // Acknowledgments (this is based on info/code from):
-//   https://github.com/ghacksuserjs/ghacks-user.js
-//     https://github.com/ghacksuserjs/ghacks-user.js/tree/master/scratchpad-scripts
-//       https://github.com/ghacksuserjs/ghacks-user.js/blob/master/scratchpad-scripts/ghacks-clear-[removed].js
-//       https://github.com/ghacksuserjs/ghacks-user.js/blob/master/scratchpad-scripts/troubleshooter.js
-//     https://github.com/ghacksuserjs/ghacks-user.js/wiki/1.6-Firefox-Android
+//   https://github.com/arkenfox/user.js
+//     https://github.com/arkenfox/user.js/tree/master/scratchpad-scripts
+//       https://github.com/arkenfox/user.js/blob/master/scratchpad-scripts/arkenfox-clear-removed.js
+//       https://github.com/arkenfox/user.js/blob/master/scratchpad-scripts/troubleshooter.js
+//     https://github.com/arkenfox/user.js/wiki/1.6-Firefox-Android
 //   https://stackoverflow.com/questions/3796084/about-config-preferences-and-js
 //   https://developer.mozilla.org/en-US/docs/Mozilla/JavaScript_code_modules/Services.jsm
 //   http://www.openjs.com/articles/optional_function_arguments.php
