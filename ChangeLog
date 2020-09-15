@@ -1,3 +1,11 @@
+version 2020.09.15 (alpha/experimental)
+* updated hyperlinks and references
+  re "https://github.com/ghacksuserjs/ghacks-user.js"
+  has moved to "https://github.com/arkenfox/user.js"
+
+
+
+
 version 2020.03.21 (alpha/experimental)
 * added a [<Back] button (it replaces [Actions] and close [X] buttons)
   ([Menu] still has an Actions option, panels still have a close X)
