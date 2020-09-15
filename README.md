@@ -24,9 +24,9 @@ Disclaimer: Use with care at your own risk, and verify any results
 #### Live auto-load and view arkenfox/user.js (example)
 [https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?action=view1&box=a&load1=https://raw.githubusercontent.com/arkenfox/user.js/master/user.js](https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?action=view1&box=a&load1=https://raw.githubusercontent.com/arkenfox/user.js/master/user.js)
 
-shortcut parameter which does the same as the above:<br>[https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?gv](https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?gv)
+shortcut parameter which does the same as the above:<br>[https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?av](https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?av)
 
-shortcut parameter similar to above (opens arkenfox/user.js in "Table View"):<br>[https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?gt](https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?gt)
+shortcut parameter similar to above (opens arkenfox/user.js in "Table View"):<br>[https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?at](https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?at)
 
 #### Version 2020.02.22 (alpha/experimental)
 added user.js compare, improved file/URL loading, updated layout and more<br>
