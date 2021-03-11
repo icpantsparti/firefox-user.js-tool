@@ -1,4 +1,12 @@
 #### userjs-tool.html
+ 
+Open userjs-tool.html on-line:<br>[https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html](https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html)
+
+View the current arkenfox user.js in a table:<br>[https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?at](https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?at)
+
+Functions to get more out of about:config (eg: find, filter, list, save to file, etc):<br>[https://raw.githubusercontent.com/icpantsparti/firefox-user.js-tool/master/userjs-tool-aboutconfig-functions.js](https://raw.githubusercontent.com/icpantsparti/firefox-user.js-tool/master/userjs-tool-aboutconfig-functions.js)
+
+#### Introduction
 
 Interactive view, compare, and more for Firefox user.js (eg arkenfox/user.js).
 
@@ -18,21 +26,6 @@ This started as an over the top experiment for learning some HTML/CSS/JavaScript
 
 Disclaimer: Use with care at your own risk, and verify any results
 
-#### Open userjs-tool.html on-line
-[https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html](https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html)
-
-#### Live auto-load and view arkenfox/user.js (example)
-[https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?action=view1&box=a&load1=https://raw.githubusercontent.com/arkenfox/user.js/master/user.js](https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?action=view1&box=a&load1=https://raw.githubusercontent.com/arkenfox/user.js/master/user.js)
-
-shortcut parameter which does the same as the above:<br>[https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?av](https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?av)
-
-shortcut parameter similar to above (opens arkenfox/user.js in "Table View"):<br>[https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?at](https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?at)
-
-#### Version 2020.02.22 (alpha/experimental)
-added user.js compare, improved file/URL loading, updated layout and more<br>
-multi preference regex search [Groups] work in the newer about:config search box<br>
-added functions for find (filter/list)/reset/set on about:config Web Console
-
 #### How to save and open userjs-tool.html off-line
 Open the raw text/html file in a browser tab ([direct link](https://raw.githubusercontent.com/icpantsparti/firefox-user.js-tool/master/userjs-tool.html)), right click within that page and "Save Page As...".  Open the saved userjs-tool.html file with your Firefox browser (you can drag and drop it from your Downloads folder into a new tab), bookmark it for easy access.  Remember to check here for updates.
 
@@ -41,6 +34,13 @@ This is an optional file for use with userjs-tool.html.  Use this file to overri
 
 #### userjs-tool-aboutconfig-functions.js
 This file is embeded in userjs-tool.html (view with the [a:c Functions] button).
+
+#### Other example links
+(you can do these from the interface too)
+
+Live auto-load and view arkenfox user.js:<br>[https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?av](https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?av)
+
+Load and view a user.js from URL:<br>[https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?action=view1&load1=%68ttps://raw.githubusercontent.com/arkenfox/user.js/master/user.js](https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?action=view1&load1=%68ttps://raw.githubusercontent.com/arkenfox/user.js/master/user.js)
 
 #### Preview
 ![](/images/userjs-tool.png)
