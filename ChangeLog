@@ -1,3 +1,50 @@
+version 2021.03.11
+
+updated userjs-tool-aboutconfig-functions.js and minor changes
+
+* updated [a:c Functions] userjs-tool-aboutconfig-functions.js
+  + ujtFindPref options: asdefault, nodefault, fileout
+      optionally save results to desktop file (fileout: true)
+  + ujtFindPref style 0 and 1: now updates the about:config display
+      insert result into the about:config search box and filter
+      reduce text size and spacing to see more
+  + use Services.prefs.getComplexValue to look up "chrome:..." prefs
+  + ujtFindPref style: 5=user_pref@default
+  + ujtFindPref style 2 and 5: show pref default values
+      (note: policies.json/etc can alter defaults)
+
+* userjsTableView:
+  detected tags (those not hardcoded) now show * indicator in Info column
+  under [Filter] button:
+    detected tags now show above the individual SETUP and FF tags (arkenfox)
+    grouped SETUP... and FF... tags (arkenfox) now hint "(listed below)"
+    tag sort made case insensitive
+  make arkenfox "_user.js.parrot" pref show first value
+
++ userjsTableView/userjsTableViewTagFilter:
+  make a first link in [Groups] to reflect whats shown in the filtered table
+
+* userjsViewer/userjsCompare/userjsTableView:
+  remove first [Groups] link if empty
+
+* userjsCompare/userjsCompareLauncher/handleActionURLparameter:
+  remove space from all layout variable values re below
+  improve action=compare URL params (eg action=compare:1:4:az:2column)
+
+* loadLocalFile: use readAsText instead of readAsBinaryString
+
+* links_panel:
+  + add links for arkenfox wiki and issues
+  * tidy up auto-loading links
+  + add "Auto-load about:config Groups" (about:config search patterns)
+
+* rename "Get started info" to "Hints", tidy up and add more hints
+
++ two action buttons, shortcuts for: [View arkenfox] + [Load arkenfox]
+
+
+
+
 version 2020.09.15 (alpha/experimental)
 * updated hyperlinks and references
   re "https://github.com/ghacksuserjs/ghacks-user.js"
