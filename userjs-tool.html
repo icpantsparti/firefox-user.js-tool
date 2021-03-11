@@ -13,7 +13,7 @@
 
        Name         : userjs-tool.html
        Project      : https://github.com/icpantsparti/firefox-user.js-tool
-       Version      : 2020.09.15 (alpha/experimental)
+       Version      : 2021.03.11 (alpha/experimental)
        File         : https://raw.githubusercontent.com/icpantsparti/firefox-user.js-tool/master/userjs-tool.html
        On-line      : https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html
        License (MIT): https://raw.githubusercontent.com/icpantsparti/firefox-user.js-tool/master/LICENSE
@@ -43,7 +43,7 @@
     /* main blocks */
 
     body {
-      font-family: Consolas,"Liberation Mono",Menlo,Courier,monospace;
+      font-family: Consolas,"Courier New","Liberation Mono",monospace;
       font-size: 100%;
       /* white-space: normal|nowrap|pre|pre-line|pre-wrap|initial|inherit; */
       /* word-wrap: normal|break-word|initial|inherit; */
@@ -210,7 +210,6 @@
     }
     #endcollect_button, #endcollect_br { display: none; }
 
-
     #functions_panel_textarea {
       width: 99%;
       min-width: 99%;
@@ -374,7 +373,7 @@
 
 
     /* within view area */
-    #collect_mode_pad { display: none; }
+    #collect_mode_pad { display: none; white-space: normal; }
     .heading_buttons {
       padding-left: 20px;
       width: 86%;
@@ -759,10 +758,10 @@
 
 function escape(s) {
     var n = s;
-    //n = n.replace(/&/g, "&amp;");
-    //n = n.replace(/</g, "&lt;");
-    //n = n.replace(/>/g, "&gt;");
-    //n = n.replace(/"/g, "&quot;");
+    // n = n.replace(/&/g, "&amp;");
+    // n = n.replace(/</g, "&lt;");
+    // n = n.replace(/>/g, "&gt;");
+    // n = n.replace(/"/g, "&quot;");
 
     return n;
 }
@@ -1132,7 +1131,9 @@ function diff( o, n ) {
         if (url == "URL") {
           url = "";
           url = prompt("Please input URL of file to load\n"
-            + "(Only works if the site allows this)", "");
+            + "(Only works if the site allows this)\n"
+            + "(eg arkenfox /master/ or /vNN.0-beta/ /NN.0/)",
+            "https://raw.githubusercontent.com/arkenfox/user.js/master/user.js");
         }
         if (url != null && url != "") {
           downloadFile(url, text_box);
@@ -1255,9 +1256,9 @@ function diff( o, n ) {
             e.focus();
           }
         };
-        // reader_e.readAsText(f);
-        // reader_e.readAsArrayBuffer(f);
-        reader_e.readAsBinaryString(fe);
+        reader_e.readAsText(fe);
+        // reader_e.readAsArrayBuffer(fe);
+        // reader_e.readAsBinaryString(fe);
       }
 
       if (ft) {
@@ -1274,7 +1275,7 @@ function diff( o, n ) {
             t.focus();
           }
         };
-        reader_t.readAsBinaryString(ft);
+        reader_t.readAsText(ft);
       }
 
       if (fo) {
@@ -1291,7 +1292,7 @@ function diff( o, n ) {
             o.focus();
           }
         };
-        reader_o.readAsBinaryString(fo);
+        reader_o.readAsText(fo);
       }
 
       if (fu) {
@@ -1308,7 +1309,7 @@ function diff( o, n ) {
             u.focus();
           }
         };
-        reader_u.readAsBinaryString(fu);
+        reader_u.readAsText(fu);
       }
 
       if (fx) {
@@ -1325,7 +1326,7 @@ function diff( o, n ) {
             x.focus();
           }
         };
-        reader_x.readAsBinaryString(fx);
+        reader_x.readAsText(fx);
       }
 
     } // end function loadLocalFile
@@ -1888,7 +1889,7 @@ function diff( o, n ) {
         groups_container_html += '<a target="_blank" href="about:config?filter=/^\\*$|^(';
         content_html += ""  // plus below
           // hidden heading (H1/H3/DL tags for bookmarks import compatibility)
-          + '  <span class="hidden"><H3>' + section_heading + '</H3></span>\n'
+          + '  <div class="hidden"><H3>' + section_heading + '</H3></div>\n'
           + '  <button type="button" class="controls borders '
           + 'controls_' + theme + ' borders_' + theme
           + ' heading_buttons" id="'
@@ -2093,7 +2094,14 @@ function diff( o, n ) {
       content_html += '  <span class="anchor" id="(BOTTOM)"></span><br><br><br></DL>\n';
       index_select_html += '<option>(BOTTOM)</option>\n';
       document.getElementById("index_select").innerHTML = index_select_html;
-      document.getElementById("groups_container").innerHTML = groups_container_html;
+
+      // also remove first group if unused
+      document.getElementById("groups_container").innerHTML =
+        groups_container_html.replace(new RegExp('<a target="_blank"'
+          + ' href="about:config\\?filter='
+          + '\\/\\^\\\\\\*\\$\\|\\^\\(\\)\\(;\\|\\$\\)\\|\\^\\$\\/i">'
+          + '-\\(TOP\\) \\/ Introduction<\\/A><br>'), "");
+
       document.getElementById("view_area").innerHTML = content_html;
       index_select_html = null;
       groups_container_html = null;
@@ -2655,31 +2663,49 @@ function diff( o, n ) {
 
         + '<br><br><br><br>Compare ';
 
-      if (show == "az") {
-        content_html += "[A-Z] (by alphabetical)";
-      }
-      else if (show == "groupx12") {
-        content_html += "[Group x12] (by value/state/active/inactive)";
-      }
-      else if (show == "groupx6") {
-        content_html += "[Group x6] (by value/state)";
-      }
-      else if (show == "multiple") {
-        content_html += "[Multiple] (by multiple occurrence/alphabetical)";
-      }
-      else if (show == "diffstring") {
-        content_html += "[DiffStr] (string difference)"
-          + "<br><br>&nbsp;&nbsp;(Uses a 3rd party library, see Help/Acknowledgments)"
-          + "<br>&nbsp;&nbsp;(It is better to use file comparison software, eg meld)"
-          + '<br><br>(<ins>1st</ins>: ' + input_box_short_name + ')'
-          + '&nbsp;&nbsp;(<del>2nd</del>: ' + input_box_short_name_2 + ')<hr>';
-      }
-      else {
-        content_html += "[Unsorted] (by order found)";
+      switch (show) {
+        case "groupx6":
+          content_html += "[Group x6] (value/state)";
+          break;
+        case "groupx12":
+          content_html += "[Group x12] (value/state/active/inactive)";
+          break;
+        case "multiple":
+          content_html += "[Multiple] (multiple occurrence/alphabetical)";
+          break;
+        case "az":
+          content_html += "[A-Z] (alphabetical)";
+          break;
+        case "unsorted":
+          content_html += "[Unsorted] (order found)";
+          break;
+        case "diffstring":
+          content_html += "[DiffStr] (string difference)"
+            + "<br><br>&nbsp;&nbsp;(Uses a 3rd party library, see Help/Acknowledgments)"
+            + "<br>&nbsp;&nbsp;(It is better to use file comparison software, eg meld)"
+            + '<br><br>(<ins>1st</ins>: ' + input_box_short_name + ')'
+            + '&nbsp;&nbsp;(<del>2nd</del>: ' + input_box_short_name_2 + ')<hr>';
+          break;
+        default:
+          show = "az";
+          content_html += "[A-Z] (alphabetical)";
       }
 
       if (show != "diffstring") {
-        content_html += ' [Layout: ' + layout + ']<br><br>';
+        switch (layout) {
+          case "5column":
+            content_html += ' [Layout: 5 column]<br><br>';
+            break;
+          case "3column":
+            content_html += ' [Layout: 3 column]<br><br>';
+            break;
+          case "2column":
+            content_html += ' [Layout: 2 column]<br><br>';
+            break;
+          default:
+            layout = "5column";
+            content_html += ' [Layout: 5 column]<br><br>';
+        }
       }
 
       var index_select_html = ''
@@ -3150,12 +3176,12 @@ function diff( o, n ) {
         content_html += '<tr>';
 
         // 5col 3col (prefname col)
-        if (layout != "2 column") {
+        if (layout != "2column") {
           content_html += '<td class="td_comp ';
-          if (layout == "5 column") {
+          if (layout == "5column") {
             content_html += 'td1a_comp_name"';
           }
-          else if (layout == "3 column") {
+          else if (layout == "3column") {
             content_html += 'td1b_comp_name" rowspan="2"';
           }
           // add prefname column header
@@ -3163,7 +3189,7 @@ function diff( o, n ) {
             '>Preference Name<br>(Total: ' + stats["total"].count + ')</td>';
         }
 
-        if (layout == "2 column") {
+        if (layout == "2column") {
           var td3td5 = 'td3td5_b_comp_value';
         }
         else {
@@ -3177,7 +3203,7 @@ function diff( o, n ) {
           + input_box_short_name + ': ' + stats["total1"].count
           + ')</td>';
         // 3col 2col (split into 2nd row)
-        if (layout != "5 column") { content_html += '</tr><tr>' }
+        if (layout != "5column") { content_html += '</tr><tr>' }
 
         // 5col 3col 2col (state2 value2 cols)
         content_html += '<td class="td_comp td2td4_comp_state">State2</td>'
@@ -3226,13 +3252,13 @@ function diff( o, n ) {
 
             // name (title)
             content_html += '<tr><td class="td_comp ';
-            if (layout == "5 column") {
+            if (layout == "5column") {
               content_html += 'td1a_comp_name" colspan="5">';
             }
-            else if (layout == "3 column") {
+            else if (layout == "3column") {
               content_html += 'td1b_comp_name td_comp_dashed" colspan="3">';
             }
-            else if (layout == "2 column") {
+            else if (layout == "2column") {
               content_html += 'td1b_comp_name td_comp_dashed" colspan="2">';
             }
             // anchor
@@ -3276,12 +3302,12 @@ function diff( o, n ) {
             content_html += '<tr>';
 
             // 5col 3col (prefname col)
-            if (layout != "2 column") {
+            if (layout != "2column") {
               content_html += '<td class="td_comp '
-              if (layout == "5 column") {
+              if (layout == "5column") {
                 content_html += 'td1a_comp_name">';
               }
-              else if (layout == "3 column") {
+              else if (layout == "3column") {
                 content_html += 'td1b_comp_name td_comp_dashed" rowspan="2">';
               }
               // add prefname
@@ -3301,16 +3327,16 @@ function diff( o, n ) {
 
             // 5col 3col 2col (state1 col)
             content_html += '<td class="td_comp td2td4_comp_state';
-            if (layout != "5 column") { content_html += ' td_comp_dashed'; }
+            if (layout != "5column") { content_html += ' td_comp_dashed'; }
             content_html +=
               diff_state1 + '">' + '<span class="pref">'
               + prefArray[i].state1 + '</span>' + '</td>';
 
             // 5col 3col 2col (value1 col)
             content_html += '<td class="td_comp ' + td3td5;
-            if (layout != "5 column") { content_html += ' td_comp_dashed'; }
+            if (layout != "5column") { content_html += ' td_comp_dashed'; }
             content_html += diff_value1 + '">';
-            if ((layout == "2 column") && (prefArray[i].value1 != "-")) {
+            if ((layout == "2column") && (prefArray[i].value1 != "-")) {
               // add pref name
               content_html += 'user_pref("'
                 + "<a target=\"_blank\" href=\"about:config?filter=/^\\*\$|^("
@@ -3324,11 +3350,11 @@ function diff( o, n ) {
                   .replace(/^[0-9.+-]+$/, "integer")
                   .replace(/^(".*"|'.*')$/, "string")
               + '">' + prefArray[i].value1 + '</span>';
-            if ((layout == "2 column") && (prefArray[i].value1 != "-")) {
+            if ((layout == "2column") && (prefArray[i].value1 != "-")) {
               content_html += ');';
             }
             content_html += '</td>';
-            if (layout != "5 column") { content_html += '</tr>' + '<tr>'; }
+            if (layout != "5column") { content_html += '</tr>' + '<tr>'; }
 
             // state2
             content_html +=
@@ -3338,7 +3364,7 @@ function diff( o, n ) {
 
             // value2
             content_html += '<td class="td_comp ' + td3td5 + diff_value2 + '">';
-            if ((layout == "2 column") && (prefArray[i].value2 != "-")) {
+            if ((layout == "2column") && (prefArray[i].value2 != "-")) {
               // add pref name
               content_html += 'user_pref("'
                 + "<a target=\"_blank\" href=\"about:config?filter=/^\\*\$|^("
@@ -3352,7 +3378,7 @@ function diff( o, n ) {
                   .replace(/^[0-9.+-]+$/, "integer")
                   .replace(/^(".*"|'.*')$/, "string")
               + '">' + prefArray[i].value2 + '</span>';
-            if ((layout == "2 column") && (prefArray[i].value2 != "-")) {
+            if ((layout == "2column") && (prefArray[i].value2 != "-")) {
               content_html += ');';
             }
             content_html += '</td>';
@@ -3385,7 +3411,14 @@ function diff( o, n ) {
 
       document.getElementById("view_area").innerHTML = content_html;
       document.getElementById("index_select").innerHTML = index_select_html;
-      document.getElementById("groups_container").innerHTML = groups_container_html;
+
+      // also remove first group if unused
+      document.getElementById("groups_container").innerHTML =
+        groups_container_html.replace(new RegExp('<a target="_blank"'
+          + ' href="about:config\\?filter='
+          + '\\/\\^\\\\\\*\\$\\|\\^\\(\\)\\(;\\|\\$\\)\\|\\^\\$\\/i">'
+          + '-\\(TOP\\)<\\/A><br>'), "");
+
       content_html = null;
       index_select_html = null;
       groups_container_html = null;
@@ -3432,9 +3465,9 @@ function diff( o, n ) {
       });
 
       document.getElementById("compare_layout_button").addEventListener("click", function() {
-        if (layout == "5 column") { layout = "3 column" }
-        else if (layout == "3 column") { layout = "2 column" }
-        else { layout = "5 column" }
+        if (layout == "5column") { layout = "3column" }
+        else if (layout == "3column") { layout = "2column" }
+        else { layout = "5column" }
         userjsCompare(input_box_name, input_box_name_2, show, layout);
       });
 
@@ -3518,10 +3551,15 @@ function diff( o, n ) {
     // userjsCompareLauncher
     // *************************************
 
-    function userjsCompareLauncher(boxes_chosen) {
+    function userjsCompareLauncher(choice) {
+      // choice eg  compare:1:4  compare:1:4:az:2column  etc
       // determine the box numbers to compare from the choice text
-      var box1st = boxes_chosen.replace(/^.*([0-9])[^0-9]+([0-9]).*$/, "$1");
-      var box2nd = boxes_chosen.replace(/^.*([0-9])[^0-9]+([0-9]).*$/, "$2");
+      var box1st = choice.replace(/^[^0-9]*([0-9])[^0-9]+([0-9]).*$/, "$1");
+      var box2nd = choice.replace(/^[^0-9]*([0-9])[^0-9]+([0-9]).*$/, "$2");
+      // groupx6 groupx12 multiple az unsorted diffstring
+      var show = choice.replace(/^[^0-9]*([0-9])[^0-9]+([0-9]):([^:]+).*$/, "$3");
+      // 5column 3column 2column
+      var layout = choice.replace(/^[^0-9]*([0-9])[^0-9]+([0-9]):([^:]*):([^:]+).*$/, "$4");
       switch (box1st) {
         case "1": box1st="box_1_template"; break;
         case "2": box1st="box_2_overrides"; break;
@@ -3543,11 +3581,14 @@ function diff( o, n ) {
           || (document.getElementById(box2nd).value == "")
           || (box1st == box2nd)
         ) {
-          userjsCompare(box1st, box2nd, "az", "5 column");
+          // trying to compare with empty/same box (ie just one box)
+          if (!show || show == choice) { show = "az" }
         }
         else {
-          userjsCompare(box1st, box2nd, "groupx6", "5 column");
+          if (!show || show == choice) { show = "groupx6" }
         }
+        if (!layout || layout == choice) { layout = "5column" }
+        userjsCompare(box1st, box2nd, show, layout);
         toggleActionsPanel(false);
       }
     } /* end function userjsCompareLauncher */
@@ -3596,6 +3637,7 @@ function diff( o, n ) {
       var hideactiveoption = 4;
       var invertoption = 5;
       var e = document.getElementById("table_tview").querySelectorAll("tr");
+      var group_user_pref_list_filter = "";
 
       // get menu status
       var hideinactive =
@@ -3708,6 +3750,26 @@ function diff( o, n ) {
         ? s.options[0].textContent.replace(/\u{25A2}/u, "\u25A3")
         : s.options[0].textContent.replace(/\u{25A3}/u, "\u25A2");
 
+      // update group_link_showing_table_filter (inside groups_container div)
+      var prefnametd;
+      for (var i = 1, j = e.length; i < j; i++) {
+        if (!(e[i].style.display == "none")) {
+          // get prefname from table text (where e[i] is the tr)
+          // TODO check
+          prefnametd = e[i].getElementsByClassName("td_tview_name");
+          if (prefnametd.length > 0) {
+            if (prefnametd[0].textContent) {
+              group_user_pref_list_filter +=
+                prefnametd[0].textContent.replace(/([*.+])/g, "\\$1") + "|";
+            }
+          }
+        }
+      }
+      document.getElementById("group_link_showing_table_filter").href =
+         'about:config?filter=/^\\*$|^('
+         + group_user_pref_list_filter.replace(/\|$/, '')
+         + ')(;|$)|^$/i';
+
       s.blur();
 
     } /* end function userjsTableViewTagFilter */
@@ -3723,7 +3785,9 @@ function diff( o, n ) {
       var theme = document.body.className.replace( /(^| *)[^_]+_/ , '');
 
       // tags (shown under filter button in this order)
-      // (these are used on the table row eg: <tr class="TAGS_WARNING "...>)
+      //   these are used on the table row eg: <tr class="TAGS_WARNING "...>
+      //   those below are hardcoded (with an indicator code for the info column)
+      //   any other tags will be detected later (and use a * as indicator code)
       var tags = {
         // tags to show first
         'WARNING': {
@@ -3744,7 +3808,7 @@ function diff( o, n ) {
           'titleflag': false,
           'count': 0
         },
-        'SETUP...': {
+        'SETUP... (listed below)': {
           'rx': new RegExp("(\\[SETUP[^\\]]*\\])", "gi"),
           're': '<span class="setup">$1</span>',
           'indicator': '<span class="setup">S</span>',
@@ -3763,7 +3827,7 @@ function diff( o, n ) {
           'count': 0
         },
         // other tags
-        'FF...': {
+        'FF... (listed below)': {
           'rx': new RegExp("(\\[FF[^\\]]*\\])", "gi"),
           're': "",
           'indicator': "F",
@@ -3794,15 +3858,6 @@ function diff( o, n ) {
           'rx': new RegExp("(\\[SETTING[^\\]]*\\])", "gi"),
           're': "",
           'indicator': "X",
-          'secflag': false,
-          'subflag': false,
-          'titleflag': false,
-          'count': 0
-        },
-        'TEST': {
-          'rx': new RegExp("(\\[TEST[^\\]]*\\])", "gi"),
-          're': "",
-          'indicator': "T",
           'secflag': false,
           'subflag': false,
           'titleflag': false,
@@ -3853,74 +3908,44 @@ function diff( o, n ) {
           'subflag': false,
           'titleflag': false,
           'count': 0
-        },
-        'SETUP-CHROME': {
-          'rx': new RegExp("(\\[SETUP-CHROME[^\\]]*\\])", "gi"),
-          're': '',
-          // 'indicator': '<span class="setup">SC</span>',
-          'indicator': "",
-          'secflag': false,
-          'subflag': false,
-          'titleflag': false,
-          'count': 0
-        },
-        'SETUP-HARDEN': {
-          'rx': new RegExp("(\\[SETUP-HARDEN[^\\]]*\\])", "gi"),
-          're': '',
-          // 'indicator': '<span class="setup">SH</span>',
-          'indicator': "",
-          'secflag': false,
-          'subflag': false,
-          'titleflag': false,
-          'count': 0
-        },
-        'SETUP-non-RFP': {
-          'rx': new RegExp("(\\[SETUP-non-RFP[^\\]]*\\])", "gi"),
-          're': '',
-          // 'indicator': '<span class="setup">SR</span>',
-          'indicator': "",
-          'secflag': false,
-          'subflag': false,
-          'titleflag': false,
-          'count': 0
-        },
-        'SETUP-PERF': {
-          'rx': new RegExp("(\\[SETUP-PERF[^\\]]*\\])", "gi"),
-          're': '',
-          // 'indicator': '<span class="setup">SP</span>',
-          'indicator': "",
-          'secflag': false,
-          'subflag': false,
-          'titleflag': false,
-          'count': 0
-        },
-        'SETUP-SECURITY': {
-          'rx': new RegExp("(\\[SETUP-SECURITY[^\\]]*\\])", "gi"),
-          're': '',
-          // 'indicator': '<span class="setup">SS</span>',
-          'indicator': "",
-          'secflag': false,
-          'subflag': false,
-          'titleflag': false,
-          'count': 0
-        },
-        'SETUP-WEB': {
-          'rx': new RegExp("(\\[SETUP-WEB[^\\]]*\\])", "gi"),
-          're': '',
-          // 'indicator': '<span class="setup">SW</span>',
-          'indicator': "",
-          'secflag': false,
-          'subflag': false,
-          'titleflag': false,
-          'count': 0
         }
       }
 
       // check for "[TAGS]" not hardcoded above
-      var extraTags = input_box.value.replace(/(\[[^\]]*\])/gm,'\n$1\n')
-        .split("\n").filter(function(value) { return /^\[.*\]$/.test(value) })
+      var extraTags = input_box.value
+        // make [TAGS] be on their own line
+        .replace(/(\[[^\]]*\])/gm,'\n$1\n')
+        .split("\n")
+        // keep just the [TAGS] lines
+        .filter(function(value) { return /^\[.*\]$/.test(value) })
+        // unique values
         .filter(function(value, index, self) { return self.indexOf(value) === index })
-        .sort()
+        // prefix [TAGS] for sort priority (SETUP and FF to the end)
+        .map(function(value) {
+          if (new RegExp("^(\\[FF[^\\]]*\\])").test(value) ) {
+            return '3' + value;
+          }
+          else if (new RegExp("^(\\[SETUP[^\\]]*\\])").test(value) ) {
+            return '2' + value;
+          }
+          else {
+            return '1' + value;
+          }
+        })
+        // case insensitive sort
+        .sort(function (a, b) {
+          var x = a.toLowerCase(),
+              y = b.toLowerCase();
+          if (x < y) { return -1; }
+          if (x > y) { return 1; }
+          if (a < b) { return -1; }
+          if (a > b) { return 1; }
+          return 0;
+        })
+        // remove sort priority prefix
+        .map(function(value) { return value.replace(/^./, "") })
+        // remove non-TAGS eg  [SECTION...  [0]  [a...  etc
+        // and remove any already hard coded in tags object above
         .filter(function(value) {
           var newtag = true;
           if (new RegExp("^(\\[SECTION |\\[[^A-Z])").test(value) ) {
@@ -3929,27 +3954,37 @@ function diff( o, n ) {
           else {
             for (var i in tags) {
               tags[i].rx.lastIndex = 0;
-              if (i == "SETUP..." || i == "FF...")  {
+              if (i == "SETUP... (listed below)"
+                || i == "FF... (listed below)"
+              )  {
+                // pick up these variations (as we only hardcoded them grouped)
                 continue;
               }
               else if (tags[i].rx.test(value)) {
+                // already included (hard coded in tags object above)
                 newtag = false;
               }
             }
           }
+          // keep in extraTags
           if (newtag) { return value }
         });
-      // include the extra tags for detection
+
+      // now include the extra tags for detection (add them to tags object)
       for (var i in extraTags) {
         var iv = extraTags[i].replace(/[\[\]]/g, "");
         tags[iv] = {
           'rx': new RegExp("(\\[" + RegExp.escape(iv) + "\\])", "gi"),
           're': "",
-          'indicator': "",
+          'indicator': "*",
           'secflag': false,
           'subflag': false,
           'titleflag': false,
           'count': 0
+        }
+        if (new RegExp("^(SETUP|FF).+").test(iv)) {
+          // remove the * indicator as these TAGS are in a group too
+          tags[iv].indicator = "";
         }
       }
 
@@ -4106,7 +4141,7 @@ function diff( o, n ) {
                     prefArray[last_index].info += tags[i].indicator + ' ';
                   }
                   prefArray[last_index].tagclass += "TAGS_"
-                    + i.replace(/[^A-Za-z0-9_]/, "__") + " ";
+                    + i.replace(/[^A-Za-z0-9_]/g, "__") + " ";
                   tags[i].count++;
                 }
               }
@@ -4340,12 +4375,14 @@ function diff( o, n ) {
             prefState = "";
           }
 
-          // if we already seen the parrot pref only update the value
+          // only display first instance of parrot pref
           if (prefName == "_user.js.parrot") {
             if (ISawAParrot > -1) {
-              prefArray[ISawAParrot].value = prefValue;
+              // disabled: make first parrot display latest parrot value
+              // prefArray[ISawAParrot].value = prefValue;
               continue;
             }
+            // note index of first parrot (not yet appended)
             ISawAParrot = (prefArray.length);
           }
 
@@ -4377,7 +4414,7 @@ function diff( o, n ) {
                 prefArray[last_index].info += tags[i].indicator + ' ';
               }
               prefArray[last_index].tagclass += "TAGS_"
-                + i.replace(/[^A-Za-z0-9_]/, "__") + " ";
+                + i.replace(/[^A-Za-z0-9_]/g, "__") + " ";
               tags[i].count++;
             }
           }
@@ -4494,7 +4531,7 @@ function diff( o, n ) {
       for (var i in tags) {
         if (tags[i].count > 0) {
           content_html += '  <option value="' + "TAGS_"
-            + i.replace(/[^A-Za-z0-9_]/, "__")
+            + i.replace(/[^A-Za-z0-9_]/g, "__")
             + '">&#x25A2;&#x00A0;&#x00A0;';
           if (tags[i].indicator) {
             content_html += tags[i].indicator
@@ -4525,13 +4562,16 @@ function diff( o, n ) {
         + '</div>'
         + '<div style="width: 100%;" id="tableview_div">'
         + '<br><br><br><br>'
-        + '(see [Filter] button for Info key, and other tags)<br>';
+        + '(see [Filter] button for Info key, and other * tags)<br>\n';
 
       var index_select_html = ''
         + '<option value="" disabled selected hidden>&#x25BE;Index</option>\n'
         + '<option value="0">(TOP)</option>\n';
 
-      var groups_container_html = '';
+      var groups_container_html =
+        '<a target="_blank" href="" id="group_link_showing_table_filter">-'
+        + 'Current Table View (changes with [Filter] button use)'
+        + '</a><br>\n';
 
 
       ////////////////////////////////////////
@@ -4555,6 +4595,7 @@ function diff( o, n ) {
       var section_heading = "";
       var sectionCount = 0;
       var group_user_pref_list = '';
+      var group_user_pref_list_filter = '';
 
       for (var i = 0, len = prefArray.length; i < len; i++) {
 
@@ -4583,7 +4624,7 @@ function diff( o, n ) {
           if (sectionCount > 1) {
             group_user_pref_list = group_user_pref_list.replace(/\|$/, '');
             groups_container_html += group_user_pref_list + ')(;|$)|^$/i">-'
-              + section_heading + '</A><br>\n';
+              + section_heading + '</a><br>\n';
             group_user_pref_list = '';
           }
           groups_container_html +=
@@ -4662,6 +4703,8 @@ function diff( o, n ) {
             if (prefArray[i].name) {
               group_user_pref_list +=
                 prefArray[i].name.replace(/([*.+])/g, "\\$1") + "|";
+              group_user_pref_list_filter +=
+                prefArray[i].name.replace(/([*.+])/g, "\\$1") + "|";
             }
         }
 
@@ -4685,7 +4728,19 @@ function diff( o, n ) {
       content_html += '</div><br><br><br><br>\n';
       document.getElementById("view_area").innerHTML = content_html;
       document.getElementById("index_select").innerHTML = index_select_html;
-      document.getElementById("groups_container").innerHTML = groups_container_html;
+
+      // also remove first group if unused
+      document.getElementById("groups_container").innerHTML =
+        groups_container_html.replace(new RegExp('<a target="_blank"'
+          + ' href="about:config\\?filter='
+          + '\\/\\^\\\\\\*\\$\\|\\^\\(\\)\\(;\\|\\$\\)\\|\\^\\$\\/i">'
+          + '-Introduction<\\/A><br>'), "");
+
+      document.getElementById("group_link_showing_table_filter").href =
+        'about:config?filter=/^\\*$|^('
+        + group_user_pref_list_filter.replace(/\|$/, '')
+        + ')(;|$)|^$/i';
+
       content_html = null;
       index_select_html = null;
       groups_container_html = null;
@@ -4950,10 +5005,10 @@ function diff( o, n ) {
 
     function refocusSection() {
       if (!section_focus) {
-        section_focus = document.getElementById("(TOP) / Introduction");
+        section_focus = document.getElementById("TOP-Introduction");
       }
       section_focus.focus();
-      // if (section_focus == document.getElementById("(TOP) / Introduction")) {
+      // if (section_focus == document.getElementById("TOP-Introduction")) {
       //   section_focus.scrollIntoView(false);
       // }
       // else {
@@ -5504,22 +5559,7 @@ function diff( o, n ) {
           document.getElementById("view_other_button").click();
           document.getElementById("groups_button").click();
           break;
-        case "compare:1:1":
-        case "compare:1:2":
-        case "compare:1:3":
-        case "compare:1:4":
-        case "compare:2:1":
-        case "compare:2:2":
-        case "compare:2:3":
-        case "compare:2:4":
-        case "compare:3:1":
-        case "compare:3:2":
-        case "compare:3:3":
-        case "compare:3:4":
-        case "compare:4:1":
-        case "compare:4:2":
-        case "compare:4:3":
-        case "compare:4:4":
+        case "compare:"+(action.replace(/^compare:/, "")):
           userjsCompareLauncher(action);
           break;
         case "links":
@@ -6108,21 +6148,44 @@ function diff( o, n ) {
       // action buttons
       // *************************************
 
-      // links
+      // arkenfox view
 
-      document.getElementById("links_button").addEventListener("click", function() {
-        return_to_panel = "actions_panel";
-        toggleLinksPanel(true);
-      });
+      document.getElementById('view_arkenfox_button').addEventListener('click', function() {
+        if (
+          document.getElementById("collect_button").style.textDecoration != "line-through"
+        ) {
+          toggleTemplateDiv();
+          downloadFile(
+            "https://raw.githubusercontent.com/arkenfox/user.js/master/user.js",
+            "box_1_template");
+          setTimeout(function(){
+            document.getElementById("tableview_template_button").click();
+          }, 1000);
+        }
+      }, false);
+
+      // arkenfox load
+
+      document.getElementById('load_arkenfox_button').addEventListener('click', function() {
+        if (
+          document.getElementById("collect_button").style.textDecoration != "line-through"
+        ) {
+          toggleTemplateDiv();
+          downloadFile(
+            "https://raw.githubusercontent.com/arkenfox/user.js/master/user.js",
+            "box_1_template");
+        }
+      }, false);
 
       // compare
 
       document.getElementById("compare_select").addEventListener("change", function() {
         // user chooses the textarea input boxes for compare option
-        // get the choice and then make the select element show title (first choice)
-        var boxes_chosen = this.value;
+        // get the choice
+        var choice = this.value;
+        // make the select element show title (first option)
         this.selectedIndex = 0;
-        userjsCompareLauncher(boxes_chosen);
+        userjsCompareLauncher(choice);
       });
 
       // append
@@ -6167,6 +6230,7 @@ function diff( o, n ) {
             "tableview_template_button", "tableview_overrides_button",
             "tableview_userjs_button", "tableview_other_button",
             "clear_template_button", "clear_overrides_button",
+            "view_arkenfox_button", "load_arkenfox_button",
             "compare_select", "skeleton_button", "collect_button",
             "byvalue_button", "togroup_button"
           ] ) {
@@ -6206,6 +6270,7 @@ function diff( o, n ) {
             "tableview_template_button", "tableview_overrides_button",
             "tableview_userjs_button", "tableview_other_button",
             "clear_template_button", "clear_overrides_button",
+            "view_arkenfox_button", "load_arkenfox_button",
             "compare_select", "skeleton_button", "collect_button",
             "byvalue_button", "togroup_button"
           ] ) {
@@ -6281,7 +6346,7 @@ function diff( o, n ) {
         }
       });
 
-      // base64 encode/decode
+      // base64 encode/decode etc
 
       document.getElementById("encode_select").addEventListener("change", function() {
         var choice = this.selectedIndex;
@@ -6327,6 +6392,13 @@ function diff( o, n ) {
       document.getElementById("functions_button").addEventListener("click", function() {
         return_to_panel = "actions_panel";
         toggleFunctionsPanel(true);
+      });
+
+      // links
+
+      document.getElementById("links_button").addEventListener("click", function() {
+        return_to_panel = "actions_panel";
+        toggleLinksPanel(true);
       });
 
       // help
@@ -6464,9 +6536,9 @@ function diff( o, n ) {
 <body onload="userjstoolStart()">
 
 <!-- hidden heading (H1/H3/DL tags for bookmarks import compatibility) -->
-<span class="hidden"><H1>Bookmarks Menu</H1></span><DL>
+<div class="hidden"><H1>Bookmarks Menu</H1></div><DL>
 <!-- >>>> date is inserted here later <<<< -->
-<span id="hiddendate" class="hidden"><H3>--userjs_</H3></span><DL>
+<div id="hiddendate" class="hidden"><H3>--userjs_</H3></div><DL>
 
 
 
@@ -6564,12 +6636,14 @@ title="Close panel" onclick="backButton();"><b>&lt;</b>Back</button>
      ************************************* -->
 
 <br><br><br><br>
-<div id="collect_mode_pad"><br><br><br><br><br><br><br><br><br><br><br><br><br><br></div>
+<div id="collect_mode_pad"><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br>Note: a very basic overrides collector, click value/"user_pref" to toggle.<br>
+You can also edit box 2 above, and don't forget to save what you do.<br><br></div>
 
 <div id="view_area">
 <!-- >>>> section contents (between here) are replaced later <<<< -->
   <button type="button" class="controls borders heading_buttons"
-id="(TOP) / Introduction" >(TOP) / Introduction</button>
+id="TOP-Introduction">(TOP) / Introduction</button>
   <div class="content">
 Please add user.js content under [Menu]&gt;[Actions],
 then use [View], [Table View], or [Compare].
@@ -6588,9 +6662,9 @@ then use [View], [Table View], or [Compare].
 <span class="close_panel_x" onclick="toggleActionsPanel();"
 title="Close [Actions] panel">&times;</span>
 <!-- hidden heading (H1/H3/DL tags for bookmarks import compatibility) -->
-<span class="hidden"><H3>[Actions]</H3></span>
+<div class="hidden"><H3>[Actions]</H3></div>
 <b>[Actions] (Firefox user.js view, compare and more)</b> ([X] closes)<br>
-(Please see "Get started info" below)<br><br>
+(Please see "Hints" below, scroll down)<br><br>
 
 <!-- actions_buttons_bar -->
 
@@ -6625,7 +6699,7 @@ title="Show all boxes">All</button><!--
 title="View box content with HTML, links, etc">View</button><br>
 
 <button type="button" class="controls borders" id="tableview_template_button"
-title="View box content in a table (for arkenfox/user.js)">Table View</button><br>
+title="View box content in a table (for arkenfox user.js)">Table View</button><br>
 
 <select class="controls borders" id="loadsave_template_select"
 title="Select a file and load contents into the box">
@@ -6643,10 +6717,12 @@ name="file" accept=".js" id="load_template_input" />
 
 </td><td class="td2_actions">
 <a target="_blank" rel="external noopener noreferrer"
-class="local_folder" href="user-template.js">Template</a> eg arkenfox/user.js
+class="local_folder" href="user-template.js">Template</a> eg
+<a target="_blank" rel="external noopener noreferrer"
+href="https://github.com/arkenfox/user.js">arkenfox</a>
 <textarea id="box_1_template" autofocus="true"
 ondrop="dropHandler1(event);" ondragover="dragOverHandler(event);"
-placeholder="&#10; Add user.js template here ([Load], drag or paste)&#10;&#10; Then use [View], [Table View], [Compare], or another action button"
+placeholder="&#10; Add user.js template here (Use [Load] button, drag/drop or paste)&#10;&#10; Then use [View], [Table View], [Compare], or another action button"
 ></textarea>
 </td></tr></table></div>
 
@@ -6665,7 +6741,7 @@ title="End the point and click overrides collection"
 title="View box content with HTML, links, etc">View</button><br>
 
 <button type="button" class="controls borders" id="tableview_overrides_button"
-title="View box content in a table (for arkenfox/user.js)">Table View</button><br>
+title="View box content in a table (for arkenfox user.js)">Table View</button><br>
 
 <select class="controls borders" id="loadsave_overrides_select"
 title="Select a file and load contents into the box">
@@ -6686,7 +6762,7 @@ name="file" accept=".js" id="load_overrides_input" />
 class="local_folder" href="user-overrides.js">user-overrides.js</a>
 <textarea id="box_2_overrides"
 ondrop="dropHandler2(event);" ondragover="dragOverHandler(event);"
-placeholder="&#10; Add user-overrides.js here ([Load], drag or paste)&#10;&#10; (or used for action button input/output)"
+placeholder="&#10; Add user-overrides.js here (Use [Load] button, drag/drop or paste)&#10;&#10; (or used for action button input/output)"
 ></textarea>
 </td></tr></table></div>
 
@@ -6704,7 +6780,7 @@ placeholder="&#10; Add user-overrides.js here ([Load], drag or paste)&#10;&#10; 
 title="View box content with HTML, links, etc">View</button><br>
 
 <button type="button" class="controls borders" id="tableview_userjs_button"
-title="View box content in a table (for arkenfox/user.js)">Table View</button><br>
+title="View box content in a table (for arkenfox user.js)">Table View</button><br>
 
 <select class="controls borders" id="loadsave_userjs_select"
 title="Select a file and load contents into the box">
@@ -6725,7 +6801,7 @@ name="file" accept=".js" id="load_userjs_input" />
 class="local_folder" href="user.js">user.js</a>
 <textarea id="box_3_userjs"
 ondrop="dropHandler3(event);" ondragover="dragOverHandler(event);"
-placeholder="&#10; Add user.js here ([Load], drag or paste)&#10;&#10; (or used for action button input/output)"
+placeholder="&#10; Add user.js here (Use [Load] button, drag/drop or paste)&#10;&#10; (or used for action button input/output)"
 ></textarea>
 </td></tr></table></div>
 
@@ -6739,7 +6815,7 @@ placeholder="&#10; Add user.js here ([Load], drag or paste)&#10;&#10; (or used f
 title="View box content with HTML, links, etc">View</button><br>
 
 <button type="button" class="controls borders" id="tableview_other_button"
-title="View box content in a table (for arkenfox/user.js)">Table View</button><br>
+title="View box content in a table (for arkenfox user.js)">Table View</button><br>
 
 <select class="controls borders" id="loadsave_other_select"
 title="Select a file and load contents into the box">
@@ -6764,7 +6840,7 @@ class="local_folder" href="prefs.js">prefs.js</a>
 
 <textarea id="box_4_other"
 ondrop="dropHandler4(event);" ondragover="dragOverHandler(event);"
-placeholder="&#10; Add other/user.js here ([Load], drag or paste)&#10;&#10; (or used for action button input/output)"
+placeholder="&#10; Add other/user.js here (Use [Load] button, drag/drop or paste)&#10;&#10; (or used for action button input/output)"
 ></textarea>
 </td></tr></table></div>
 
@@ -6773,6 +6849,12 @@ placeholder="&#10; Add other/user.js here ([Load], drag or paste)&#10;&#10; (or 
 <!-- actions_buttons_div -->
 
 <div id="actions_buttons_div"><!--
+
+--><button type="button" class="controls borders" id="view_arkenfox_button"
+title="View current arkenfox user.js in a table (Load in Box 1)">View arkenfox &gt;1</button><!--
+
+--><button type="button" class="controls borders" id="load_arkenfox_button"
+title="Load current arkenfox user.js into Box 1">Load arkenfox &gt;1</button><!--
 
 --><select class="controls borders" id="compare_select"
 title="Compare the user_pref of 2 boxes">
@@ -6841,24 +6923,64 @@ title="Functions for about:config (find (filter/list)/reset/set)"
 >a:c Functions</button><!--
 
 --><button type="button" class="controls borders" id="links_button"
-title="Display some useful links (eg: arkenfox/user.js, profile folders)"
+title="Display some useful links (eg: arkenfox user.js, auto-load, profile folders)"
 >Links</button><!--
 
 --><button type="button" class="controls borders" id="help_button"
 >Help/Info</button>
-<br><br><br>Get started info (scroll down):<br>
-<div class="indentdiv">
-<br><li>Place user.js text into a box above using the [Load] button (or
-drag/drop, copy/paste) then click the [View] or [Table View] button, or
-use the [Compare] button after loading two boxes.</li>
-<br><li>The [<b>&lt;</b>Back] button closes the current panel, or returns here
-(you can also choose [Actions] under the [Menu] button to return here).</li>
-<br><li>Hover other buttons for their info, or use [Help/Info] button.</li>
-<br><li>The numbers on the buttons indicate the input>output boxes, contents
-of the output box are replaced, [Collect] amends the output box.</li>
-<br><li>[Index] (section jump) and [Groups] (about:config search) are updated
-when [View]/[Table View]/[Compare] are used.</li>
-</div><br><br><br><br><br>
+
+<br><br><br>Hints:<br>
+
+<ul>
+
+<br><li><a target="_blank" rel="external noopener noreferrer"
+href="?at"
+>To view the current arkenfox user.js in a table</a>
+<br>Click the [View arkenfox] button, or use the above link.</li>
+
+<br><li><a target="_blank" rel="external noopener noreferrer"
+href="?a&action=collect"
+>To collect/create Overrides from arkenfox user.js</a>
+<br>Click [Load arkenfox] then [Collect], or use the above link.</li>
+
+<br><li><b>What do the buttons do?</b>
+<br>Hover mouse over buttons for their info, or click [Help/Info].</li>
+
+<br><li><b>How to return here to [Actions]?</b>
+<br>Click [Menu] choose [Actions], or try the [<b>&lt;</b>Back] button.</li>
+
+<br><li><b>View or compare user.js</b>
+<br>Place user.js text into the box(es) above using the [Load] button (or
+drag/drop, copy/paste) then click [View], [Table View] or [Compare].</li>
+
+<br><li><b>To append your user-overrides.js</b>
+<br>Place the user.js template in Box 1 (or click [Load arkenfox]), place your
+overrides in Box 2, then click [Append], resulting user.js will be in Box 3.</li>
+
+<br><li><b>What are the numbers on some buttons?</b>
+<br>It indicates "input>output" boxes, contents of the output box are
+usually replaced, [Collect] amends the output box.</li>
+
+<br><li><b>[Index] = section jump, [Groups] = about:config search patterns</b>
+<br>These are updated after [View]/[Table View]/[Compare] are used.</li>
+
+<br><li><a target="_blank" rel="external noopener noreferrer"
+href="https://raw.githubusercontent.com/icpantsparti/firefox-user.js-tool/master/userjs-tool-aboutconfig-functions.js"
+>To get more out of about:config (eg: find, filter, list, save to file, etc)</a>
+<br>Click [a:c Functions], or use the above link.</li>
+
+<br><li><a target="_blank" rel="external noopener noreferrer"
+href="?at&groups=true"
+>For searching arkenfox user.js preferences in about:config</a>
+<br>Click [View arkenfox] then [Groups], or use the above link.</li>
+
+<br><li><a target="_blank" rel="external noopener noreferrer"
+href="?box=a&action=togroup&load4=%68ttps://raw.githubusercontent.com/arkenfox/user.js/master/scratchpad-scripts/troubleshooter.js"
+>For searching arkenfox troubleshooter.js preferences in about:config</a>
+<br>Place troubleshooter.js in Box 4 click [To Group], or use the above link.</li>
+
+</ul>
+<br><br><br><br><br>
 </div><!-- end: actions_buttons_div -->
 
 </div><!-- end: actions_panel -->
@@ -6874,10 +6996,10 @@ when [View]/[Table View]/[Compare] are used.</li>
 <span class="close_panel_x" onclick="toggleGroupsPanel();"
 title="Close [Groups] panel">&times;</span>
 <!-- hidden heading (H1/H3/DL tags for bookmarks import compatibility) -->
-<span class="hidden"><H3>[Groups] (paste into about:config search box)</H3></span>
-<b>[Groups] (paste into about:config search box)</b> ([X] closes)<br>
-(links: right click, a, hold Ctrl: T, V, Enter, V)<br>
-(bookmarks: right click, c, left click, Ctrl+V)
+<div class="hidden"><H3>[Groups] (copy/paste into about:config search box)</H3></div>
+<b>[Groups] (copy/paste into about:config search box)</b> ([X] closes)<br>
+(these links: right click, a, hold Ctrl: T, V, Enter, V)<br>
+(if bookmarked: right click, c, left click, Ctrl+V)
 <br><br>
 <!-- >>>> user pref groups (between here) are replaced later <<<< -->
 <div id="groups_container">
@@ -6899,7 +7021,7 @@ then use [View], [Table View], or [Compare].
 <span class="close_panel_x" onclick="toggleLinksPanel();"
 title="Close [Links] panel">&times;</span>
 <!-- hidden heading (H1/H3/DL tags for bookmarks import compatibility) -->
-<span class="hidden"><H3>[Links]</H3></span>
+<div class="hidden"><H3>[Links]</H3></div>
 <b>[Links]</b> ([X] closes)
 
 <br><br>
@@ -6913,15 +7035,24 @@ user.js template example
 <tr><td class="td1_links">
 <a target="_blank" rel="external noopener noreferrer"
 href="https://raw.githubusercontent.com/arkenfox/user.js/master/user.js"
->arkenfox/user.js #</a>
+>arkenfox user.js #</a>
 <br><br>(read their wiki) (listed on privacytools.io)
 <br><br><a target="_blank" rel="external noopener noreferrer"
 href="https://github.com/arkenfox/user.js/issues/123"
->arkenfox/user.js deprecated-removed-legacy prefs (list)</a>
+>arkenfox user.js deprecated-removed-legacy prefs (list)</a>
 </td><td class="td2_links">
 <a target="_blank" rel="external noopener noreferrer"
 href="https://github.com/arkenfox/user.js"
-><span class="hidden">__</span>arkenfox/user.js github project page</a>
+><span class="hidden">__arkenfox user.js </span>project page</a>
+<br><br><a target="_blank" rel="external noopener noreferrer"
+href="https://github.com/arkenfox/user.js/wiki"
+><span class="hidden">__arkenfox user.js </span>wiki</a>
+<br><br><a target="_blank" rel="external noopener noreferrer"
+href="https://github.com/arkenfox/user.js/issues?q=sort%3Aupdated-desc"
+><span class="hidden">__arkenfox user.js </span>issues</a>
+
+
+
 </td></tr>
 </table>
 
@@ -6930,39 +7061,90 @@ href="https://github.com/arkenfox/user.js"
 <br><br>
 Auto-loading (also see [Menu]&gt;[Help/Info]&gt;Initial states)
 <table class="table_links">
-<tr><td class="td1_links">
-?a&box=a&nbsp;
-or: ?box=a&load1=https://raw.githubusercontent.com/arkenfox/user.js/master/user.js
-</td><td class="td2_links">
+
+<tr><td class="td2_links">
 <a target="_blank" rel="external noopener noreferrer"
 href="?a&box=a"
->auto-load arkenfox/user.js</a>
+>Load current arkenfox user.js</a>
+(or specific <a target="_blank" rel="external noopener noreferrer"
+href="?box=a&load1=%68ttps://raw.githubusercontent.com/arkenfox/user.js/master/user.js"
+><span class="hidden">Load current arkenfox user.js/</span>URL</a>)
 </td></tr>
 
-<tr><td class="td1_links">
-?av&nbsp;
-or: ?action=view1&load1=https://raw.githubusercontent.com/arkenfox/user.js/master/user.js
-</td><td class="td2_links">
-<a target="_blank" rel="external noopener noreferrer"
-href="?av"
->auto-load arkenfox/user.js and view</a>
-</td></tr>
-
-<tr><td class="td1_links">
-?at&nbsp;
-or: ?action=table1&load1=https://raw.githubusercontent.com/arkenfox/user.js/master/user.js
-</td><td class="td2_links">
+<tr><td class="td2_links">
 <a target="_blank" rel="external noopener noreferrer"
 href="?at"
->auto-load arkenfox/user.js and table view</a>
+>View current arkenfox user.js in a table</a>
+(or specific <a target="_blank" rel="external noopener noreferrer"
+href="?box=a&action=table1&load1=%68ttps://raw.githubusercontent.com/arkenfox/user.js/master/user.js"
+><span class="hidden">View current arkenfox user.js in a table/</span>URL</a>)
 </td></tr>
 
-<tr><td class="td1_links">
-?load2=data:text/plain;base64,...
-</td><td class="td2_links">
+<tr><td class="td2_links">
+<a target="_blank" rel="external noopener noreferrer"
+href="?av"
+>View current arkenfox user.js with styling</a>
+(or specific <a target="_blank" rel="external noopener noreferrer"
+href="?box=a&action=view1&load1=%68ttps://raw.githubusercontent.com/arkenfox/user.js/master/user.js"
+><span class="hidden">View current arkenfox user.js with styling/</span>URL</a>)
+</td></tr>
+
+<tr><td class="td2_links">
+<a target="_blank" rel="external noopener noreferrer"
+href="?a&action=collect"
+>Overrides collector (using arkenfox)</a> (by clicking values/"user_pref")
+</td></tr>
+
+<tr><td class="td2_links">
 <a target="_blank" rel="external noopener noreferrer"
 href="?load2=data:text/plain;base64,Ly8gdGhpcyB0ZXh0IHdhcyBpbiB0aGUgbGluay9ib29rbWFyayAodXNpbmcgQmFzZTY0KQovLyAoZG8gbm90IHB1dCBhbnl0aGluZyBwcml2YXRlKQoKLy8gdXNlci1vdmVycmlkZXMuanMKLy8vLyAtLS0gYWRkLW92ZXJyaWRlLWNvbW1lbnQgLS0tCi8qKiogVElUTEUgKioqLwp1c2VyX3ByZWYoInByZWYubmFtZSIsIG51bGwpOwovLy8vIC0tLSBjb21tZW50LW91dCAtLS0gJ3ByZWYubmFtZScK"
->load-non-private-text</a>
+>load some non private text (?load2=data:text/plain;base64,...)</a>
+</td></tr>
+</table>
+
+
+<!-- example links for preference groups -->
+<br><br>
+Auto-load about:config Groups (for about:config search box to display multiple preferences)
+<table class="table_links">
+
+<tr><td class="td2_links">
+<a target="_blank" rel="external noopener noreferrer"
+href="?at&groups=true"
+>Groups from arkenfox user.js by section</a>
+(or specific <a target="_blank" rel="external noopener noreferrer"
+href="?groups=true&box=a&action=table1&load1=%68ttps://raw.githubusercontent.com/arkenfox/user.js/master/user.js"
+><span class="hidden">Groups from arkenfox user.js by section/</span>URL</a>)
+</td></tr>
+
+<tr><td class="td2_links">
+<a target="_blank" rel="external noopener noreferrer"
+href="?box=a&action=byvalue&load3=%68ttps://raw.githubusercontent.com/arkenfox/user.js/master/user.js"
+>Groups from arkenfox user.js by value</a>
+</td></tr>
+
+<tr><td class="td2_links">
+<a target="_blank" rel="external noopener noreferrer"
+href="?box=a&action=togroup&load4=%68ttps://raw.githubusercontent.com/arkenfox/user.js/master/scratchpad-scripts/troubleshooter.js"
+>Groups from arkenfox troubleshooter.js</a>
+</td></tr>
+
+<tr><td class="td2_links">
+<a target="_blank" rel="external noopener noreferrer"
+href="?box=a&action=togroup&load4=%68ttps://raw.githubusercontent.com/arkenfox/user.js/master/scratchpad-scripts/arkenfox-clear-deprecated.js"
+>Groups from arkenfox-clear-deprecated.js</a>
+</td></tr>
+
+<tr><td class="td2_links">
+<a target="_blank" rel="external noopener noreferrer"
+href="?box=a&action=togroup&load4=%68ttps://raw.githubusercontent.com/arkenfox/user.js/master/scratchpad-scripts/arkenfox-clear-removed.js"
+>Groups from arkenfox-clear-removed.js</a>
+</td></tr>
+
+<tr><td class="td2_links">
+<a target="_blank" rel="external noopener noreferrer"
+href="?box=a&action=togroup&load4=%68ttps://raw.githubusercontent.com/arkenfox/user.js/master/scratchpad-scripts/arkenfox-clear-RFP-alternatives.js"
+>Groups from arkenfox-clear-RFP-alternatives.js</a>
 </td></tr>
 </table>
 
@@ -6993,14 +7175,14 @@ file:///data/data/org.mozilla.fenix/files/mozilla
 </td><td class="td2_links">
 <a target="_blank" rel="external noopener noreferrer"
 href="file:///data/data/org.mozilla.fenix/files/mozilla"
-><span class="hidden">Firefox profile: </span>Android Preview</a>
+><span class="hidden">Firefox profile: </span>Android Nightly</a>
 </td></tr>
 
 <tr><td class="td1_links">
 file:///Users/USERNAME/Library/Application Support/Firefox/Profiles
 </td><td class="td2_links">
 <a target="_blank" rel="external noopener noreferrer"
-href="file:///Users/USERNAME/Library/Application Support/Firefox/Profiles"
+href="file:///Users/USERNAME/Library/Application%20Support/Firefox/Profiles"
 ><span class="hidden">Firefox profile: </span>OS X</a>
 </td></tr>
 
@@ -7043,7 +7225,7 @@ title="Select all text in the box">Select</button>
 <span class="close_panel_x" onclick="toggleHelpPanel();"
 title="Close [Help] panel">&times;</span>
 <!-- hidden heading (H1/H3/DL tags for bookmarks import compatibility) -->
-<span class="hidden"><H3>[Help/Info]</H3></span>
+<div class="hidden"><H3>[Help/Info]</H3></div>
 <b>[Help/Info] (userjs-tool.html)</b> ([X] closes)<br><br>
 
 
@@ -7059,9 +7241,9 @@ an extension such as: uBlock Origin, uMatrix, NoScript.<br>
 
 <!-- version/links -->
 <br>
-Interactive view, compare, and more for Firefox user.js (eg arkenfox/user.js).<br>
+Interactive view, compare, and more for Firefox user.js (eg arkenfox user.js).<br>
 <br>
-Version&nbsp;&nbsp;&nbsp;: 2020.09.15 (alpha/experimental)<br>
+Version&nbsp;&nbsp;&nbsp;: 2021.03.11 (alpha/experimental)<br>
 
 Project&nbsp;&nbsp;&nbsp;:
 <a target="_blank" rel="external noopener noreferrer"
@@ -7096,7 +7278,7 @@ dependency.&nbsp;Open on-line or save for off-line use.
 Display a Mozilla Firefox user.js settings file contents
 in your Firefox browser, with:<br>
 
-<div class="indentdiv"><div class="indentdiv">
+<ul>
 
 <br><li>highlighting, links, themes*, re-size, wrap,
 about:config links/regex/groups</li>
@@ -7121,11 +7303,11 @@ Web Console (Firefox/forks/Thunderbird/SeaMonkey)</li>
 
 <br><li>open userjs-tool.html on-line or save for off-line use</li>
 
-</div></div>
+</ul>
 
 <br>(*<a target="_blank" rel="external noopener noreferrer"
 href="https://github.com/arkenfox/user.js"
->arkenfox/user.js</a> inspired, see "Acknowledgments" section below.
+>arkenfox user.js &#128142;</a> inspired, see "Acknowledgments" section below.
 &nbsp;Please visit them and read their wiki/info, they
 have nice scripts for append/clean/troubleshoot.)
 
@@ -7149,7 +7331,7 @@ href="http://kb.mozillazine.org/User.js_file"
 >mozillaZine User.js file</a>
 and <a target="_blank" rel="external noopener noreferrer"
 href="https://github.com/arkenfox/user.js/wiki"
->arkenfox/user.js/wiki</a>)
+>arkenfox user.js wiki</a>)
 
 <br><br>The user.js file needs to be placed in your Firefox
 profile folder, type 'about:profiles' into the URL address box
@@ -7157,14 +7339,14 @@ to help find this. &nbsp;Make a backup copy of your Firefox
 profile folder.
 
 <br><br>Various online sites provide details of user_pref settings.
-&nbsp;Some projects (ie arkenfox/user.js) publish their user.js
+&nbsp;Some projects (ie arkenfox user.js) publish their user.js
 template, with instructions and information/wiki.
 &nbsp;These projects may update their content regularly,
 keep your user.js up to date, settings may also change with
 each Firefox version.
 
 <br><br>A user-overrides.js file is not used directly by Firefox,
-it is a arkenfox/user.js idea, please read about this at the wiki
+it is a arkenfox user.js idea, please read about this at the wiki
 link given above. &nbsp;Basically, you take a projects user.js
 template, and append your user-overrides.js onto it, to form
 your user.js. &nbsp;The user-overrides.js file contains your
@@ -7192,7 +7374,7 @@ Load user.js content into the text boxes by:<br>
 <div class="indentdiv"><br>
 Paste the content into the text boxes under [Menu]&gt;[Actions].
 &nbsp;Open the user.js first in a text editor or in a browser tab to copy it.
-&nbsp;A link for arkenfox/user.js is provided under [Menu]&gt;[Links].
+&nbsp;A link for arkenfox user.js is provided under [Menu]&gt;[Links].
 <br><br>
 The links shown above the text input boxes can also be used to open files in
 a browser tab for copy/paste.
@@ -7269,7 +7451,7 @@ comments as in-line comments, if you set this off some inactive user_pref
 will have '//' preceding them, others within '/* */' comment blocks (which
 may be multi-line) will have no style indicating they are inactive.
 <br><br>
-Some arkenfox/user.js sections (such as: RFP ALTERNATIVES, and
+Some arkenfox user.js sections (such as: RFP ALTERNATIVES, and
 DEPRECATED/ESR) use comment blocks, a text editor (such as Kate, Notepad++,
 or Meld diff tool) would grey out everything in those commented sections,
 this viewer does not.
@@ -7333,7 +7515,7 @@ and paste the link into the about:config search box
 <br><details><summary>BOOKMARKING (not recommended: they get out dated)</summary>
 <div class="indentdiv"><br>
 The links will open from bookmarks, mass import them by:
-<div class="indentdiv">
+<ul>
 <li>when viewing the user.js use the browser's "Save
 Page As..." (Ctrl+S) to save a HTML file (remove it afterwards)</li>
 <li>go into the browser's "Library", "Bookmarks", "Show All
@@ -7341,7 +7523,7 @@ Bookmarks" (Ctrl+Shift+B or Ctrl+Shift+O)</li>
 <li>consider using bookmarks "Backup..." as a precaution</li>
 <li>use "Import Bookmarks from HTML..." (may be slow)</li>
 <li>keep them up to date (remove/replace)</li>
-</div>
+</ul>
 <br></div></details>
 <div class="indentdiv">
 (bookmarks FF71+ too: right click, c, left click, Ctrl+V)
@@ -7351,7 +7533,7 @@ Bookmarks" (Ctrl+Shift+B or Ctrl+Shift+O)</li>
 <div class="indentdiv"><br>
 You can use the regular expressions from the links with
 JavaScript functions to access preferences, copy/paste/edit or:<br>
-<div class="indentdiv"><div class="indentdiv">
+<ul>
 <li>Use the [Menu]&gt;"Function about:config link" option to style the
 about:config links as "about:blank#ujtFindPref({style:3,name:REGEX});"</li>
 <li>When on the about:config page open Firefox
@@ -7363,7 +7545,7 @@ preferences see the [Menu]&gt;[Actions]&gt;[a:c Functions] button for
 var ujtFindPref = function(options) { anotherFunction(options["name"]); };</li>
 <li>Copy/paste the link to use into the Web Console,
 you must remove the "about:blank#" prefix.
-</div></div>
+</ul>
 </div></details>
 
 </div>
@@ -7391,7 +7573,7 @@ Some initial states can be set with (one or more) URL parameter variables:<br>
 <div class="indentdiv">
 PATH/userjs-tool.html<b>?</b>option=value<b>&amp;</b>option=value...
 </div><br>
-<div class="indentdiv"><div class="indentdiv">
+<ul>
 <li>size=80&nbsp;&nbsp;(font size percent, default: 100, Android: 150)</li>
 <li>wrap=true&nbsp;&nbsp;(line wrap)</li>
 <li>expand=true&nbsp;&nbsp;(Expand all sections on View)</li>
@@ -7409,20 +7591,22 @@ above the input boxes), default: same folder as userjs-tool.html)</li>
 <li>action=ACTION&nbsp;&nbsp;(when loadX=URL used), ACTION:
 <div class="indentdiv">
 viewX&nbsp;&nbsp;(view box number 0(none)|1|2|3|4)<br>
-tableX&nbsp;&nbsp;(table view (arkenfox/user.js) of box number 1|2|3|4)<br>
+tableX&nbsp;&nbsp;(table view (arkenfox user.js) of box number 1|2|3|4)<br>
 groupsX&nbsp;&nbsp;(show [Groups] for box number 1|2|3|4)<br>
 compare:X:Y&nbsp;&nbsp;(compare box numbers 1|2|3|4 and 1|2|3|4)<br>
+compare:X:Y:show&nbsp;&nbsp;(show: groupx6|groupx12|multiple|az|unsorted|diffstring)<br>
+compare:X:Y:show:layout&nbsp;&nbsp;(layout: 5column|3column|2column)<br>
 append,skeleton,collect,reduce,clean,byvalue,togroup<br>
 </div>
 </li>
 <li>jump=TEXT&nbsp;&nbsp;(expand/focus first section containing TEXT with auto-load)</li>
-<li>g&nbsp;&nbsp;(auto-load arkenfox/user.js)</li>
-<li>gv&nbsp;&nbsp;(auto-load arkenfox/user.js and view)</li>
-<li>gt&nbsp;&nbsp;(auto-load arkenfox/user.js and table view)</li>
-</div></div>
+<li>a&nbsp;&nbsp;(auto-load arkenfox user.js)</li>
+<li>av&nbsp;&nbsp;(auto-load arkenfox user.js and view)</li>
+<li>at&nbsp;&nbsp;(auto-load arkenfox user.js and table view)</li>
+</ul>
 <br>
 <details><summary>Examples</summary>
-<div class="indentdiv"><br><div class="indentdiv">
+<ul>
 <li>https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html</li>
 <li>file:///C:/Users/USERNAME/Downloads/userjs-tool.html</li>
 <li>file:///home/USERNAME/Downloads/userjs-tool.html</li>
@@ -7433,21 +7617,21 @@ append,skeleton,collect,reduce,clean,byvalue,togroup<br>
 <li>?av or ?action=view1&amp;box=a&amp;load1=https://raw.githubusercontent.com/arkenfox/user.js/master/user.js</li>
 <li>?at or ?action=table1&amp;box=a&amp;load1=https://raw.githubusercontent.com/arkenfox/user.js/master/user.js</li>
 <li>?action=compare:1:4&box=a&load1=https://raw.githubusercontent.com/arkenfox/user.js/master/user.js&load4=https://raw.githubusercontent.com/arkenfox/user.js/72.0/user.js</li>
-</div></div></details>
+</ul></details>
 <br></div><hr></details>
 
 
 <!-- Acknowledgments -->
 <br><details><summary>Acknowledgments</summary>
-<div class="indentdiv"><div class="indentdiv">
+<ul>
 <br>
 <li>Many thanks to <a target="_blank" rel="external noopener noreferrer"
 href="https://github.com/arkenfox/user.js"
->https://github.com/arkenfox/user.js</a> and all particiPANTS.
+>https://github.com/arkenfox/user.js &#128142;</a> and all particiPANTS.
 &nbsp;The HTML rendered view of user.js follows a similar style (and
-dark/light theme) to the static HTML that arkenfox/user.js once produced.
+dark/light theme) to the static HTML that arkenfox user.js once produced.
 user-overrides.js append, prefs.js cleaner, //// --- comment-out --- are
-arkenfox/user.js methods.</li>
+arkenfox user.js methods.</li>
 <br>
 <li>Thanks <a target="_blank" rel="external noopener noreferrer"
 href="http://www.ghacks.net/"
@@ -7468,7 +7652,7 @@ which inspired [Compare] (not a port).</li>
 <br>
 <li><a target="_blank" rel="external noopener noreferrer"
 href="https://github.com/overdodactyl"
->https://github.com/overdodactyl</a> made a work in progress prototype
+>https://github.com/overdodactyl &#129436;</a> made a work in progress prototype
 (on shinyapps.io) in early 2019 which inspired [Table View] (not a port).</li>
 <br>
 <li><a target="_blank" rel="external noopener noreferrer"
@@ -7485,8 +7669,9 @@ href="https://kate-editor.org/get-it/">Kate (text editor)</a></li>
 <br>
 <li><a target="_blank" rel="external noopener noreferrer"
 href="http://meldmerge.org/">Meld (visual diff/merge)</a></li>
-</div>
-<br></div><hr></details>
+<br>
+</ul>
+<hr></details>
 
 
 <!-- input box buttons -->
@@ -7496,7 +7681,7 @@ Closing or refreshing the browser tab will lose any content added into
 the [Action] text boxes.<br>
 <br>
 These buttons are on the left of each text input box:<br>
-<div class="indentdiv">
+<ul>
 <br>
 <li>&#x25A3;ro Indicates the box is readonly, click to toggle.</li>
 <br>
@@ -7523,7 +7708,7 @@ choose the location and file name).</li>
 <li>[Select] highlight all text in the box.</li>
 <br>
 <li>[Clear] the text in the box (and switch readonly off).</li>
-</div>
+</ul>
 <br></div><hr></details>
 
 
@@ -7549,18 +7734,18 @@ href="https://github.com/claustromaniac/Compare-UserJS"
 >https://github.com/claustromaniac/Compare-UserJS &#128570;</a>.
 <br><br>
 Display options:<br><br>
-<div class="indentdiv"><div class="indentdiv">
-<li>[Group x6] (by value/state)</li>
-<li>[Group x12] (by value/state/active/inactive)</li>
-<li>[Multiple] (by multiple occurrence/alphabetical)</li>
-<li>[A-Z] (by alphabetical)</li>
-<li>[Unsorted] (by order found)</li>
-<li>[DiffStr] (string difference)
-<br>&nbsp;&nbsp;(Uses an embedded 3rd party library, see Help/Acknowledgments)
-<br>&nbsp;&nbsp;(It is better to use file comparison software, eg meld)
-</li>
-<li>[Layout] (change table between 5columnx1row 3columnx2row 2columnx2row)</li>
-</div></div>
+<ul>
+  <li>[Group x6] (by value/state)</li>
+  <li>[Group x12] (by value/state/active/inactive)</li>
+  <li>[Multiple] (by multiple occurrence/alphabetical)</li>
+  <li>[A-Z] (by alphabetical)</li>
+  <li>[Unsorted] (by order found)</li>
+  <li>[DiffStr] (string difference)
+    <br>&nbsp;&nbsp;(Uses an embedded 3rd party library, see Help/Acknowledgments)
+    <br>&nbsp;&nbsp;(It is better to use file comparison software, eg meld)
+  </li>
+  <li>[Layout] (change table between 5columnx1row 3columnx2row 2columnx2row)</li>
+</ul>
 </div></details>
 
 <!-- Actions - [Append] -->
@@ -7596,7 +7781,7 @@ appended user-overrides.js part of the output as in-line comments (//).
 <details><summary>[Collect 1&gt;+2]</summary>
 <div class="indentdiv"><br>
 Helps to create a user-overrides.js, by allowing point/click/edit collection
-of user_pref.
+of user_pref. (Note: this is very basic)
 <br><br>
 It first takes you into the usual viewing of Box 1 content, with the
 added ability to:
@@ -7738,200 +7923,338 @@ https://raw.githubusercontent.com/icpantsparti/firefox-user.js-tool/master/userj
 -->
 <div id="base64_aboutconfig_functions" class="hidden">
 Ly8gSmF2YVNjcmlwdCBmdW5jdGlvbnMgZm9yIE1vemlsbGEgRmlyZWZveC9UaHVuZGVyYmlyZCBh
-Ym91dDpjb25maWcKLy8gZmluZCAoZmlsdGVyL2xpc3QpL3Jlc2V0L3NldCB1c2VyIHByZWZlcmVu
-Y2VzIGFuZCB2YWx1ZXMKLy8KLy8gTmFtZSAgICAgICAgIDogdXNlcmpzLXRvb2wtYWJvdXRjb25m
-aWctZnVuY3Rpb25zLmpzCi8vIFByb2plY3QgICAgICA6IGh0dHBzOi8vZ2l0aHViLmNvbS9pY3Bh
-bnRzcGFydGkvZmlyZWZveC11c2VyLmpzLXRvb2wKLy8gVmVyc2lvbiAgICAgIDogMjAyMC4wOS4x
-NSAoYWxwaGEvZXhwZXJpbWVudGFsKQovLyBGaWxlICAgICAgICAgOiBodHRwczovL3Jhdy5naXRo
-dWJ1c2VyY29udGVudC5jb20vaWNwYW50c3BhcnRpL2ZpcmVmb3gtdXNlci5qcy10b29sL21hc3Rl
-ci91c2VyanMtdG9vbC1hYm91dGNvbmZpZy1mdW5jdGlvbnMuanMKLy8gTGljZW5zZSAoTUlUKTog
-aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2ljcGFudHNwYXJ0aS9maXJlZm94LXVz
-ZXIuanMtdG9vbC9tYXN0ZXIvTElDRU5TRQovLyBEaXNjbGFpbWVyICAgOiBVc2Ugd2l0aCBjYXJl
-IGF0IHlvdXIgb3duIHJpc2ssIGFuZCB2ZXJpZnkgYW55IHJlc3VsdHMKLy8KLy8gUGFzdGUgdGhp
-cyB0ZXh0IGludG8gdGhlIGNvbnNvbGUgdG8gYWRkIHRoZSBmdW5jdGlvbnM6Ci8vIEZpcmVmb3g6
-IG9wZW4gJ2Fib3V0OmNvbmZpZycgdGhlbiBXZWIgQ29uc29sZSAoQ3RybCtTaGlmdCtLKQovLyBB
-bmRyb2lkL1JlbW90ZTogJ2Fib3V0OmRlYnVnZ2luZycgb24gUEMsICdhYm91dDpjb25maWcnIG9u
-IHRhcmdldCBkZXZpY2UKLy8gVGh1bmRlcmJpcmQ6IFRvb2xzPkRldmVsb3BlciBUb29scz5Db250
-ZW50IEZyYW1lIERlYnVnZ2VyPlRhYnM+RGVidWc+Q29uc29sZQovLwovLyBGdW5jdGlvbiAgICAg
-OiB1anRGaW5kUHJlZiggeyBzdHlsZTowLCBtb2RpZmllZDovW3luXS8sIGxvY2tlZDovW3luXS8s
-IHR5cGU6L1tiaXNdLywgbmFtZTovLiovaSwgdmFsdWU6Ly4qL2kgfSApOwovLyBGdW5jdGlvbiAg
-ICAgOiB1anRSZXNldFByZWYocHJlZik7Ci8vIEZ1bmN0aW9uICAgICA6IHVqdFNldFByZWYocHJl
-ZiwgdmFsdWUpOwovLyBBbGlhcyAgICAgICAgOiB1c2VyX3ByZWYgPSB1anRTZXRQcmVmOyAgLy8g
-c2VlIG5vdGVzCi8vCi8vIEV4YW1wbGVzIHVqdEZpbmRQcmVmOgovLyAgIHVqdEZpbmRQcmVmKCk7
-ICAgICAgICAgICAgICAgICAgICAgICAvLyBzaG93IHVzYWdlIGluZm8KLy8gICB1anRGaW5kUHJl
-Zih7c3R5bGU6M30pOyAgICAgICAgICAgICAgLy8gbGlzdCBhbGwgKHVzZXJfcHJlZiBzdHlsZSkK
-Ly8gICB1anRGaW5kUHJlZih7c3R5bGU6Mn0pOyAgICAgICAgICAgICAgLy8gbGlzdCBhbGwgKGZv
-ciBzcHJlYWRzaGVldCkKLy8gICB1anRGaW5kUHJlZih7bW9kaWZpZWQ6L3kvfSk7ICAgICAgICAg
-Ly8gZmluZCBtb2RpZmllZCAoZm9yIGFib3V0OmNvbmZpZyBzZWFyY2ggYm94KQovLyAgIHVqdEZp
-bmRQcmVmKHtsb2NrZWQ6L3kvfSk7ICAgICAgICAgICAvLyBmaW5kIGxvY2tlZCAoZm9yIGFib3V0
-OmNvbmZpZyBzZWFyY2ggYm94KQovLyAgIHVqdEZpbmRQcmVmKHt2YWx1ZTovZ29vZ2xlL2l9KTsg
-ICAgICAvLyBmaW5kIHZhbHVlIChmb3IgYWJvdXQ6Y29uZmlnIHNlYXJjaCBib3gpCi8vICAgdWp0
-RmluZFByZWYoe3N0eWxlOjMsbmFtZTovYWN0aXZpdHktc3RyZWFtL2l9KTsgICAgICAgICAgICAg
-ICAgICAgIC8vIHBhcnQgbmFtZQovLyAgIHVqdEZpbmRQcmVmKHtzdHlsZTozLG5hbWU6L15leHRl
-bnNpb25zXC5wb2NrZXRcLmVuYWJsZWQkL2l9KTsgICAgICAvLyB3aG9sZSBuYW1lCi8vICAgdWp0
-RmluZFByZWYoe3N0eWxlOjMsbmFtZTovXih3aG9sZXxzdGFydC4qfC4qbWlkZGxlLip8LiplbmQp
-JC9pfSk7IC8vIG11bHRpIG5hbWUKLy8gICB1anRGaW5kUHJlZih7bW9kaWZpZWQ6L3kvLHR5cGU6
-L2IvLHZhbHVlOi9eZmFsc2UkL2l9KTsgLy8gZmluZCBtb2RpZmllZCBib29sZWFuIGZhbHNlCi8v
-Ci8vIEdlbmVyYWwgTm90ZXM6Ci8vICAgKiBvbiBjb25zb2xlIHJpZ2h0IGNsaWNrIHJlc3VsdHMg
-IkNvcHkgb2JqZWN0IiAvIGxlZnQgY2xpY2sgZXhwYW5kL2NvbnRyYWN0Ci8vICAgKiBjbGVhciBj
-b25zb2xlL2NvbW1hbmQgaGlzdG9yeTogIGNsZWFyKCk7ICBjbGVhckhpc3RvcnkoKTsKLy8gICAq
-IFRodW5kZXJiaXJkIGNvbnNvbGUgdG8gb3BlbiBhYm91dDpjb25maWc6IHdpbmRvdy5vcGVuRGlh
-bG9nKCJhYm91dDpjb25maWciKTsKLy8gICAqIGlmIHVzaW5nIHJlbW90ZSBkZWJ1Z2dpbmcgdG8g
-YWNjZXNzIGFub3RoZXIgZGV2aWNlIChlZyBBbmRyb2lkKToKLy8gICAgIFBDOiB1c2UgJ2Fib3V0
-OmRlYnVnZ2luZycgKG9sZGVyIEZpcmVmb3ggd2FzIFdlYklERS9TY3JhdGNocGFkKQovLyAgICAg
-VGFyZ2V0OiAnYWJvdXQ6Y29uZmlnJyBvcGVuLCAiUmVtb3RlIGRlYnVnZ2luZyIgZW5hYmxlZCBp
-biBGaXJlZm94IHNldHRpbmdzCi8vICAgICAgICAgICAgICJVU0IgZGVidWdnaW5nIiBlbmFibGVk
-IGluIEFuZHJvaWQgRGV2ZWxvcGVyIHNldHRpbmdzCi8vICAgICByZTogaHR0cHM6Ly9naXRodWIu
-Y29tL2Fya2VuZm94L3VzZXIuanMvd2lraS8xLjYtRmlyZWZveC1BbmRyb2lkCi8vICAgICBhbHNv
-IHJlIGFya2VuZm94L3VzZXIuanMvd2lraTogdW5ibG9jayBhYm91dDpjb25maWcgaW4gbmV3ZXIg
-dmVyc2lvbnMgKEZGNzErPyk6Ci8vICAgICB1c2VyX3ByZWYoImdlbmVyYWwuYWJvdXRDb25maWcu
-ZW5hYmxlIiwgdHJ1ZSk7Ci8vICAgKiBzZXQgJ3VzZXJfcHJlZicgYWxpYXMgaWYgeW91IHdhbnQg
-dG8gcGFzdGUgJ3VzZXIuanMnIGNvZGUgdG8gcnVuIGEgZnVuY3Rpb24KLy8gICAgIGVnIGVudGVy
-ICd1c2VyX3ByZWYgPSB1anRTZXRQcmVmOycgb3IgJ3VzZXJfcHJlZiA9IHVqdFJlc2V0UHJlZjsn
-Ci8vICAgKiBhbHNvIHdvcmtzIHRocm91Z2ggQnJvd3Nlci9FcnJvciBDb25zb2xlIChDdHJsK1No
-aWZ0K0opCi8vCi8vIHVqdEZpbmRQcmVmIE5vdGVzOgovLyAgICogc3R5bGU6Ci8vICAgICAgIDA9
-cmVnZXggICAgIHBhc3RlIHJlc3VsdCBpbnRvIHRoZSBhYm91dDpjb25maWcgc2VhcmNoIGJveCAo
-ZGVmYXVsdCkKLy8gICAgICAgMT1ib29rbWFyayAgJ2Fib3V0OmNvbmZpZz9maWx0ZXI9JyAoRkY3
-MSsgY29weSwgY2xpY2ssIHBhc3RlIGluIHNlYXJjaCkKLy8gICAgICAgMj1saXN0ICAgICAgICAg
-ICAgICAgIHBhc3RlIGludG8gYSBzcHJlYWRzaGVldCBmb3Igc29ydC9maWx0ZXIvc2VhcmNoCi8v
-ICAgICAgIDM9dXNlcl9wcmVmK2NvbW1lbnRzICB1c2VyX3ByZWYoInByZWYiLCB2YWx1ZSk7ICAv
-LyBsb2NrZWQgIC8vIG1vZGlmaWVkCi8vICAgICAgIDQ9dXNlcl9wcmVmICAgICAgICAgICB1c2Vy
-X3ByZWYoInByZWYiLCB2YWx1ZSk7Ci8vICAgKiBtb2RpZmllZC9sb2NrZWQ6IHk9eWVzIG49bm8g
-Ly8gdHlwZTogYj1ib29sZWFuIGk9aW50ZWdlciBzPXN0cmluZwovLyAgICogcmV0dXJucyBhbmQg
-bmV3bGluZXMgaW4gcHJlZmVyZW5jZSB2YWx1ZXMgYXJlIHJlcGxhY2VkIGFzIFxyIFxuCi8vICAg
-KiBzb21lIHByZWZzIHNob3cgImNocm9tZTouLi4iIGFuZCBub3QgdGhlIHZhbHVlLCByZWZlciB0
-byBhYm91dDpjb25maWcKLy8gICAgIChmaW5kIHRoZSBwcmVmcyBhZmZlY3RlZCB3aXRoOiB1anRG
-aW5kUHJlZih7J3ZhbHVlJzovXmNocm9tZTovaX0pOykKLy8gICAqIHNvbWUgcHJlZnMgc2hvdyBh
-cyBtb2RpZmllZCBpbnN0ZWFkIG9mIGRlZmF1bHQgKHNhbWUgd2l0aCBhYm91dDpjb25maWcpCi8v
-ICAgICB0aGV5IGhhdmUgYmVlbiB1c2VyIHNldCBzb21ld2hlcmUgdG8gc2FtZSBhcyBkZWZhdWx0
-IChwZXJoYXBzIHVzZXIuanMpCi8vICAgKiBoaWRkZW4gcHJlZnMgb25seSBzaG93IHVwIGlmIHRo
-ZXkgd2VyZSBjcmVhdGVkIChzYW1lIHdpdGggYWJvdXQ6Y29uZmlnKQovLwovLyB1anRTZXRQcmVm
-L3VqdFJlc2V0UHJlZiBOb3RlczoKLy8gICAqIHRoaXMgaXMgbWFpbmx5IGludGVuZGVkIGZvciB3
-aGVuIGluamVjdGluZyBwcmVmZXJlbmNlcyB0byBBbmRyb2lkCi8vICAgKiBvbiBkZXNrdG9wIHlv
-dSB3b3VsZCB1c3VhbGx5IHVzZSB1c2VyLmpzL3Byb2ZpbGVzIGZvciBwcmVmZXJlbmNlIGNvbnRy
-b2wKLy8gICAgIChhbHRob3VnaCB1anRSZXNldFByZWYgY291bGQgYmUgdXNlZnVsIGZvciBiYXRj
-aCBjbGVhcmluZyBwcmVmcykKLy8gICAqIGluY29ycmVjdCB1c2FnZSByaXNrcyBtZXNzaW5nIHVw
-IHlvdXIgRmlyZWZveCBzZXR0aW5ncyAoaWYgeW91IGFyZSB1c2luZwovLyAgICAgdGhpcyBvbiBk
-ZXNrdG9wOiBiYWNrdXAgeW91ciBGaXJlZm94IHByb2ZpbGUsIG9yICdwcmVmcy5qcycgYXQgbGVh
-c3QsCi8vICAgICBhbmQgcmVtZW1iZXIgdGhhdCB1c2VyLmpzIGNhbiBvdmVycmlkZSBjaGFuZ2Vz
-IG9uIEZpcmVmb3ggcmVzdGFydCkKLy8gICAqIHVqdFNldFByZWYgb3V0cHV0cyAnY3JlYXRpbmcn
-IHRvIHRoZSBjb25zb2xlIHdoZW4gdGhlIHByZWZlcmVuY2UgZGlkCi8vICAgICBub3QgYWxyZWFk
-eSBleGlzdCAodGhlc2UgYXJlIGVpdGhlciBoaWRkZW4gcHJlZmVyZW5jZXMsIG9yIGludmFsaWQp
-Ci8vCi8vIEFja25vd2xlZGdtZW50cyAodGhpcyBpcyBiYXNlZCBvbiBpbmZvL2NvZGUgZnJvbSk6
-Ci8vICAgaHR0cHM6Ly9naXRodWIuY29tL2Fya2VuZm94L3VzZXIuanMKLy8gICAgIGh0dHBzOi8v
-Z2l0aHViLmNvbS9hcmtlbmZveC91c2VyLmpzL3RyZWUvbWFzdGVyL3NjcmF0Y2hwYWQtc2NyaXB0
-cwovLyAgICAgICBodHRwczovL2dpdGh1Yi5jb20vYXJrZW5mb3gvdXNlci5qcy9ibG9iL21hc3Rl
-ci9zY3JhdGNocGFkLXNjcmlwdHMvYXJrZW5mb3gtY2xlYXItcmVtb3ZlZC5qcwovLyAgICAgICBo
-dHRwczovL2dpdGh1Yi5jb20vYXJrZW5mb3gvdXNlci5qcy9ibG9iL21hc3Rlci9zY3JhdGNocGFk
-LXNjcmlwdHMvdHJvdWJsZXNob290ZXIuanMKLy8gICAgIGh0dHBzOi8vZ2l0aHViLmNvbS9hcmtl
-bmZveC91c2VyLmpzL3dpa2kvMS42LUZpcmVmb3gtQW5kcm9pZAovLyAgIGh0dHBzOi8vc3RhY2tv
-dmVyZmxvdy5jb20vcXVlc3Rpb25zLzM3OTYwODQvYWJvdXQtY29uZmlnLXByZWZlcmVuY2VzLWFu
-ZC1qcwovLyAgIGh0dHBzOi8vZGV2ZWxvcGVyLm1vemlsbGEub3JnL2VuLVVTL2RvY3MvTW96aWxs
-YS9KYXZhU2NyaXB0X2NvZGVfbW9kdWxlcy9TZXJ2aWNlcy5qc20KLy8gICBodHRwOi8vd3d3Lm9w
-ZW5qcy5jb20vYXJ0aWNsZXMvb3B0aW9uYWxfZnVuY3Rpb25fYXJndW1lbnRzLnBocAovLyAgIGh0
-dHBzOi8vZHhyLm1vemlsbGEub3JnL21vemlsbGEtY2VudHJhbC9zb3VyY2UvbW9kdWxlcy9saWJw
-cmVmL25zSVByZWZCcmFuY2guaWRsIzMxCgppZiAodHlwZW9mKFNlcnZpY2VzKSA9PSAidW5kZWZp
-bmVkIikgewogIGNvbnNvbGUubG9nKCIvLyByZXF1aXJlcyBTZXJ2aWNlcyAoZWcgYWJvdXQ6Y29u
-ZmlnIGFzIGFjdGl2ZSB0YWIpIik7Cn0KLy8gb2xkZXIgdmVyc2lvbnMgb2YgRmlyZWZveC9mb3Jr
-cy9UaHVuZGVyYmlyZC9TZWFNb25rZXkgdXNlIC4uLkNoYXJQcmVmCnZhciB1anRVc2VDaGFyUHJl
-ZiA9ICEodHlwZW9mKFNlcnZpY2VzLnByZWZzLmdldFN0cmluZ1ByZWYpID09ICJmdW5jdGlvbiIp
-OwoKdmFyIHVqdEZpbmRQcmVmID0gZnVuY3Rpb24ob3B0aW9ucykgewogIHZhciByZXN1bHQgPSAi
-IjsKICBpZiAodHlwZW9mIG9wdGlvbnMgPT0gInVuZGVmaW5lZCIpIHsKICAgIC8vIGlmIG5vIG9w
-dGlvbnMgc3BlY2lmaWVkIHNob3cgc29tZSBpbmZvCiAgICByZXN1bHQgPSAiLy8gdXNhZ2U6XG4i
-CiAgICAgICsgJy8vIHVqdEZpbmRQcmVmKCB7IHN0eWxlOjAsIG1vZGlmaWVkOi9beW5dLywgbG9j
-a2VkOi9beW5dLywgdHlwZTovW2Jpc10vLCBuYW1lOi8uKi9pLCB2YWx1ZTovLiovaSB9ICk7XG4n
-CiAgICAgICsgJy8vICAgc3R5bGU6IDA9cmVnZXggMT1ib29rbWFyayAyPWxpc3QgMz11c2VyX3By
-ZWYrY29tbWVudHMgND11c2VyX3ByZWZcbicKICAgICAgKyAnLy8gICBtb2RpZmllZC9sb2NrZWQ6
-IHk9eWVzIG49bm8gLy8gdHlwZTogYj1ib29sZWFuIGk9aW50ZWdlciBzPXN0cmluZ1xuJwogICAg
-ICArICcvLyB1anRGaW5kUHJlZih7bW9kaWZpZWQ6L3kvfSk7ICAvLyBmaW5kIG1vZGlmaWVkIChm
-b3IgYWJvdXQ6Y29uZmlnIHNlYXJjaCBib3gpXG4nCiAgICAgICsgJy8vIHVqdEZpbmRQcmVmKHtz
-dHlsZToyfSk7ICAgICAgIC8vIGxpc3QgYWxsIChmb3Igc3ByZWFkc2hlZXQpXG4nCiAgICAgICsg
-Jy8vIHVqdEZpbmRQcmVmKHtzdHlsZTozfSk7ICAgICAgIC8vIGxpc3QgYWxsICh1c2VyX3ByZWYg
-c3R5bGUpXG4nOwogIH0KICBlbHNlIHsKICAgIC8vIHByZXBhcmUgZm9yIG9wdGlvbnMgYmVpbmcg
-YSBzaW5nbGUgcmVnZXgvc3RyaW5nCiAgICB2YXIgbm9BcmdzTWF0Y2hlZCA9IHRydWUsIG5hbWVP
-bmx5ID0gb3B0aW9uczsKICAgIGlmICh0eXBlb2Ygb3B0aW9ucyA9PSAic3RyaW5nIikgewogICAg
-ICBuYW1lT25seSA9IG5ldyBSZWdFeHAob3B0aW9ucywgImkiKTsKICAgICAgb3B0aW9ucyA9IHt9
-OwogICAgfQogICAgLy8gZW5mb3JjZSBkZWZhdWx0cyBmb3IgdW5zcGVjaWZpZWQgb3B0aW9ucwog
-ICAgdmFyIGRlZmF1bHRBcmdzID0geyAnc3R5bGUnOiAwLCAnbW9kaWZpZWQnOiAvLiovLCAnbG9j
-a2VkJzogLy4qLywKICAgICAgJ3R5cGUnOiAvLiovLCAnbmFtZSc6IC8uKi8sICd2YWx1ZSc6IC8u
-Ki8gfQogICAgZm9yKHZhciBpIGluIGRlZmF1bHRBcmdzKSB7CiAgICAgIGlmICh0eXBlb2Ygb3B0
-aW9uc1tpXSA9PSAidW5kZWZpbmVkIikgewogICAgICAgIG9wdGlvbnNbaV0gPSBkZWZhdWx0QXJn
-c1tpXTsKICAgICAgfQogICAgICBlbHNlIGlmICh0eXBlb2Ygb3B0aW9uc1tpXSA9PSAic3RyaW5n
-IikgewogICAgICAgIG9wdGlvbnNbaV0gPSBuZXcgUmVnRXhwKG9wdGlvbnNbaV0sICJpIik7CiAg
-ICAgICAgbm9BcmdzTWF0Y2hlZCA9IGZhbHNlOwogICAgICB9CiAgICAgIGVsc2UgewogICAgICAg
-IG5vQXJnc01hdGNoZWQgPSBmYWxzZTsKICAgICAgfQogICAgfQogICAgLy8gd2hlbiBvcHRpb25z
-IHdhcyBhIHNpbmdsZSByZWdleC9zdHJpbmcKICAgIGlmIChub0FyZ3NNYXRjaGVkKSB7CiAgICAg
-IG9wdGlvbnNbInN0eWxlIl0gPSAzOwogICAgICBvcHRpb25zWyJuYW1lIl0gPSBuYW1lT25seTsK
-ICAgIH0KICAgIC8vIGJlZ2luIGZvcm1pbmcgcmVzdWx0CiAgICBzd2l0Y2ggKG9wdGlvbnNbInN0
-eWxlIl0pIHsKICAgICAgY2FzZSA0OgogICAgICBjYXNlIDM6CiAgICAgICAgYnJlYWs7CiAgICAg
-IGNhc2UgMjoKICAgICAgICByZXN1bHQgPSAiW01vZGlmaWVkXVx0W0xvY2tlZF1cdFtUeXBlXVx0
-W1ByZWZlcmVuY2UgTmFtZV1cdFtWYWx1ZV1cbiI7CiAgICAgICAgYnJlYWs7CiAgICAgIGNhc2Ug
-MToKICAgICAgICByZXN1bHQgPSAnYWJvdXQ6Y29uZmlnP2ZpbHRlcj0nOwogICAgICBkZWZhdWx0
-OgogICAgICAgIHJlc3VsdCArPSAnL15cXCokfF4oJzsKICAgIH0KICAgIC8vIGxvb3AgdGhyb3Vn
-aCBhbGwgcHJlZnMKICAgIHZhciBtb2RpZmllZCwgbG9ja2VkLCB0eXBlLCB2YWx1ZTsKICAgIGZv
-ciAoY29uc3QgcHJlZk5hbWUgb2YgU2VydmljZXMucHJlZnMuZ2V0Q2hpbGRMaXN0KCIiKS5zb3J0
-KCkpIHsKICAgICAgLy8gZ2V0IHByZWYgaW5mbwogICAgICBtb2RpZmllZCA9IChTZXJ2aWNlcy5w
-cmVmcy5wcmVmSGFzVXNlclZhbHVlKHByZWZOYW1lKSA/ICd5JyA6ICduJyk7CiAgICAgIGxvY2tl
-ZCA9IChTZXJ2aWNlcy5wcmVmcy5wcmVmSXNMb2NrZWQocHJlZk5hbWUpID8gJ3knIDogJ24nKTsK
-ICAgICAgc3dpdGNoIChTZXJ2aWNlcy5wcmVmcy5nZXRQcmVmVHlwZShwcmVmTmFtZSkpIHsKICAg
-ICAgICBjYXNlIDEyODoKICAgICAgICAgIHR5cGUgPSAiYiI7CiAgICAgICAgICB2YWx1ZSA9IFNl
-cnZpY2VzLnByZWZzLmdldEJvb2xQcmVmKHByZWZOYW1lKS50b1N0cmluZygpOwogICAgICAgICAg
-YnJlYWs7CiAgICAgICAgY2FzZSA2NDoKICAgICAgICAgIHR5cGUgPSAiaSI7CiAgICAgICAgICB2
-YWx1ZSA9IFNlcnZpY2VzLnByZWZzLmdldEludFByZWYocHJlZk5hbWUpLnRvU3RyaW5nKCk7CiAg
-ICAgICAgICBicmVhazsKICAgICAgICBjYXNlIDMyOgogICAgICAgICAgdHlwZSA9ICJzIjsKICAg
-ICAgICAgIHZhbHVlID0gdWp0VXNlQ2hhclByZWYgPyBTZXJ2aWNlcy5wcmVmcy5nZXRDaGFyUHJl
-ZihwcmVmTmFtZSkKICAgICAgICAgICAgOiBTZXJ2aWNlcy5wcmVmcy5nZXRTdHJpbmdQcmVmKHBy
-ZWZOYW1lKTsKICAgICAgICAgIGJyZWFrOwogICAgICAgIGRlZmF1bHQ6CiAgICAgICAgICBtb2Rp
-ZmllZCA9IG51bGw7IGxvY2tlZCA9IG51bGw7IHR5cGUgPSBudWxsOyB2YWx1ZSA9IG51bGw7CiAg
-ICAgIH0KICAgICAgLy8gYWRkIHRvIHJlc3VsdCBpZiBtYXRjaGVzIG9wdGlvbnMKICAgICAgaWYg
-KCAob3B0aW9uc1sibmFtZSJdLnRlc3QocHJlZk5hbWUpKQogICAgICAgICYmIChvcHRpb25zWyJt
-b2RpZmllZCJdLnRlc3QobW9kaWZpZWQpKQogICAgICAgICYmIChvcHRpb25zWyJsb2NrZWQiXS50
-ZXN0KGxvY2tlZCkpCiAgICAgICAgJiYgKG9wdGlvbnNbInR5cGUiXS50ZXN0KHR5cGUpKQogICAg
-ICAgICYmIChvcHRpb25zWyJ2YWx1ZSJdLnRlc3QodmFsdWUpKSApCiAgICAgIHsKICAgICAgICAv
-LyBxdW90ZS9lc2NhcGUgc3RyaW5nCiAgICAgICAgaWYgKCh0eXBlID09ICJzIikgJiYgKG9wdGlv
-bnNbInN0eWxlIl0gPT0gNCB8fCBvcHRpb25zWyJzdHlsZSJdID09IDMpKSB7CiAgICAgICAgICB2
-YWx1ZSA9ICciJyArIHZhbHVlLnJlcGxhY2UoLyhbIlxcXSkvZywgJ1xcJDEnKSArICciJzsKICAg
-ICAgICB9CiAgICAgICAgdmFsdWUgPSB2YWx1ZS5yZXBsYWNlKC9cbi9nLCAiXFxuIikucmVwbGFj
-ZSgvXHIvZywgIlxcciIpOwogICAgICAgIHN3aXRjaCAob3B0aW9uc1sic3R5bGUiXSkgewogICAg
-ICAgICAgY2FzZSA0OiAvLyA0PXVzZXJfcHJlZgogICAgICAgICAgICByZXN1bHQgKz0gJ3VzZXJf
-cHJlZigiJyArIHByZWZOYW1lICsgJyIsICcgKyB2YWx1ZSArICIpO1xuIjsKICAgICAgICAgICAg
-YnJlYWs7CiAgICAgICAgICBjYXNlIDM6IC8vIDM9dXNlcl9wcmVmK2NvbW1lbnRzCiAgICAgICAg
-ICAgIHJlc3VsdCArPSAndXNlcl9wcmVmKCInICsgcHJlZk5hbWUgKyAnIiwgJyArIHZhbHVlICsg
-Iik7IgogICAgICAgICAgICAgICsgbG9ja2VkLnJlcGxhY2UoL3kvZywgIiAgLy8gbG9ja2VkIiku
-cmVwbGFjZSgvbi9nLCAiIikKICAgICAgICAgICAgICArIG1vZGlmaWVkLnJlcGxhY2UoL3kvZywg
-IiAgLy8gbW9kaWZpZWQiKS5yZXBsYWNlKC9uL2csICIiKQogICAgICAgICAgICAgICsgIlxuIjsK
-ICAgICAgICAgICAgYnJlYWs7CiAgICAgICAgICBjYXNlIDI6IC8vIDI9bGlzdAogICAgICAgICAg
-ICByZXN1bHQgKz0gbW9kaWZpZWQgKyAiXHQiICsgbG9ja2VkICsgIlx0IgogICAgICAgICAgICAg
-ICsgdHlwZSArICJcdCIgKyBwcmVmTmFtZSArICJcdCIgKyB2YWx1ZSArICJcbiI7CiAgICAgICAg
-ICAgIGJyZWFrOwogICAgICAgICAgZGVmYXVsdDogLy8gMD1yZWdleCAvIDE9Ym9va21hcmsKICAg
-ICAgICAgICAgcmVzdWx0ICs9IHByZWZOYW1lLnJlcGxhY2UoLyhbKi4rXSkvZywgIlxcJDEiKSAr
-ICJ8IjsKICAgICAgICB9CiAgICAgIH0KICAgIH0gLy8gKGVuZCBvZiBsb29wIHRocm91Z2ggYWxs
-IHByZWZzKQogICAgLy8gZmluaXNoIGZvcm1pbmcgcmVzdWx0CiAgICBzd2l0Y2ggKG9wdGlvbnNb
-InN0eWxlIl0pIHsKICAgICAgY2FzZSA0OgogICAgICBjYXNlIDM6CiAgICAgIGNhc2UgMjogYnJl
-YWs7CiAgICAgIGRlZmF1bHQ6IHJlc3VsdCA9IHJlc3VsdC5yZXBsYWNlKC9cfCQvLCAnJykgKyAn
-KSg7fCQpfF4kL2knOwogICAgfQogIH0KICBjb25zb2xlLmxvZyhyZXN1bHQpOwp9Cgp2YXIgdWp0
-U2V0UHJlZiA9IGZ1bmN0aW9uKHByZWYsIHZhbHVlKSB7CiAgdHJ5IHsKICAgIGlmIChTZXJ2aWNl
-cy5wcmVmcy5nZXRQcmVmVHlwZShwcmVmKSA9PSAwKSB7CiAgICAgIGNvbnNvbGUubG9nKCIvLyAo
-dWp0U2V0UHJlZikgY3JlYXRpbmc6ICIgKyBwcmVmICsgIlxuIik7CiAgICB9CiAgICBzd2l0Y2gg
-KHR5cGVvZiB2YWx1ZSkgewogICAgICBjYXNlICJib29sZWFuIjoKICAgICAgICBTZXJ2aWNlcy5w
-cmVmcy5zZXRCb29sUHJlZihwcmVmLCB2YWx1ZSk7CiAgICAgICAgYnJlYWs7CiAgICAgIGNhc2Ug
-Im51bWJlciI6CiAgICAgICAgU2VydmljZXMucHJlZnMuc2V0SW50UHJlZihwcmVmLCB2YWx1ZSk7
-CiAgICAgICAgYnJlYWs7CiAgICAgIGNhc2UgInN0cmluZyI6CiAgICAgICAgaWYgKHVqdFVzZUNo
-YXJQcmVmKSB7IFNlcnZpY2VzLnByZWZzLnNldENoYXJQcmVmKHByZWYsIHZhbHVlKSB9CiAgICAg
-ICAgZWxzZSB7IFNlcnZpY2VzLnByZWZzLnNldFN0cmluZ1ByZWYocHJlZiwgdmFsdWUpIH0KICAg
-ICAgICBicmVhazsKICAgIH0KICB9CiAgY2F0Y2goZSkgewogICAgY29uc29sZS5sb2coIi8vICh1
-anRTZXRQcmVmKSBlcnJvcjogIiArIGUgKyAiIHByZWY6ICIKICAgICAgKyBwcmVmICsgIiB2YWx1
-ZTogIiArIHZhbHVlICsgIlxuIik7CiAgfQp9Cgp2YXIgdWp0UmVzZXRQcmVmID0gZnVuY3Rpb24o
-cHJlZikgewogIHRyeSB7CiAgICBpZiAoU2VydmljZXMucHJlZnMucHJlZkhhc1VzZXJWYWx1ZShw
-cmVmKSkgewogICAgICBTZXJ2aWNlcy5wcmVmcy5jbGVhclVzZXJQcmVmKHByZWYpOwogICAgICBp
-ZiAoU2VydmljZXMucHJlZnMucHJlZkhhc1VzZXJWYWx1ZShwcmVmKSkgewogICAgICAgIGNvbnNv
-bGUubG9nKCIvLyAodWp0UmVzZXRQcmVmKSBmYWlsZWQ6ICIgKyBwcmVmICsgIlxuIik7CiAgICAg
-IH0KICAgIH0KICB9CiAgY2F0Y2goZSkgewogICAgY29uc29sZS5sb2coIi8vICh1anRSZXNldFBy
-ZWYpIGVycm9yOiAiICsgZSArICIgcHJlZjogIiArIHByZWYgKyAiXG4iKTsKICB9Cn0KCi8vIHNl
-dCB1c2VyX3ByZWYgYWxpYXMgdG8gZnVuY3Rpb24gcmVxdWlyZWQgKHRoZW4geW91IGNhbiBwYXN0
-ZS9ydW4gdXNlci5qcykKdmFyIHVzZXJfcHJlZiA9IHVqdFNldFByZWY7Ci8vIHZhciB1c2VyX3By
-ZWYgPSB1anRSZXNldFByZWY7CgovKiBlbmQgb2YgdXNlcmpzLXRvb2wtYWJvdXRjb25maWctZnVu
-Y3Rpb25zLmpzICovCg==
+Ym91dDpjb25maWcKLy8gdXNlciBwcmVmZXJlbmNlcyBhbmQgdmFsdWVzOiBmaW5kIChmaWx0ZXIv
+bGlzdC9zYXZlL2RlZmF1bHRzKS9yZXNldC9zZXQKLy8KLy8gTmFtZSAgICAgICAgIDogdXNlcmpz
+LXRvb2wtYWJvdXRjb25maWctZnVuY3Rpb25zLmpzCi8vIFByb2plY3QgICAgICA6IGh0dHBzOi8v
+Z2l0aHViLmNvbS9pY3BhbnRzcGFydGkvZmlyZWZveC11c2VyLmpzLXRvb2wKLy8gVmVyc2lvbiAg
+ICAgIDogMjAyMS4wMy4xMSAoYWxwaGEvZXhwZXJpbWVudGFsKQovLyBGaWxlL1VwZGF0ZSAgOiBo
+dHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vaWNwYW50c3BhcnRpL2ZpcmVmb3gtdXNl
+ci5qcy10b29sL21hc3Rlci91c2VyanMtdG9vbC1hYm91dGNvbmZpZy1mdW5jdGlvbnMuanMKLy8g
+TGljZW5zZSAoTUlUKTogaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2ljcGFudHNw
+YXJ0aS9maXJlZm94LXVzZXIuanMtdG9vbC9tYXN0ZXIvTElDRU5TRQovLyBEaXNjbGFpbWVyICAg
+OiBVc2Ugd2l0aCBjYXJlIGF0IHlvdXIgb3duIHJpc2ssIGFuZCB2ZXJpZnkgYW55IHJlc3VsdHMK
+Ly8KLy8gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQovLyBQYXN0ZSB0aGUgdGV4dCBmcm9tIHRoaXMg
+ZmlsZSBpbnRvIHRoZSBjb25zb2xlIHRvIGFkZCB0aGUgZnVuY3Rpb25zIHRlbXBvcmFyaWx5Ci8v
+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KLy8gRmlyZWZveDogb3BlbiAnYWJvdXQ6Y29uZmlnJyB0
+aGVuIFdlYiBDb25zb2xlIChDdHJsK1NoaWZ0K0spCi8vIEFuZHJvaWQvUmVtb3RlOiAnYWJvdXQ6
+ZGVidWdnaW5nJyBvbiBQQywgJ2Fib3V0OmNvbmZpZycgb24gdGFyZ2V0IGRldmljZQovLyBUaHVu
+ZGVyYmlyZDogTWVudT5Ub29scz5EZXZlbG9wZXIgVG9vbHM+RXJyb3IgQ29uc29sZSAoQ3RybCtT
+aGlmdCtKKQovLyBUaHVuZGVyYmlyZC9PdGhlcjogVG9vbHM+RGV2ZWxvcGVyIFRvb2xzPkNvbnRl
+bnQgRnJhbWUgRGVidWdnZXI+VGFicz5EZWJ1Zz5Db25zb2xlCi8vIE9yIGxvYWQgc2F2ZWQgZmls
+ZSBpbiB0aGUgY29uc29sZSB3aXRoOgovLyBqYXZhc2NyaXB0OigoKT0+e3dpdGgoZG9jdW1lbnQp
+e2xldCBzPWNyZWF0ZUVsZW1lbnQoJ3NjcmlwdCcpO3Muc3JjPSdmaWxlOi8vL1lPVVJQQVRIL3Vz
+ZXJqcy10b29sLWFib3V0Y29uZmlnLWZ1bmN0aW9ucy5qcyc7aGVhZC5hcHBlbmRDaGlsZChzKX19
+KSgpOwovLwovLyAtLS0tLS0tCi8vIFN1bW1hcnkKLy8gLS0tLS0tLQovLyBGdW5jdGlvbjogdWp0
+RmluZFByZWYoIHsgc3R5bGU6MCwgbmFtZTovLiovaSwgdmFsdWU6Ly4qL2ksIHR5cGU6L1tiaXNd
+LywgbG9ja2VkOi9beW5dLywgbW9kaWZpZWQ6L1t5bl0vLCBhc2RlZmF1bHQ6L1t5bl0vLCBub2Rl
+ZmF1bHQ6L1t5bl0vLCBmaWxlb3V0OmZhbHNlIH0gKTsKLy8gRnVuY3Rpb246IHVqdFJlc2V0UHJl
+ZihwcmVmKTsKLy8gRnVuY3Rpb246IHVqdFNldFByZWYocHJlZiwgdmFsdWUpOwovLyBBbGlhcyAg
+IDogdXNlcl9wcmVmID0gdWp0U2V0UHJlZjsgIC8vIHNlZSBub3RlcwovLwovLyAtLS0tLS0tLS0t
+LS0tLS0tLS0tLQovLyB1anRGaW5kUHJlZiBFeGFtcGxlcwovLyAtLS0tLS0tLS0tLS0tLS0tLS0t
+LQovLyAgIHVqdEZpbmRQcmVmKCk7ICAgICAgICAgICAgICAgICAgICAgICAgLy8gc2hvdyBzb21l
+IHVzYWdlIGluZm8KLy8gICB1anRGaW5kUHJlZigyKTsgICAgICAgICAgICAgICAgICAgICAgIC8v
+IGxpc3QgYWxsICsgc2F2ZSB0byBmaWxlIChzcHJlYWRzaGVldCBzdHlsZSkKLy8gICB1anRGaW5k
+UHJlZih7c3R5bGU6MyxmaWxlb3V0OnRydWV9KTsgIC8vIGxpc3QgYWxsICsgc2F2ZSB0byBmaWxl
+ICh1c2VyX3ByZWYrY29tbWVudHMgc3R5bGUpCi8vICAgdWp0RmluZFByZWYoe21vZGlmaWVkOi95
+L30pOyAgICAgICAgICAgICAgICAvLyBzaG93IG1vZGlmaWVkCi8vICAgdWp0RmluZFByZWYoe21v
+ZGlmaWVkOi95Lyxhc2RlZmF1bHQ6L3kvfSk7ICAvLyBzaG93IG1vZGlmaWVkPWRlZmF1bHQKLy8g
+ICB1anRGaW5kUHJlZih7bm9kZWZhdWx0Oi95L30pOyAgICAgICAgICAgICAgIC8vIHNob3cgVHJh
+c2ggQ2FuIFByZWZzIGVnIGhpZGRlbi9pbnZhbGlkCi8vICAgdWp0RmluZFByZWYoe2xvY2tlZDov
+eS99KTsgICAgICAgICAgICAgICAgICAvLyBzaG93IGxvY2tlZAovLyAgIHVqdEZpbmRQcmVmKHt2
+YWx1ZTovZ29vZ2xlL2l9KTsgICAgICAgICAgICAgLy8gZmluZCB2YWx1ZQovLyAgIHVqdEZpbmRQ
+cmVmKHttb2RpZmllZDoveS8sdHlwZTovYi8sdmFsdWU6L15mYWxzZSQvaX0pOyAgLy8gc2hvdyBt
+b2RpZmllZCBib29sZWFuIGZhbHNlCi8vICAgdWp0RmluZFByZWYoe3N0eWxlOjMsbmFtZTovYWN0
+aXZpdHktc3RyZWFtL2l9KTsgICAgICAgICAgICAgICAgICAgICAvLyBwYXJ0IG5hbWUKLy8gICB1
+anRGaW5kUHJlZih7c3R5bGU6MyxuYW1lOi9eZXh0ZW5zaW9uc1wucG9ja2V0XC5lbmFibGVkJC9p
+fSk7ICAgICAgIC8vIHdob2xlIG5hbWUKLy8gICB1anRGaW5kUHJlZih7c3R5bGU6MyxuYW1lOi9e
+KHdob2xlfHN0YXJ0Lip8LiptaWRkbGUuKnwuKmVuZCkkL2l9KTsgIC8vIG11bHRpIG5hbWUKLy8K
+Ly8gLS0tLS0tLS0tLS0tLQovLyBHZW5lcmFsIE5vdGVzCi8vIC0tLS0tLS0tLS0tLS0KLy8gICAq
+IG9uIGNvbnNvbGUgcmlnaHQgY2xpY2sgcmVzdWx0cyAiQ29weSBvYmplY3QiIC8gbGVmdCBjbGlj
+ayBleHBhbmQvY29udHJhY3QKLy8gICAgIChpZiByZXN1bHRzIGRvIG5vdCBjb3B5IHRvIGNsaXBi
+b2FyZCB0cnkgIkV4cG9ydCB2aXNpYmxlIG1lc3NhZ2VzIHRvIEZpbGUiLAovLyAgICAgb3IgdWp0
+RmluZFByZWYgaGFzIGZpbGVvdXQ6dHJ1ZSB0byBzYXZlIHJlc3VsdHMgdG8gYSBmaWxlKQovLyAg
+ICogY2xlYXIgY29uc29sZS9jb21tYW5kIGhpc3Rvcnk6ICBjbGVhcigpOyAgY2xlYXJIaXN0b3J5
+KCk7Ci8vICAgKiBUaHVuZGVyYmlyZCAoY29uc29sZSkgb3BlbiBhYm91dDpjb25maWc6IHdpbmRv
+dy5vcGVuRGlhbG9nKCJhYm91dDpjb25maWciKTsKLy8gICAqIGlmIHVzaW5nIHJlbW90ZSBkZWJ1
+Z2dpbmcgdG8gYWNjZXNzIGFub3RoZXIgZGV2aWNlIChlZyBBbmRyb2lkKToKLy8gICAgIFBDOiB1
+c2UgJ2Fib3V0OmRlYnVnZ2luZycgKG9sZGVyIEZpcmVmb3ggd2FzIFdlYklERS9TY3JhdGNocGFk
+KQovLyAgICAgVGFyZ2V0OiAnYWJvdXQ6Y29uZmlnJyBvcGVuLCAiUmVtb3RlIGRlYnVnZ2luZyIg
+ZW5hYmxlZCBpbiBGaXJlZm94IHNldHRpbmdzCi8vICAgICAgICAgICAgICJVU0IgZGVidWdnaW5n
+IiBlbmFibGVkIGluIEFuZHJvaWQgRGV2ZWxvcGVyIHNldHRpbmdzCi8vICAgICByZTogaHR0cHM6
+Ly9naXRodWIuY29tL2Fya2VuZm94L3VzZXIuanMvd2lraS8xLjYtRmlyZWZveC1BbmRyb2lkCi8v
+ICAgICBhbHNvIHJlIGFya2VuZm94L3VzZXIuanMvd2lraTogdW5ibG9jayBhYm91dDpjb25maWcg
+aW4gbmV3ZXIgdmVyc2lvbnMgKEZGNzErPyk6Ci8vICAgICB1c2VyX3ByZWYoImdlbmVyYWwuYWJv
+dXRDb25maWcuZW5hYmxlIiwgdHJ1ZSk7Ci8vICAgKiBmdW5jdGlvbnMgbWlnaHQgYWxzbyB3b3Jr
+IHRocm91Z2ggQnJvd3Nlci9FcnJvciBDb25zb2xlIChDdHJsK1NoaWZ0K0opCi8vICAgKiBzZXQg
+J3VzZXJfcHJlZicgYWxpYXMgaWYgeW91IHdhbnQgdG8gcGFzdGUgJ3VzZXIuanMnIGNvZGUgdG8g
+cnVuIGEgZnVuY3Rpb24KLy8gICAgIGVnIGVudGVyICd1c2VyX3ByZWYgPSB1anRTZXRQcmVmOycg
+b3IgJ3VzZXJfcHJlZiA9IHVqdFJlc2V0UHJlZjsnCi8vICAgKiBkaXN0cmlidXRpb24vcG9saWNp
+ZXMuanNvbiBjYW4gY2hhbmdlIHByZWZlcmVuY2UgZGVmYXVsdCB2YWx1ZXMgKGFib3V0OnBvbGlj
+aWVzKQovLyAgICogaGlkZGVuIHByZWZlcmVuY2VzIG9ubHkgc2hvdyBpZiB0aGV5IGhhdmUgYmVl
+biBjcmVhdGVkL21vZGlmaWVkIChzYW1lIGFzIGFib3V0OmNvbmZpZykKLy8gICAgIGV4YW1wbGVz
+OiBodHRwczovL3NlYXJjaGZveC5vcmcvbW96aWxsYS1jZW50cmFsL3NlYXJjaD9xPShleHRlbnNp
+b25zXC5nZXRBZGRvbnNcLnNob3dQYW5lfHByaXZhY3lcLnJlc2lzdEZpbmdlcnByaW50aW5nXC5s
+ZXR0ZXJib3hpbmd8dWlcLnByZWZlcnNSZWR1Y2VkTW90aW9uKSZwYXRoPSZjYXNlPWZhbHNlJnJl
+Z2V4cD10cnVlCi8vCi8vIC0tLS0tLS0tLS0tLS0tLS0tCi8vIHVqdEZpbmRQcmVmIE5vdGVzCi8v
+IC0tLS0tLS0tLS0tLS0tLS0tCi8vICAgKiB1anRGaW5kUHJlZiggeyBzdHlsZTowLCBuYW1lOi8u
+Ki9pLCB2YWx1ZTovLiovaSwgdHlwZTovW2Jpc10vLCBsb2NrZWQ6L1t5bl0vLCBtb2RpZmllZDov
+W3luXS8sIGFzZGVmYXVsdDovW3luXS8sIG5vZGVmYXVsdDovW3luXS8sIGZpbGVvdXQ6ZmFsc2Ug
+fSApOwovLyAgICogc3R5bGU6Ci8vICAgICAgIDA9cmVnZXggICAgIChkZWZhdWx0KSBwYXN0ZSBy
+ZXN1bHQgaW50byB0aGUgYWJvdXQ6Y29uZmlnIHNlYXJjaCBib3gKLy8gICAgICAgMT1ib29rbWFy
+ayAgJ2Fib3V0OmNvbmZpZz9maWx0ZXI9JyAoRkY3MSsgY29weSwgY2xpY2ssIHBhc3RlIGluIHNl
+YXJjaCkKLy8gICAgICAgMj1saXN0K2RlZmF1bHQgICAgICAgIHBhc3RlIGludG8gYSBzcHJlYWRz
+aGVldCBmb3Igc29ydC9maWx0ZXIvc2VhcmNoCi8vICAgICAgIDM9dXNlcl9wcmVmK2NvbW1lbnRz
+ICB1c2VyX3ByZWYoInByZWYiLCB2YWx1ZSk7ICAvLyBsb2NrZWQgIC8vIG1vZGlmaWVkICAvLyBu
+b2RlZmF1bHQKLy8gICAgICAgND11c2VyX3ByZWYgICAgICAgICAgIHVzZXJfcHJlZigicHJlZiIs
+IHZhbHVlKTsKLy8gICAgICAgNT11c2VyX3ByZWZAZGVmYXVsdCAgIHVzZXJfcHJlZigicHJlZiIs
+IHZhbHVlRGVmYXVsdCk7Ci8vICAgKiB0eXBlOiBiPWJvb2xlYW4gaT1pbnRlZ2VyIHM9c3RyaW5n
+Ci8vICAgKiBsb2NrZWQvbW9kaWZpZWQvYXNkZWZhdWx0L25vZGVmYXVsdDogeT15ZXMgbj1ubwov
+LyAgICogbW9kaWZpZWQ6L3kvIC0gdXNlciBzZXQgcHJlZmVyZW5jZXMgKGVnIHVzZXIuanMvYWJv
+dXQ6Y29uZmlnL2V0YykKLy8gICAgIHttb2RpZmllZDoveS8sYXNkZWZhdWx0Oi95L30gLSBmaW5k
+cyB0aG9zZSB1c2VyIHNldCB0byBzYW1lIGFzIGRlZmF1bHQKLy8gICAqIGFzZGVmYXVsdDoveS8g
+LSBpZiBwcmVmZXJlbmNlIHZhbHVlIGlzIHRoZSBzYW1lIGFzIHRoZSBkZWZhdWx0IHZhbHVlCi8v
+ICAgKiBub2RlZmF1bHQ6L3kvIC0gcHJlZnMgd2l0aCBhIHRyYXNoIGNhbiBpY29uIG9uIGFib3V0
+OmNvbmZpZyBlZyBoaWRkZW4vaW52YWxpZAovLyAgICogZmlsZW91dDp0cnVlIC0gc2F2ZSByZXN1
+bHRzIHRvIGRlc2t0b3AgdXNlcmpzLXRvb2wtYWJvdXRjb25maWctWVlZWU1NREQtSEhNTVNTLVNT
+Uy50eHQKLy8gICAqIHJldHVybiBhbmQgbmV3bGluZSBjaGFyYWN0ZXJzIGluIHByZWZlcmVuY2Ug
+dmFsdWVzIGFyZSByZXBsYWNlZCBhcyBcciBcbgovLyAgICogbm93IHVzaW5nIFNlcnZpY2VzLnBy
+ZWZzLmdldENvbXBsZXhWYWx1ZSB0byBsb29rIHVwIHRoZSB2YWx1ZSBvZgovLyAgICAgcHJlZmVy
+ZW5jZXMgd2hpY2ggYXJlIGluaXRpYWxseSByZWFkIGFzICJjaHJvbWU6Li4uIgovLwovLyAtLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQovLyB1anRTZXRQcmVmL3VqdFJlc2V0UHJlZiBOb3Rl
+cwovLyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQovLyAgICogdGhlc2Ugd2VyZSBtYWlu
+bHkgaW50ZW5kZWQgZm9yIHdoZW4gaW5qZWN0aW5nIHByZWZlcmVuY2VzIHRvIEFuZHJvaWQKLy8g
+ICAqIG9uIGRlc2t0b3AgeW91IHdvdWxkIHVzdWFsbHkgdXNlIHVzZXIuanMvcHJvZmlsZXMgZm9y
+IHByZWZlcmVuY2UgY29udHJvbAovLyAgICAgKGFsdGhvdWdoIHVqdFJlc2V0UHJlZiBjb3VsZCBi
+ZSB1c2VmdWwgZm9yIGJhdGNoIGNsZWFyaW5nIHByZWZzKQovLyAgICogaW5jb3JyZWN0IHVzYWdl
+IHJpc2tzIG1lc3NpbmcgdXAgeW91ciBGaXJlZm94IHNldHRpbmdzIChpZiB5b3UgYXJlIHVzaW5n
+Ci8vICAgICB0aGlzIG9uIGRlc2t0b3A6IGJhY2t1cCB5b3VyIEZpcmVmb3ggcHJvZmlsZSwgb3Ig
+J3ByZWZzLmpzJyBhdCBsZWFzdCwKLy8gICAgIGFuZCByZW1lbWJlciB0aGF0IHVzZXIuanMgY2Fu
+IG92ZXJyaWRlIGNoYW5nZXMgb24gRmlyZWZveCByZXN0YXJ0KQovLyAgICogdWp0U2V0UHJlZiBv
+dXRwdXRzICdjcmVhdGluZycgdG8gdGhlIGNvbnNvbGUgd2hlbiB0aGUgcHJlZmVyZW5jZSBkaWQK
+Ly8gICAgIG5vdCBhbHJlYWR5IGV4aXN0ICh0aGVzZSBhcmUgZWl0aGVyIGhpZGRlbiBwcmVmZXJl
+bmNlcywgb3IgaW52YWxpZCkKLy8KLy8gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLQovLyBBY2tub3dsZWRnbWVudHMgKHRoaXMgaXMgYmFzZWQgb24gaW5m
+by9jb2RlIGZyb20pCi8vIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0KLy8gICBodHRwczovL2dpdGh1Yi5jb20vYXJrZW5mb3gvdXNlci5qcwovLyAgICAg
+aHR0cHM6Ly9naXRodWIuY29tL2Fya2VuZm94L3VzZXIuanMvd2lraS8xLjYtRmlyZWZveC1BbmRy
+b2lkCi8vICAgICBodHRwczovL2dpdGh1Yi5jb20vYXJrZW5mb3gvdXNlci5qcy90cmVlL21hc3Rl
+ci9zY3JhdGNocGFkLXNjcmlwdHMKLy8gICAgIGh0dHBzOi8vZ2l0aHViLmNvbS9hcmtlbmZveC91
+c2VyLmpzL2Jsb2IvbWFzdGVyL3NjcmF0Y2hwYWQtc2NyaXB0cy9hcmtlbmZveC1jbGVhci1yZW1v
+dmVkLmpzCi8vICAgICBodHRwczovL2dpdGh1Yi5jb20vYXJrZW5mb3gvdXNlci5qcy9ibG9iL21h
+c3Rlci9zY3JhdGNocGFkLXNjcmlwdHMvdHJvdWJsZXNob290ZXIuanMKLy8gICBodHRwczovL3N0
+YWNrb3ZlcmZsb3cuY29tL3F1ZXN0aW9ucy8zNzk2MDg0L2Fib3V0LWNvbmZpZy1wcmVmZXJlbmNl
+cy1hbmQtanMKLy8gICBodHRwczovL2RldmVsb3Blci5tb3ppbGxhLm9yZy9lbi1VUy9kb2NzL01v
+emlsbGEvSmF2YVNjcmlwdF9jb2RlX21vZHVsZXMvU2VydmljZXMuanNtCi8vICAgaHR0cDovL3d3
+dy5vcGVuanMuY29tL2FydGljbGVzL29wdGlvbmFsX2Z1bmN0aW9uX2FyZ3VtZW50cy5waHAKLy8g
+ICBodHRwczovL2R4ci5tb3ppbGxhLm9yZy9tb3ppbGxhLWNlbnRyYWwvc291cmNlL21vZHVsZXMv
+bGlicHJlZi9uc0lQcmVmQnJhbmNoLmlkbCMzMQovLyAgIGh0dHBzOi8vZGV2ZWxvcGVyLm1vemls
+bGEub3JnL2VuLVVTL2RvY3MvQXJjaGl2ZS9BZGQtb25zL0NvZGVfc25pcHBldHMvRmlsZV9JX08K
+Ly8gICBodHRwczovL2dpdGh1Yi5jb20vVGhlZW1pbS9HZWNrb1ByZWZzRXhwb3J0ZXIgICAoZmls
+ZSBvdXQgbWV0aG9kKQoKaWYgKHR5cGVvZihTZXJ2aWNlcykgPT0gInVuZGVmaW5lZCIpIHsKICBj
+b25zb2xlLmxvZygiLy8gcmVxdWlyZXMgU2VydmljZXMgKGVnIGFib3V0OmNvbmZpZyBhcyBhY3Rp
+dmUgdGFiKSIpOwp9CgovLyBvbGRlciB2ZXJzaW9ucyBvZiBGaXJlZm94L2ZvcmtzL1RodW5kZXJi
+aXJkL1NlYU1vbmtleSB1c2UgLi4uQ2hhclByZWYKdHJ5IHsKICB2YXIgdWp0VXNlQ2hhclByZWYg
+PSAhKHR5cGVvZihTZXJ2aWNlcy5wcmVmcy5nZXRTdHJpbmdQcmVmKSA9PSAiZnVuY3Rpb24iKTsK
+fQpjYXRjaChlKSB7IH0KCnZhciB1anRGaW5kUHJlZiA9IGZ1bmN0aW9uKG9wdGlvbnMpIHsKICB2
+YXIgcmVzdWx0ID0gIiI7CiAgaWYgKHR5cGVvZiBvcHRpb25zID09ICJ1bmRlZmluZWQiKSB7CiAg
+ICBvcHRpb25zID0geyAnZmlsZW91dCc6IGZhbHNlIH07CiAgICAvLyBpZiBubyBvcHRpb25zIHNw
+ZWNpZmllZCBzaG93IHNvbWUgdXNhZ2UgaW5mbwogICAgcmVzdWx0ID0gIi8vIHVzYWdlOlxuIgog
+ICAgICArICcvLyB1anRGaW5kUHJlZiggeyBzdHlsZTowLCBuYW1lOi8uKi9pLCB2YWx1ZTovLiov
+aSwgdHlwZTovW2Jpc10vLCBsb2NrZWQ6L1t5bl0vLCBtb2RpZmllZDovW3luXS8sIGFzZGVmYXVs
+dDovW3luXS8sIG5vZGVmYXVsdDovW3luXS8sIGZpbGVvdXQ6ZmFsc2UgfSApO1xuJwogICAgICAr
+ICcvLyBzdHlsZTogMD1yZWdleCAxPWJvb2ttYXJrIDI9bGlzdCtkZWZhdWx0IDM9dXNlcl9wcmVm
+K2NvbW1lbnRzIDQ9dXNlcl9wcmVmIDU9dXNlcl9wcmVmQGRlZmF1bHRcbicKICAgICAgKyAnLy8g
+Yj1ib29sZWFuIGk9aW50ZWdlciBzPXN0cmluZyB5PXllcyBuPW5vXG4nCiAgICAgICsgJy8vIGVn
+IHVqdEZpbmRQcmVmKDIpOyB1anRGaW5kUHJlZih7c3R5bGU6MyxmaWxlb3V0OnRydWV9KTsgdWp0
+RmluZFByZWYoe21vZGlmaWVkOi95L30pOyB1anRGaW5kUHJlZih7bm9kZWZhdWx0Oi95L30pO1xu
+JzsKICB9CiAgZWxzZSB7CiAgICAvLyBmdW5jdGlvbiB0byBnZXQgdGhlIGRlZmF1bHQgdmFsdWUg
+b2YgYSBwcmVmZXJlbmNlCiAgICB2YXIgdWp0R2V0UHJlZkRlZmF1bHQgPSBmdW5jdGlvbihwcmVm
+TmFtZSkgewogICAgICB2YXIgZGVmYXVsdFZhbHVlOwogICAgICB0cnkgewogICAgICAgIHN3aXRj
+aCAoU2VydmljZXMucHJlZnMuZ2V0RGVmYXVsdEJyYW5jaCgiIikuZ2V0UHJlZlR5cGUocHJlZk5h
+bWUpKSB7CiAgICAgICAgICBjYXNlIDEyODoKICAgICAgICAgICAgZGVmYXVsdFZhbHVlID0gU2Vy
+dmljZXMucHJlZnMuZ2V0RGVmYXVsdEJyYW5jaCgiIikuZ2V0Qm9vbFByZWYocHJlZk5hbWUpLnRv
+U3RyaW5nKCk7CiAgICAgICAgICAgIGJyZWFrOwogICAgICAgICAgY2FzZSA2NDoKICAgICAgICAg
+ICAgZGVmYXVsdFZhbHVlID0gU2VydmljZXMucHJlZnMuZ2V0RGVmYXVsdEJyYW5jaCgiIikuZ2V0
+SW50UHJlZihwcmVmTmFtZSkudG9TdHJpbmcoKTsKICAgICAgICAgICAgYnJlYWs7CiAgICAgICAg
+ICBjYXNlIDMyOgogICAgICAgICAgICBkZWZhdWx0VmFsdWUgPSB1anRVc2VDaGFyUHJlZiA/IFNl
+cnZpY2VzLnByZWZzLmdldERlZmF1bHRCcmFuY2goIiIpLmdldENoYXJQcmVmKHByZWZOYW1lKQog
+ICAgICAgICAgICAgIDogU2VydmljZXMucHJlZnMuZ2V0RGVmYXVsdEJyYW5jaCgiIikuZ2V0U3Ry
+aW5nUHJlZihwcmVmTmFtZSk7CiAgICAgICAgICAgIGJyZWFrOwogICAgICAgICAgZGVmYXVsdDoK
+ICAgICAgICAgICAgcmV0dXJuIG51bGw7CiAgICAgICAgfQogICAgICB9CiAgICAgIGNhdGNoKGUp
+IHsKICAgICAgICByZXR1cm4gbnVsbDsKICAgICAgfQogICAgICByZXR1cm4gZGVmYXVsdFZhbHVl
+OwogICAgfQogICAgLy8gcHJlcGFyZSBmb3Igb3B0aW9ucyBiZWluZyBhIHNpbmdsZSByZWdleC9z
+dHJpbmcvbnVtYmVyCiAgICB2YXIgbm9BcmdzTWF0Y2hlZCA9IHRydWUsIG5hbWVPbmx5ID0gb3B0
+aW9ucywgc3R5bGVPbmx5ID0gMywgZmlsZU91dEV4ID0gZmFsc2U7CiAgICBpZiAodHlwZW9mIG9w
+dGlvbnMgPT0gInN0cmluZyIpIHsKICAgICAgbmFtZU9ubHkgPSBuZXcgUmVnRXhwKG9wdGlvbnMs
+ICJpIik7CiAgICAgIGZpbGVPdXRFeCA9IHRydWU7CiAgICAgIG9wdGlvbnMgPSB7fTsKICAgIH0K
+ICAgIGVsc2UgaWYgKHR5cGVvZiBvcHRpb25zID09ICJudW1iZXIiKSB7CiAgICAgIG5hbWVPbmx5
+ID0gbmV3IFJlZ0V4cCgiLioiLCAiaSIpOwogICAgICBzdHlsZU9ubHkgPSBvcHRpb25zOwogICAg
+ICBmaWxlT3V0RXggPSB0cnVlOwogICAgICBvcHRpb25zID0ge307CiAgICB9CiAgICAvLyBlbmZv
+cmNlIGRlZmF1bHRzIGZvciB1bnNwZWNpZmllZCBvcHRpb25zCiAgICB2YXIgZGVmYXVsdEFyZ3Mg
+PSB7ICdzdHlsZSc6IDAsICduYW1lJzogLy4qLywgJ3ZhbHVlJzogLy4qLywgJ3R5cGUnOiAvLiov
+LCAnbG9ja2VkJzogLy4qLywKICAgICAgJ21vZGlmaWVkJzogLy4qLywgJ2FzZGVmYXVsdCc6IC8u
+Ki8sICdub2RlZmF1bHQnOiAvLiovLCAnZmlsZW91dCc6IGZhbHNlIH0KICAgIGZvcih2YXIgaSBp
+biBkZWZhdWx0QXJncykgewogICAgICBpZiAodHlwZW9mIG9wdGlvbnNbaV0gPT0gInVuZGVmaW5l
+ZCIpIHsKICAgICAgICBvcHRpb25zW2ldID0gZGVmYXVsdEFyZ3NbaV07CiAgICAgIH0KICAgICAg
+ZWxzZSBpZiAodHlwZW9mIG9wdGlvbnNbaV0gPT0gInN0cmluZyIpIHsKICAgICAgICBvcHRpb25z
+W2ldID0gbmV3IFJlZ0V4cChvcHRpb25zW2ldLCAiaSIpOwogICAgICAgIG5vQXJnc01hdGNoZWQg
+PSBmYWxzZTsKICAgICAgfQogICAgICBlbHNlIHsKICAgICAgICBub0FyZ3NNYXRjaGVkID0gZmFs
+c2U7CiAgICAgIH0KICAgIH0KICAgIC8vIHdoZW4gb3B0aW9ucyB3YXMgYSBzaW5nbGUgcmVnZXgv
+c3RyaW5nL251bWJlcgogICAgaWYgKG5vQXJnc01hdGNoZWQpIHsKICAgICAgb3B0aW9uc1sibmFt
+ZSJdID0gbmFtZU9ubHk7CiAgICAgIG9wdGlvbnNbInN0eWxlIl0gPSBzdHlsZU9ubHk7CiAgICAg
+IG9wdGlvbnNbImZpbGVvdXQiXSA9IGZpbGVPdXRFeDsKICAgIH0KICAgIC8vIGJlZ2luIGZvcm1p
+bmcgcmVzdWx0CiAgICBzd2l0Y2ggKG9wdGlvbnNbInN0eWxlIl0pIHsKICAgICAgY2FzZSA1Ogog
+ICAgICAgIHJlc3VsdCA9ICIvLyBkZWZhdWx0IHZhbHVlc1xuIjsKICAgICAgICBicmVhazsKICAg
+ICAgY2FzZSA0OgogICAgICBjYXNlIDM6CiAgICAgICAgYnJlYWs7CiAgICAgIGNhc2UgMjoKICAg
+ICAgICByZXN1bHQgPSAiW1ByZWZlcmVuY2VOYW1lXVx0W1R5cGVdXHRbVmFsdWVdXHRbTG9ja2Vk
+XVx0W01vZGlmaWVkXVx0W1NhbWVBc0RlZmF1bHRdXHRbRGVmYXVsdFZhbHVlXVx0W05vRGVmYXVs
+dF1cbiI7CiAgICAgICAgYnJlYWs7CiAgICAgIGNhc2UgMToKICAgICAgICByZXN1bHQgPSAnYWJv
+dXQ6Y29uZmlnP2ZpbHRlcj0nOwogICAgICBkZWZhdWx0OgogICAgICAgIHJlc3VsdCArPSAnL15c
+XCokfF4oJzsKICAgIH0KICAgIC8vIGxvb3AgdGhyb3VnaCBhbGwgcHJlZnMKICAgIHZhciB0eXBl
+LCB2YWx1ZSwgbG9ja2VkLCBtb2RpZmllZCwgYXNEZWZhdWx0LCBub0RlZmF1bHQsIHZhbHVlRGVm
+YXVsdDsKICAgIC8vIHNhbWUgcHJlZnM6IFNlcnZpY2VzLnByZWZzLmdldERlZmF1bHRCcmFuY2go
+IiIpLmdldENoaWxkTGlzdCgiIikuc29ydCgpCiAgICAvLyAgICAgICAgICAgICBTZXJ2aWNlcy5w
+cmVmcy5nZXRCcmFuY2goIiIpLmdldENoaWxkTGlzdCgiIikuc29ydCgpCiAgICAvLyAgICAgICAg
+ICAgICBTZXJ2aWNlcy5wcmVmcy5nZXRDaGlsZExpc3QoIiIpLnNvcnQoKQogICAgZm9yIChjb25z
+dCBwcmVmTmFtZSBvZiBTZXJ2aWNlcy5wcmVmcy5nZXRDaGlsZExpc3QoIiIpLnNvcnQoKSkgewog
+ICAgICAvLyBnZXQgcHJlZiBpbmZvCiAgICAgIG1vZGlmaWVkID0gKFNlcnZpY2VzLnByZWZzLnBy
+ZWZIYXNVc2VyVmFsdWUocHJlZk5hbWUpID8gJ3knIDogJ24nKTsKICAgICAgbG9ja2VkID0gKFNl
+cnZpY2VzLnByZWZzLnByZWZJc0xvY2tlZChwcmVmTmFtZSkgPyAneScgOiAnbicpOwogICAgICBz
+d2l0Y2ggKFNlcnZpY2VzLnByZWZzLmdldFByZWZUeXBlKHByZWZOYW1lKSkgewogICAgICAgIGNh
+c2UgMTI4OgogICAgICAgICAgdHlwZSA9ICJiIjsKICAgICAgICAgIHZhbHVlID0gU2VydmljZXMu
+cHJlZnMuZ2V0Qm9vbFByZWYocHJlZk5hbWUpLnRvU3RyaW5nKCk7CiAgICAgICAgICB2YWx1ZURl
+ZmF1bHQgPSB1anRHZXRQcmVmRGVmYXVsdChwcmVmTmFtZSk7CiAgICAgICAgICBicmVhazsKICAg
+ICAgICBjYXNlIDY0OgogICAgICAgICAgdHlwZSA9ICJpIjsKICAgICAgICAgIHZhbHVlID0gU2Vy
+dmljZXMucHJlZnMuZ2V0SW50UHJlZihwcmVmTmFtZSkudG9TdHJpbmcoKTsKICAgICAgICAgIHZh
+bHVlRGVmYXVsdCA9IHVqdEdldFByZWZEZWZhdWx0KHByZWZOYW1lKTsKICAgICAgICAgIGJyZWFr
+OwogICAgICAgIGNhc2UgMzI6CiAgICAgICAgICB0eXBlID0gInMiOwogICAgICAgICAgdmFsdWUg
+PSB1anRVc2VDaGFyUHJlZiA/IFNlcnZpY2VzLnByZWZzLmdldENoYXJQcmVmKHByZWZOYW1lKQog
+ICAgICAgICAgICA6IFNlcnZpY2VzLnByZWZzLmdldFN0cmluZ1ByZWYocHJlZk5hbWUpOwogICAg
+ICAgICAgdmFsdWVEZWZhdWx0ID0gdWp0R2V0UHJlZkRlZmF1bHQocHJlZk5hbWUpOwogICAgICAg
+ICAgLy8gZ2V0IHRoZSBhY3R1YWwgdmFsdWUgd2hlbiAiY2hyb21lOi4uLiIKICAgICAgICAgIHRy
+eSB7CiAgICAgICAgICAgIGlmIChtb2RpZmllZCA9PSAnbicgJiYgL15jaHJvbWU6XC9cLy4rXC9s
+b2NhbGVcLy4rXC5wcm9wZXJ0aWVzLy50ZXN0KHZhbHVlKSkgewogICAgICAgICAgICAgIHZhbHVl
+ID0gU2VydmljZXMucHJlZnMuZ2V0Q29tcGxleFZhbHVlKHByZWZOYW1lLCBDaS5uc0lQcmVmTG9j
+YWxpemVkU3RyaW5nKS5kYXRhOwogICAgICAgICAgICB9CiAgICAgICAgICB9CiAgICAgICAgICBj
+YXRjaChlKSB7IHZhbHVlID0gIiI7IH0KICAgICAgICAgIHRyeSB7CiAgICAgICAgICAgIGlmICgv
+XmNocm9tZTpcL1wvLitcL2xvY2FsZVwvLitcLnByb3BlcnRpZXMvLnRlc3QodmFsdWVEZWZhdWx0
+KSkgewogICAgICAgICAgICAgIHZhbHVlRGVmYXVsdCA9IFNlcnZpY2VzLnByZWZzLmdldENvbXBs
+ZXhWYWx1ZShwcmVmTmFtZSwgQ2kubnNJUHJlZkxvY2FsaXplZFN0cmluZykuZGF0YTsKICAgICAg
+ICAgICAgfQogICAgICAgICAgfQogICAgICAgICAgY2F0Y2goZSkgeyB2YWx1ZURlZmF1bHQgPSAi
+IjsgfQogICAgICAgICAgYnJlYWs7CiAgICAgICAgZGVmYXVsdDoKICAgICAgICAgIHZhbHVlID0g
+bnVsbDsgdHlwZSA9IG51bGw7IGxvY2tlZCA9IG51bGw7IG1vZGlmaWVkID0gbnVsbDsKICAgICAg
+ICAgIGFzRGVmYXVsdCA9IG51bGw7IG5vRGVmYXVsdCA9IG51bGw7IHZhbHVlRGVmYXVsdCA9IG51
+bGw7CiAgICAgIH0KICAgICAgaWYgKHZhbHVlRGVmYXVsdCA9PT0gbnVsbCkgeyBub0RlZmF1bHQg
+PSAieSI7IH0gZWxzZSB7IG5vRGVmYXVsdCA9ICJuIjsgfTsKICAgICAgaWYgKHZhbHVlID09PSB2
+YWx1ZURlZmF1bHQpIHsgYXNEZWZhdWx0ID0gInkiOyB9IGVsc2UgeyBhc0RlZmF1bHQgPSAibiI7
+IH07CiAgICAgIC8vIGFkZCB0byByZXN1bHQgaWYgbWF0Y2hlcyBvcHRpb25zCiAgICAgIGlmICgg
+KG9wdGlvbnNbIm5hbWUiXS50ZXN0KHByZWZOYW1lKSkKICAgICAgICAmJiAob3B0aW9uc1sidmFs
+dWUiXS50ZXN0KHZhbHVlKSkKICAgICAgICAmJiAob3B0aW9uc1sidHlwZSJdLnRlc3QodHlwZSkp
+CiAgICAgICAgJiYgKG9wdGlvbnNbImxvY2tlZCJdLnRlc3QobG9ja2VkKSkKICAgICAgICAmJiAo
+b3B0aW9uc1sibW9kaWZpZWQiXS50ZXN0KG1vZGlmaWVkKSkKICAgICAgICAmJiAob3B0aW9uc1si
+YXNkZWZhdWx0Il0udGVzdChhc0RlZmF1bHQpKQogICAgICAgICYmIChvcHRpb25zWyJub2RlZmF1
+bHQiXS50ZXN0KG5vRGVmYXVsdCkpCiAgICAgICAgICkKICAgICAgewogICAgICAgIC8vIHF1b3Rl
+L2VzY2FwZSBzdHJpbmcKICAgICAgICBpZiAoKHR5cGUgPT0gInMiKSAmJiAob3B0aW9uc1sic3R5
+bGUiXSA9PSA1CiAgICAgICAgICB8fCBvcHRpb25zWyJzdHlsZSJdID09IDQgfHwgb3B0aW9uc1si
+c3R5bGUiXSA9PSAzKSkKICAgICAgICB7CiAgICAgICAgICB2YWx1ZSA9ICciJyArIHZhbHVlLnJl
+cGxhY2UoLyhbIlxcXSkvZywgJ1xcJDEnKSArICciJzsKICAgICAgICAgIGlmICh2YWx1ZURlZmF1
+bHQgIT09IG51bGwpIHsKICAgICAgICAgICAgdmFsdWVEZWZhdWx0ID0gJyInICsgdmFsdWVEZWZh
+dWx0LnJlcGxhY2UoLyhbIlxcXSkvZywgJ1xcJDEnKSArICciJwogICAgICAgICAgfQogICAgICAg
+IH0KICAgICAgICBpZiAodmFsdWVEZWZhdWx0ID09PSBudWxsKSB7IHZhbHVlRGVmYXVsdCA9ICJu
+dWxsIiB9CiAgICAgICAgdmFsdWUgPSB2YWx1ZS5yZXBsYWNlKC9cbi9nLCAiXFxuIikucmVwbGFj
+ZSgvXHIvZywgIlxcciIpOwogICAgICAgIHZhbHVlRGVmYXVsdCA9IHZhbHVlRGVmYXVsdC5yZXBs
+YWNlKC9cbi9nLCAiXFxuIikucmVwbGFjZSgvXHIvZywgIlxcciIpOwogICAgICAgIHN3aXRjaCAo
+b3B0aW9uc1sic3R5bGUiXSkgewogICAgICAgICAgY2FzZSA1OiAvLyA1PXVzZXJfcHJlZkBkZWZh
+dWx0CiAgICAgICAgICAgIHJlc3VsdCArPSAndXNlcl9wcmVmKCInICsgcHJlZk5hbWUgKyAnIiwg
+JyArIHZhbHVlRGVmYXVsdCArICIpO1xuIjsKICAgICAgICAgICAgYnJlYWs7CiAgICAgICAgICBj
+YXNlIDQ6IC8vIDQ9dXNlcl9wcmVmCiAgICAgICAgICAgIHJlc3VsdCArPSAndXNlcl9wcmVmKCIn
+ICsgcHJlZk5hbWUgKyAnIiwgJyArIHZhbHVlICsgIik7XG4iOwogICAgICAgICAgICBicmVhazsK
+ICAgICAgICAgIGNhc2UgMzogLy8gMz11c2VyX3ByZWYrY29tbWVudHMKICAgICAgICAgICAgcmVz
+dWx0ICs9ICd1c2VyX3ByZWYoIicgKyBwcmVmTmFtZSArICciLCAnICsgdmFsdWUgKyAiKTsiCiAg
+ICAgICAgICAgICAgKyBsb2NrZWQucmVwbGFjZSgvbi9nLCAiIikucmVwbGFjZSgveS9nLCAiICAv
+LyBsb2NrZWQiKQogICAgICAgICAgICAgICsgbW9kaWZpZWQucmVwbGFjZSgvbi9nLCAiIikucmVw
+bGFjZSgveS9nLCAiICAvLyBtb2RpZmllZCIpOwogICAgICAgICAgICBpZiAoYXNEZWZhdWx0ID09
+ICJ5IiAmJiBtb2RpZmllZCA9PSAieSIpIHsgcmVzdWx0ICs9ICI9ZGVmYXVsdCIgfQogICAgICAg
+ICAgICByZXN1bHQgKz0gbm9EZWZhdWx0LnJlcGxhY2UoL24vZywgIiIpLnJlcGxhY2UoL3kvZywg
+IiAgLy8gbm9kZWZhdWx0IikgKyAiXG4iOwogICAgICAgICAgICBicmVhazsKICAgICAgICAgIGNh
+c2UgMjogLy8gMj1saXN0K2RlZmF1bHQKICAgICAgICAgICAgcmVzdWx0ICs9IHByZWZOYW1lICsg
+Ilx0IiArIHR5cGUgKyAiXHQiICsgdmFsdWUgKyAiXHQiICsgbG9ja2VkICsgIlx0IgogICAgICAg
+ICAgICAgICsgbW9kaWZpZWQgKyAiXHQiICsgYXNEZWZhdWx0ICsgIlx0IiArIHZhbHVlRGVmYXVs
+dCArICJcdCIgKyBub0RlZmF1bHQgKyAiXG4iOwogICAgICAgICAgICBicmVhazsKICAgICAgICAg
+IGRlZmF1bHQ6IC8vIDA9cmVnZXggLyAxPWJvb2ttYXJrCiAgICAgICAgICAgIHJlc3VsdCArPSBw
+cmVmTmFtZS5yZXBsYWNlKC8oWyouK10pL2csICJcXCQxIikgKyAifCI7CiAgICAgICAgfQogICAg
+ICB9CiAgICB9IC8vIChlbmQgb2YgbG9vcCB0aHJvdWdoIGFsbCBwcmVmcykKICAgIC8vIGZpbmlz
+aCBmb3JtaW5nIHJlc3VsdAogICAgc3dpdGNoIChvcHRpb25zWyJzdHlsZSJdKSB7CiAgICAgIGNh
+c2UgNToKICAgICAgY2FzZSA0OgogICAgICBjYXNlIDM6CiAgICAgIGNhc2UgMjogYnJlYWs7CiAg
+ICAgIGRlZmF1bHQ6CiAgICAgICAgcmVzdWx0ID0gcmVzdWx0LnJlcGxhY2UoL1x8JC8sICcnKSAr
+ICcpKDt8JCl8XiQvaSc7CiAgICAgICAgLy8gdXBkYXRlIGFib3V0OmNvbmZpZyBkaXNwbGF5IChp
+Z25vcmUgZXJyb3JzIGZvciB0aHVuZGVyYmlyZC9ldGMpCiAgICAgICAgdHJ5IHsKICAgICAgICAg
+IC8vIHB1dCByZXN1bHQgaW50byB0aGUgYWJvdXQ6Y29uZmlnIHNlYXJjaCBib3ggYW5kIGZpbHRl
+cgogICAgICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFib3V0LWNvbmZpZy1zZWFyY2gi
+KS52YWx1ZSA9IHJlc3VsdDsKICAgICAgICAgIGZpbHRlclByZWZzKHsgc2hvcnRTdHJpbmc6IHRy
+dWUgfSk7CiAgICAgICAgICAvLyB0ZW1wb3JhcmlseSBjaGFuZ2UgYWJvdXQ6Y29uZmlnIHRvIGNv
+bXBhY3Qgc2l6ZQogICAgICAgICAgZG9jdW1lbnQuYm9keS5zdHlsZS5mb250U2l6ZSA9ICcwLjk4
+ZW0nOwogICAgICAgICAgZm9yICh2YXIgcyBvZiBbICcjcHJlZnMnLCAnI3ByZWZzIConLCAnI3By
+ZWZzID4gdHInLCAnI3ByZWZzID4gdHIgPiB0ZCcsCiAgICAgICAgICAgICcjcHJlZnMgPiB0ciA+
+IHRoJywgJyNwcmVmcyBidXR0b24nLCAnLmFkZCcgXSkKICAgICAgICAgIHsKICAgICAgICAgICAg
+dmFyIG8gPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKHMpOwogICAgICAgICAgICBmb3IgKHZh
+ciBpID0gMCwgaiA9IG8ubGVuZ3RoOyBpIDwgajsgaSsrKSB7CiAgICAgICAgICAgICAgaWYgKHMg
+PT0gJy5hZGQnKSB7CiAgICAgICAgICAgICAgICAvLyBoaWRlIHRoZSBhZGQgKGxhc3QgbGluZSBv
+bmx5IHNob3dpbmcgdGhlIHNlYXJjaCBjcml0ZXJpYSkKICAgICAgICAgICAgICAgIG9baV0uc3R5
+bGUuZGlzcGxheSA9ICdub25lJzsKICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgZWxzZSB7
+CiAgICAgICAgICAgICAgICBvW2ldLnN0eWxlLm1pbkhlaWdodCA9ICIxLjJlbSI7CiAgICAgICAg
+ICAgICAgICBvW2ldLnN0eWxlLmhlaWdodCA9ICJ1bnNldCI7CiAgICAgICAgICAgICAgfQogICAg
+ICAgICAgICB9CiAgICAgICAgICB9CiAgICAgICAgfQogICAgICAgIGNhdGNoKGUpIHsgfQogICAg
+fQogIH0KICBjb25zb2xlLmxvZyhyZXN1bHQpOwogIGlmIChvcHRpb25zWyJmaWxlb3V0Il0pIHsK
+ICAgIC8vIGh0dHBzOi8vZGV2ZWxvcGVyLm1vemlsbGEub3JnL2VuLVVTL2RvY3MvQXJjaGl2ZS9B
+ZGQtb25zL0NvZGVfc25pcHBldHMvRmlsZV9JX08KICAgIC8vIGh0dHBzOi8vZ2l0aHViLmNvbS9U
+aGVlbWltL0dlY2tvUHJlZnNFeHBvcnRlcgogICAgdHJ5IHsKICAgICAgLy8gIkN1cldvcmtEIiBt
+aWdodCBiZSByZWFkb25seSBwcm9ncmFtIGZvbGRlciBzbyB1c2UgIkRlc2siCiAgICAgIHZhciBm
+aWxlID0gU2VydmljZXMuZGlyc3ZjLmdldCgiRGVzayIsIENvbXBvbmVudHMuaW50ZXJmYWNlcy5u
+c0lGaWxlKTsKICAgICAgdmFyIGQgPSBuZXcgRGF0ZSgpOwogICAgICBmaWxlLmFwcGVuZCgidXNl
+cmpzLXRvb2wtYWJvdXRjb25maWctIiArIGQuZ2V0RnVsbFllYXIoKQogICAgICAgICsgKChkLmdl
+dE1vbnRoKCkrMSkgPCAxMCA/ICIwIiA6ICIiKSArIChkLmdldE1vbnRoKCkrMSkKICAgICAgICAr
+IChkLmdldERhdGUoKSA8IDEwID8gIjAiIDogIiIpICsgZC5nZXREYXRlKCkKICAgICAgICArICIt
+IiArIChkLmdldEhvdXJzKCkgPCAxMCA/ICIwIiA6ICIiKSArIGQuZ2V0SG91cnMoKQogICAgICAg
+ICsgKGQuZ2V0TWludXRlcygpIDwgMTAgPyAiMCIgOiAiIikgKyBkLmdldE1pbnV0ZXMoKQogICAg
+ICAgICsgKGQuZ2V0U2Vjb25kcygpIDwgMTAgPyAiMCIgOiAiIikgKyBkLmdldFNlY29uZHMoKQog
+ICAgICAgICsgIi0iICsgZC5nZXRNaWxsaXNlY29uZHMoKSArICIudHh0IgogICAgICApOwogICAg
+ICBjb25zb2xlLmxvZygnLy8gc2F2aW5nIHJlc3VsdCB0byBmaWxlOiAnICsgZmlsZS5wYXRoKTsK
+ICAgICAgdmFyIGZvU3RyZWFtID0gQ29tcG9uZW50cy5jbGFzc2VzWyJAbW96aWxsYS5vcmcvbmV0
+d29yay9maWxlLW91dHB1dC1zdHJlYW07MSJdCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgLmNyZWF0ZUluc3RhbmNlKENvbXBvbmVudHMuaW50ZXJmYWNlcy5uc0lGaWxlT3V0cHV0U3Ry
+ZWFtKTsKICAgICAgZm9TdHJlYW0uaW5pdChmaWxlLCAweDAyIHwgMHgwOCB8IDB4MjAsIHBhcnNl
+SW50KCIwNjY2IiwgOCksIDApOwogICAgICB2YXIgY29udmVydGVyID0gQ29tcG9uZW50cy5jbGFz
+c2VzWyJAbW96aWxsYS5vcmcvaW50bC9jb252ZXJ0ZXItb3V0cHV0LXN0cmVhbTsxIl0KICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAuY3JlYXRlSW5zdGFuY2UoQ29tcG9uZW50cy5pbnRl
+cmZhY2VzLm5zSUNvbnZlcnRlck91dHB1dFN0cmVhbSk7CiAgICAgIGNvbnZlcnRlci5pbml0KGZv
+U3RyZWFtLCAiVVRGLTgiLCAwLCAwKTsKICAgICAgY29udmVydGVyLndyaXRlU3RyaW5nKHJlc3Vs
+dCk7CiAgICAgIGNvbnZlcnRlci5jbG9zZSgpOwogICAgfQogICAgY2F0Y2goZSkgewogICAgICBj
+b25zb2xlLmxvZygiLy8gKHVqdEZpbmRQcmVmKSBmaWxlIHNhdmUgZXJyb3I6XG4iK2UrIlxuIik7
+CiAgICB9CiAgfQp9Cgp2YXIgdWp0U2V0UHJlZiA9IGZ1bmN0aW9uKHByZWYsIHZhbHVlKSB7CiAg
+dHJ5IHsKICAgIGlmIChTZXJ2aWNlcy5wcmVmcy5nZXRQcmVmVHlwZShwcmVmKSA9PSAwKSB7CiAg
+ICAgIGNvbnNvbGUubG9nKCIvLyAodWp0U2V0UHJlZikgY3JlYXRpbmc6ICIgKyBwcmVmICsgIlxu
+Iik7CiAgICB9CiAgICBzd2l0Y2ggKHR5cGVvZiB2YWx1ZSkgewogICAgICBjYXNlICJib29sZWFu
+IjoKICAgICAgICBTZXJ2aWNlcy5wcmVmcy5zZXRCb29sUHJlZihwcmVmLCB2YWx1ZSk7CiAgICAg
+ICAgYnJlYWs7CiAgICAgIGNhc2UgIm51bWJlciI6CiAgICAgICAgU2VydmljZXMucHJlZnMuc2V0
+SW50UHJlZihwcmVmLCB2YWx1ZSk7CiAgICAgICAgYnJlYWs7CiAgICAgIGNhc2UgInN0cmluZyI6
+CiAgICAgICAgaWYgKHVqdFVzZUNoYXJQcmVmKSB7IFNlcnZpY2VzLnByZWZzLnNldENoYXJQcmVm
+KHByZWYsIHZhbHVlKSB9CiAgICAgICAgZWxzZSB7IFNlcnZpY2VzLnByZWZzLnNldFN0cmluZ1By
+ZWYocHJlZiwgdmFsdWUpIH0KICAgICAgICBicmVhazsKICAgIH0KICB9CiAgY2F0Y2goZSkgewog
+ICAgY29uc29sZS5sb2coIi8vICh1anRTZXRQcmVmKSBlcnJvcjogIiArIGUgKyAiIHByZWY6ICIK
+ICAgICAgKyBwcmVmICsgIiB2YWx1ZTogIiArIHZhbHVlICsgIlxuIik7CiAgfQp9Cgp2YXIgdWp0
+UmVzZXRQcmVmID0gZnVuY3Rpb24ocHJlZikgewogIHRyeSB7CiAgICBpZiAoU2VydmljZXMucHJl
+ZnMucHJlZkhhc1VzZXJWYWx1ZShwcmVmKSkgewogICAgICBTZXJ2aWNlcy5wcmVmcy5jbGVhclVz
+ZXJQcmVmKHByZWYpOwogICAgICBpZiAoU2VydmljZXMucHJlZnMucHJlZkhhc1VzZXJWYWx1ZShw
+cmVmKSkgewogICAgICAgIGNvbnNvbGUubG9nKCIvLyAodWp0UmVzZXRQcmVmKSBmYWlsZWQ6ICIg
+KyBwcmVmICsgIlxuIik7CiAgICAgIH0KICAgIH0KICB9CiAgY2F0Y2goZSkgewogICAgY29uc29s
+ZS5sb2coIi8vICh1anRSZXNldFByZWYpIGVycm9yOiAiICsgZSArICIgcHJlZjogIiArIHByZWYg
+KyAiXG4iKTsKICB9Cn0KCi8vIHNldCB1c2VyX3ByZWYgYWxpYXMgdG8gZnVuY3Rpb24gcmVxdWly
+ZWQgKHRoZW4geW91IGNhbiBwYXN0ZS9ydW4gdXNlci5qcykKdmFyIHVzZXJfcHJlZiA9IHVqdFNl
+dFByZWY7Ci8vIHZhciB1c2VyX3ByZWYgPSB1anRSZXNldFByZWY7CgovKiBlbmQgb2YgdXNlcmpz
+LXRvb2wtYWJvdXRjb25maWctZnVuY3Rpb25zLmpzICovCg==
 </div>
 <!-- the above base64 encoded block is functions for about:config -->
 
@@ -7954,3 +8277,4 @@ Y3Rpb25zLmpzICovCg==
 </body>
 
 </html>
+
