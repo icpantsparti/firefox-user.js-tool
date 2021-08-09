@@ -48,7 +48,7 @@ Disclaimer: Use with care at your own risk, and verify any results
 
 </details>
 
-<details><summary><b>Other Info</b></summary><br>
+<details><summary><b>Other Info</b></summary>
 
 * (Optional) The `userjs-tool-themes.css` file can be used with `userjs-tool.html` to add custom themes/colors (or override the default)
 
