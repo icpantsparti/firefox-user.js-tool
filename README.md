@@ -6,16 +6,15 @@ Interactive view, compare, and more for Firefox user.js (eg arkenfox/user.js) + 
 
 [View the current <i>arkenfox user.js</i>* in a table (github.io)](https://icpantsparti.github.io/firefox-user.js-tool/userjs-tool.html?at)
 
-> > (\* note: the excellent `arkenfox user.js` is by other developers at: [home](https://github.com/arkenfox/user.js) / [issues](https://github.com/arkenfox/user.js/issues?q=sort%3Aupdated-desc) / [wiki](https://github.com/arkenfox/user.js/wiki))
-
 [Functions to get more out of about:config (eg: find, filter, list, save to file, etc)](https://raw.githubusercontent.com/icpantsparti/firefox-user.js-tool/master/userjs-tool-aboutconfig-functions.js)
 
+> > > \*Note: the excellent `arkenfox user.js` is by other developers at:<br>
+> > > [arkenfox user.js home](https://github.com/arkenfox/user.js) / [arkenfox user.js issues](https://github.com/arkenfox/user.js/issues?q=sort%3Aupdated-desc) / [arkenfox user.js wiki](https://github.com/arkenfox/user.js/wiki)
+
 ----
 
-<details><summary><b>Introduction</b></summary>
+<details><summary><b>Introduction</b></summary><br>
 
-----
- 
 Display a Mozilla Firefox user.js settings file contents in your Firefox browser, with:
 * highlighting, links, themes*, re-size, wrap, about:config links/regex/groups
 * expanding sections, and index to go to sections (with compatible user.js projects)
@@ -36,9 +35,7 @@ Disclaimer: Use with care at your own risk, and verify any results
 
 </details>
 
-<details><summary><b>(Optional) How to save and open <code>userjs-tool.html</code> off-line</b></summary>
-
-----
+<details><summary><b>(Optional) How to save and open <code>userjs-tool.html</code> off-line</b></summary><br>
 
 * Open [the raw text/html file](https://raw.githubusercontent.com/icpantsparti/firefox-user.js-tool/master/userjs-tool.html) in a browser tab
 * Right click within that page and "Save Page As..."
@@ -51,9 +48,7 @@ Disclaimer: Use with care at your own risk, and verify any results
 
 </details>
 
-<details><summary><b>Other Info</b></summary>
-
-----
+<details><summary><b>Other Info</b></summary><br>
 
 * (Optional) The `userjs-tool-themes.css` file can be used with `userjs-tool.html` to add custom themes/colors (or override the default)
 
